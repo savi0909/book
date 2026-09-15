@@ -1,0 +1,1567 @@
+{
+  "info": {
+    "name": "Ticket booking interview lab",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Run in order. Local simulation only, no charges. New event per run; all state retained. Polls wait 250ms and stop after 60 attempts."
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "setTimeout(()=>{},250); // Bound polling pace in Postman/Newman."
+        ]
+      }
+    }
+  ],
+  "item": [
+    {
+      "name": "Health and fresh retained fixture",
+      "item": [
+        {
+          "name": "Replica A liveness",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200',()=>pm.response.to.have.status(200));pm.test(\"replica A\",()=>pm.expect(pm.response.json().instance==='api-a').true);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/health",
+            "header": []
+          }
+        },
+        {
+          "name": "Replica B liveness",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200',()=>pm.response.to.have.status(200));pm.test(\"replica B\",()=>pm.expect(pm.response.json().instance==='api-b').true);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{peerUrl}}/health",
+            "header": []
+          }
+        },
+        {
+          "name": "Database health",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200',()=>pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/actuator/health",
+            "header": []
+          }
+        },
+        {
+          "name": "Readiness probe",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200',()=>pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/actuator/health/readiness",
+            "header": []
+          }
+        },
+        {
+          "name": "Liveness probe",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200',()=>pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/actuator/health/liveness",
+            "header": []
+          }
+        },
+        {
+          "name": "Actuator info",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200',()=>pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/actuator/info",
+            "header": []
+          }
+        },
+        {
+          "name": "Create a fresh demo event (mutates)",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.environment.set('runId',pm.variables.replaceIn('{{$guid}}'));for(const k of ['eventId','bookingId','paymentId','lateId','latePayment','unknownId','unknownPayment','failedId','failedPayment','pollCount'])pm.environment.unset(k);"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 201',()=>pm.response.to.have.status(201));pm.environment.set('eventId',pm.response.json().id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/demo/events",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"postman-{{runId}}\",\n  \"seatCount\": 12\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "List events",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200',()=>pm.response.to.have.status(200));pm.test(\"bounded events\",()=>pm.expect(Array.isArray(pm.response.json())&&pm.response.json().length<=5).true);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/events?limit=5&offset=0",
+            "header": []
+          }
+        },
+        {
+          "name": "Read selected event",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200',()=>pm.response.to.have.status(200));pm.test(\"twelve seats\",()=>pm.expect(pm.response.json().seatCount===12).true);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/events/{{eventId}}",
+            "header": []
+          }
+        },
+        {
+          "name": "Read peer seat availability",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200',()=>pm.response.to.have.status(200));pm.test(\"available seats\",()=>pm.expect(pm.response.json().every(s=>s.availability==='AVAILABLE')).true);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{peerUrl}}/api/events/{{eventId}}/seats?limit=4&offset=0",
+            "header": []
+          }
+        }
+      ]
+    },
+    {
+      "name": "Durable holds and confirmation",
+      "item": [
+        {
+          "name": "Hold seat one",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 201',()=>pm.response.to.have.status(201));pm.environment.set('bookingId',pm.response.json().id);pm.test(\"booking state\",()=>pm.expect(pm.response.json().state==='HELD').true);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/holds",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Idempotency-Key",
+                "value": "hold-{{runId}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"eventId\": \"{{eventId}}\",\n  \"seatNumber\": 1,\n  \"buyerId\": \"postman-{{runId}}\",\n  \"ttlSeconds\": 120\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Replay hold through peer",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200',()=>pm.response.to.have.status(200));pm.test(\"same hold\",()=>pm.expect(pm.response.json().id===pm.environment.get('bookingId')&&pm.response.json().replayed).true);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{peerUrl}}/api/holds",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Idempotency-Key",
+                "value": "hold-{{runId}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"eventId\": \"{{eventId}}\",\n  \"seatNumber\": 1,\n  \"buyerId\": \"postman-{{runId}}\",\n  \"ttlSeconds\": 120\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Reject changed hold payload",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 409',()=>pm.response.to.have.status(409));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/holds",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Idempotency-Key",
+                "value": "hold-{{runId}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"eventId\": \"{{eventId}}\",\n  \"seatNumber\": 2,\n  \"buyerId\": \"postman-{{runId}}\",\n  \"ttlSeconds\": 120\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Reject competing buyer",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 409',()=>pm.response.to.have.status(409));pm.test(\"seat conflict\",()=>pm.expect(pm.response.json().code==='SEAT_UNAVAILABLE').true);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{peerUrl}}/api/holds",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Idempotency-Key",
+                "value": "contender-{{runId}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"eventId\": \"{{eventId}}\",\n  \"seatNumber\": 1,\n  \"buyerId\": \"contender-{{runId}}\",\n  \"ttlSeconds\": 120\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Read booking",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200',()=>pm.response.to.have.status(200));pm.test(\"booking state\",()=>pm.expect(pm.response.json().state==='HELD').true);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/bookings/{{bookingId}}",
+            "header": []
+          }
+        },
+        {
+          "name": "Read booking audit",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200',()=>pm.response.to.have.status(200));pm.test(\"hold audit\",()=>pm.expect(pm.response.json().some(a=>a.action==='HELD')).true);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/bookings/{{bookingId}}/audit",
+            "header": []
+          }
+        },
+        {
+          "name": "Begin successful local checkout",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 202',()=>pm.response.to.have.status(202));pm.environment.set('paymentId',pm.response.json().payment.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/bookings/{{bookingId}}/checkout",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Idempotency-Key",
+                "value": "checkout-{{runId}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"scenario\": \"SUCCESS\",\n  \"delayMs\": 0\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Replay checkout through peer",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200',()=>pm.response.to.have.status(200));pm.test(\"same payment\",()=>pm.expect(pm.response.json().payment.id===pm.environment.get('paymentId')).true);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{peerUrl}}/api/bookings/{{bookingId}}/checkout",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Idempotency-Key",
+                "value": "checkout-{{runId}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"scenario\": \"SUCCESS\",\n  \"delayMs\": 0\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Reject changed checkout input",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 409',()=>pm.response.to.have.status(409));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/bookings/{{bookingId}}/checkout",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Idempotency-Key",
+                "value": "checkout-{{runId}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"scenario\": \"FAILURE\",\n  \"delayMs\": 0\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Wait for confirmation",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200',()=>pm.response.to.have.status(200));",
+                  "const b=pm.response.json();",
+                  "if(!(b.state==='CONFIRMED')) {",
+                  "  const n=Number(pm.environment.get('pollCount')||0)+1;pm.environment.set('pollCount',n);",
+                  "  if(n<60) pm.execution.setNextRequest(pm.info.requestName);",
+                  "  else {pm.environment.unset('pollCount');pm.test('bounded poll converged',()=>pm.expect(false).true);}",
+                  "} else {pm.environment.unset('pollCount');pm.test('state converged',()=>pm.expect(true).true);}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/bookings/{{bookingId}}",
+            "header": []
+          }
+        },
+        {
+          "name": "Read payment",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200',()=>pm.response.to.have.status(200));pm.test(\"paid\",()=>pm.expect(pm.response.json().state==='SUCCESS').true);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/payments/{{paymentId}}",
+            "header": []
+          }
+        },
+        {
+          "name": "Deliver a repeated success event",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200',()=>pm.response.to.have.status(200));pm.test(\"booking state\",()=>pm.expect(pm.response.json().state==='CONFIRMED').true);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/demo/payments/{{paymentId}}/callback",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"eventId\": \"event-{{runId}}\",\n  \"outcome\": \"SUCCESS\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Replay same provider event",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200',()=>pm.response.to.have.status(200));pm.test(\"callback replay\",()=>pm.expect(pm.response.json().replayed).true);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{peerUrl}}/api/demo/payments/{{paymentId}}/callback",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"eventId\": \"event-{{runId}}\",\n  \"outcome\": \"SUCCESS\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Reject conflicting provider outcome",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 409',()=>pm.response.to.have.status(409));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/demo/payments/{{paymentId}}/callback",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"eventId\": \"bad-{{runId}}\",\n  \"outcome\": \"FAILURE\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Reconcile terminal payment",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200',()=>pm.response.to.have.status(200));pm.test(\"booking state\",()=>pm.expect(pm.response.json().state==='CONFIRMED').true);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/demo/payments/{{paymentId}}/reconcile",
+            "header": []
+          }
+        },
+        {
+          "name": "Reject unnecessary refund",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 409',()=>pm.response.to.have.status(409));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/demo/payments/{{paymentId}}/refund",
+            "header": []
+          }
+        },
+        {
+          "name": "Cancel confirmed booking",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200',()=>pm.response.to.have.status(200));pm.test(\"booking state\",()=>pm.expect(pm.response.json().state==='CANCELLED').true);pm.test(\"refund required\",()=>pm.expect(pm.response.json().reconciliation==='REFUND_REQUIRED').true);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/bookings/{{bookingId}}/cancel",
+            "header": []
+          }
+        },
+        {
+          "name": "Record simulated refund",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200',()=>pm.response.to.have.status(200));pm.test(\"refund recorded\",()=>pm.expect(pm.response.json().reconciliation==='REFUNDED_SIMULATED').true);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/demo/payments/{{paymentId}}/refund",
+            "header": []
+          }
+        },
+        {
+          "name": "Replay refund",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200',()=>pm.response.to.have.status(200));pm.test(\"refund replay\",()=>pm.expect(pm.response.json().replayed).true);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/demo/payments/{{paymentId}}/refund",
+            "header": []
+          }
+        },
+        {
+          "name": "Replay cancellation",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200',()=>pm.response.to.have.status(200));pm.test(\"booking state\",()=>pm.expect(pm.response.json().state==='CANCELLED').true);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/bookings/{{bookingId}}/cancel",
+            "header": []
+          }
+        }
+      ]
+    },
+    {
+      "name": "Expiry and late success",
+      "item": [
+        {
+          "name": "Hold seat two for two seconds",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 201',()=>pm.response.to.have.status(201));pm.environment.set('lateId',pm.response.json().id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/holds",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Idempotency-Key",
+                "value": "late-{{runId}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"eventId\": \"{{eventId}}\",\n  \"seatNumber\": 2,\n  \"buyerId\": \"postman-{{runId}}\",\n  \"ttlSeconds\": 2\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Checkout with four-second provider delay",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 202',()=>pm.response.to.have.status(202));pm.environment.set('latePayment',pm.response.json().payment.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/bookings/{{lateId}}/checkout",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Idempotency-Key",
+                "value": "late-checkout-{{runId}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"scenario\": \"SUCCESS\",\n  \"delayMs\": 4000\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Wait for expiry",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200',()=>pm.response.to.have.status(200));",
+                  "const b=pm.response.json();",
+                  "if(!(b.state==='EXPIRED')) {",
+                  "  const n=Number(pm.environment.get('pollCount')||0)+1;pm.environment.set('pollCount',n);",
+                  "  if(n<60) pm.execution.setNextRequest(pm.info.requestName);",
+                  "  else {pm.environment.unset('pollCount');pm.test('bounded poll converged',()=>pm.expect(false).true);}",
+                  "} else {pm.environment.unset('pollCount');pm.test('state converged',()=>pm.expect(true).true);}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/bookings/{{lateId}}",
+            "header": []
+          }
+        },
+        {
+          "name": "Reserve expired seat for another buyer",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 201',()=>pm.response.to.have.status(201));pm.environment.set('replacementId',pm.response.json().id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{peerUrl}}/api/holds",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Idempotency-Key",
+                "value": "replacement-{{runId}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"eventId\": \"{{eventId}}\",\n  \"seatNumber\": 2,\n  \"buyerId\": \"replacement-{{runId}}\",\n  \"ttlSeconds\": 120\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Wait for late payment success",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200',()=>pm.response.to.have.status(200));",
+                  "const b=pm.response.json();",
+                  "if(!(b.payment?.state==='SUCCESS')) {",
+                  "  const n=Number(pm.environment.get('pollCount')||0)+1;pm.environment.set('pollCount',n);",
+                  "  if(n<60) pm.execution.setNextRequest(pm.info.requestName);",
+                  "  else {pm.environment.unset('pollCount');pm.test('bounded poll converged',()=>pm.expect(false).true);}",
+                  "} else {pm.environment.unset('pollCount');pm.test('state converged',()=>pm.expect(true).true);}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/bookings/{{lateId}}",
+            "header": []
+          }
+        },
+        {
+          "name": "Observe late-success reconciliation",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200',()=>pm.response.to.have.status(200));pm.test(\"booking state\",()=>pm.expect(pm.response.json().state==='EXPIRED').true);pm.test(\"refund instead of confirmation\",()=>pm.expect(pm.response.json().reconciliation==='REFUND_REQUIRED').true);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/bookings/{{lateId}}",
+            "header": []
+          }
+        },
+        {
+          "name": "Replacement still owns the seat",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200',()=>pm.response.to.have.status(200));pm.test(\"booking state\",()=>pm.expect(pm.response.json().state==='HELD').true);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{peerUrl}}/api/bookings/{{replacementId}}",
+            "header": []
+          }
+        },
+        {
+          "name": "Refund expired booking locally",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200',()=>pm.response.to.have.status(200));pm.test(\"simulated refund\",()=>pm.expect(pm.response.json().reconciliation==='REFUNDED_SIMULATED').true);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/demo/payments/{{latePayment}}/refund",
+            "header": []
+          }
+        },
+        {
+          "name": "Replay expired original hold",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200',()=>pm.response.to.have.status(200));pm.test(\"booking state\",()=>pm.expect(pm.response.json().state==='EXPIRED').true);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/holds",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Idempotency-Key",
+                "value": "late-{{runId}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"eventId\": \"{{eventId}}\",\n  \"seatNumber\": 2,\n  \"buyerId\": \"postman-{{runId}}\",\n  \"ttlSeconds\": 2\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Unknown outcome and failure",
+      "item": [
+        {
+          "name": "Hold seat three",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 201',()=>pm.response.to.have.status(201));pm.environment.set('unknownId',pm.response.json().id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/holds",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Idempotency-Key",
+                "value": "unknown-{{runId}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"eventId\": \"{{eventId}}\",\n  \"seatNumber\": 3,\n  \"buyerId\": \"postman-{{runId}}\",\n  \"ttlSeconds\": 120\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Simulate unknown response with delay",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 202',()=>pm.response.to.have.status(202));pm.environment.set('unknownPayment',pm.response.json().payment.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/bookings/{{unknownId}}/checkout",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Idempotency-Key",
+                "value": "unknown-checkout-{{runId}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"scenario\": \"UNKNOWN\",\n  \"delayMs\": 2000\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Cancel while outcome unknown",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200',()=>pm.response.to.have.status(200));pm.test(\"booking state\",()=>pm.expect(pm.response.json().state==='CANCELLED').true);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/bookings/{{unknownId}}/cancel",
+            "header": []
+          }
+        },
+        {
+          "name": "Wait for recovered unknown outcome",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200',()=>pm.response.to.have.status(200));",
+                  "const b=pm.response.json();",
+                  "if(!(b.payment?.state==='SUCCESS')) {",
+                  "  const n=Number(pm.environment.get('pollCount')||0)+1;pm.environment.set('pollCount',n);",
+                  "  if(n<60) pm.execution.setNextRequest(pm.info.requestName);",
+                  "  else {pm.environment.unset('pollCount');pm.test('bounded poll converged',()=>pm.expect(false).true);}",
+                  "} else {pm.environment.unset('pollCount');pm.test('state converged',()=>pm.expect(true).true);}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/bookings/{{unknownId}}",
+            "header": []
+          }
+        },
+        {
+          "name": "Unknown cancellation needs refund",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200',()=>pm.response.to.have.status(200));pm.test(\"booking state\",()=>pm.expect(pm.response.json().state==='CANCELLED').true);pm.test(\"refund after recovery\",()=>pm.expect(pm.response.json().reconciliation==='REFUND_REQUIRED').true);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/bookings/{{unknownId}}",
+            "header": []
+          }
+        },
+        {
+          "name": "Refund recovered local payment",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200',()=>pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/demo/payments/{{unknownPayment}}/refund",
+            "header": []
+          }
+        },
+        {
+          "name": "Hold seat four",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 201',()=>pm.response.to.have.status(201));pm.environment.set('failedId',pm.response.json().id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/holds",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Idempotency-Key",
+                "value": "failure-{{runId}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"eventId\": \"{{eventId}}\",\n  \"seatNumber\": 4,\n  \"buyerId\": \"postman-{{runId}}\",\n  \"ttlSeconds\": 120\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Simulate payment failure",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 202',()=>pm.response.to.have.status(202));pm.environment.set('failedPayment',pm.response.json().payment.id);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/bookings/{{failedId}}/checkout",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Idempotency-Key",
+                "value": "failure-checkout-{{runId}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"scenario\": \"FAILURE\",\n  \"delayMs\": 0\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Wait for failure",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200',()=>pm.response.to.have.status(200));",
+                  "const b=pm.response.json();",
+                  "if(!(b.state==='PAYMENT_FAILED')) {",
+                  "  const n=Number(pm.environment.get('pollCount')||0)+1;pm.environment.set('pollCount',n);",
+                  "  if(n<60) pm.execution.setNextRequest(pm.info.requestName);",
+                  "  else {pm.environment.unset('pollCount');pm.test('bounded poll converged',()=>pm.expect(false).true);}",
+                  "} else {pm.environment.unset('pollCount');pm.test('state converged',()=>pm.expect(true).true);}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/bookings/{{failedId}}",
+            "header": []
+          }
+        },
+        {
+          "name": "Reject event ID reused for another payment",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 409',()=>pm.response.to.have.status(409));pm.test(\"event conflict\",()=>pm.expect(pm.response.json().code==='EVENT_CONFLICT').true);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/demo/payments/{{failedPayment}}/callback",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"eventId\": \"event-{{runId}}\",\n  \"outcome\": \"FAILURE\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Validation and statistics",
+      "item": [
+        {
+          "name": "Missing booking",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 404',()=>pm.response.to.have.status(404));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/bookings/00000000-0000-0000-0000-000000000000",
+            "header": []
+          }
+        },
+        {
+          "name": "Missing hold key",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 400',()=>pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/holds",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"eventId\": \"{{eventId}}\",\n  \"seatNumber\": 5,\n  \"buyerId\": \"postman-{{runId}}\",\n  \"ttlSeconds\": 120\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Invalid hold key",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 400',()=>pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/holds",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Idempotency-Key",
+                "value": "bad key"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"eventId\": \"{{eventId}}\",\n  \"seatNumber\": 5,\n  \"buyerId\": \"postman-{{runId}}\",\n  \"ttlSeconds\": 120\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Invalid fractional seat count",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 400',()=>pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/demo/events",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"invalid\",\n  \"seatCount\": 2.5\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Invalid event seat bound",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 400',()=>pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "url": "{{baseUrl}}/api/demo/events",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"invalid\",\n  \"seatCount\": 201\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Invalid page limit",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 400',()=>pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/events?limit=0",
+            "header": []
+          }
+        },
+        {
+          "name": "Invalid UUID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 400',()=>pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/events/not-a-uuid",
+            "header": []
+          }
+        },
+        {
+          "name": "Observe statistics",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('HTTP 200',()=>pm.response.to.have.status(200));pm.test(\"stats arrays\",()=>pm.expect(Array.isArray(pm.response.json().bookings)&&Array.isArray(pm.response.json().payments)).true);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "url": "{{baseUrl}}/api/stats",
+            "header": []
+          }
+        }
+      ]
+    }
+  ]
+}

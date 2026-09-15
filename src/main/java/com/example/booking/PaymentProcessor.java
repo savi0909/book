@@ -1,0 +1,94 @@
+package com.example.booking;
+
+import org.springframework.stereotype.Service;
+import java.util.*;
+import static com.example.booking.Models.*;
+
+@Service
+public class PaymentProcessor {
+    private final BookingStore store;
+    private final LocalProvider provider;
+    public PaymentProcessor(BookingStore store,LocalProvider provider) {this.store=store;this.provider=provider;}
+    public Payment get(UUID id) {return store.paymentRow(id).payment();}
+    public Booking reconcile(UUID id) {
+        recover(id,true);
+        UUID booking=get(id).bookingId();
+        return store.tx(() -> {store.locked(booking);store.expire(booking);return store.view(booking,false);});
+    }
+    public int recoverBatch() {
+        var ids=store.jdbc().queryForList("""
+            SELECT id FROM payments WHERE state IN ('PENDING','UNKNOWN') AND next_at <= clock_timestamp()
+              AND (lease_until IS NULL OR lease_until <= clock_timestamp()) ORDER BY next_at LIMIT 20
+            """,UUID.class);
+        for(UUID id:ids) recover(id,false);
+        return ids.size();
+    }
+    void recover(UUID id,boolean force) {
+        UUID token=UUID.randomUUID();
+        var claimed=store.tx(() -> store.jdbc().query("""
+            UPDATE payments SET lease_token=?, lease_until=clock_timestamp()+interval '5 seconds',
+              attempts=attempts+1,updated_at=clock_timestamp()
+            WHERE id=? AND state IN ('PENDING','UNKNOWN') AND (? OR next_at <= clock_timestamp())
+              AND (lease_until IS NULL OR lease_until <= clock_timestamp()) RETURNING *
+            """,BookingStore.PAYMENT,token,id,force));
+        if(claimed.isEmpty()) return;
+        Payment p=claimed.getFirst().payment();
+        // No inventory transaction/lock is alive here. A crash after acceptance
+        // leaves an idempotent provider receipt and a recoverable leased intent.
+        Receipt receipt=provider.accept(p);
+        if(!receipt.ready() || (p.scenario()==Scenario.UNKNOWN && p.attempts()==1)) {
+            store.tx(() -> {
+                store.jdbc().update("""
+                    UPDATE payments SET state='UNKNOWN',next_at=GREATEST(ready_at,clock_timestamp()+interval '3 seconds'),
+                      lease_token=NULL,lease_until=NULL,updated_at=clock_timestamp()
+                    WHERE id=? AND lease_token=? AND state IN ('PENDING','UNKNOWN')
+                    """,id,token);
+                return null;
+            });
+            return;
+        }
+        apply(id,"provider/"+id,receipt.outcome(),token);
+    }
+    public Booking callback(UUID id,CallbackRequest request) {
+        return apply(id,request.eventId(),request.outcome(),null);
+    }
+    Booking apply(UUID id,String eventId,Outcome outcome,UUID token) {
+        UUID booking=get(id).bookingId();
+        return store.tx(() -> {
+            store.locked(booking);
+            PaymentRow p=BookingStore.one(store.jdbc().query("SELECT * FROM payments WHERE id=? FOR UPDATE",BookingStore.PAYMENT,id));
+            if(token!=null && (!token.equals(p.leaseToken()) || !Boolean.TRUE.equals(store.jdbc().queryForObject(
+                "SELECT lease_until > clock_timestamp() FROM payments WHERE id=?",Boolean.class,id))))
+                return store.view(booking,true);
+            Receipt receipt=provider.lookup(id);
+            if(!receipt.ready()) throw ApiException.conflict("PROVIDER_PENDING","Simulated outcome is not yet available");
+            if(receipt.outcome()!=outcome) throw ApiException.conflict("OUTCOME_CONFLICT","Callback disagrees with the immutable local provider receipt");
+            int inserted=store.jdbc().update("INSERT INTO provider_events(event_id,payment_id,outcome) VALUES (?,?,?) ON CONFLICT DO NOTHING",eventId,id,outcome.name());
+            var event=store.jdbc().queryForMap("SELECT payment_id,outcome FROM provider_events WHERE event_id=?",eventId);
+            if(!id.equals(event.get("payment_id")) || !outcome.name().equals(event.get("outcome")))
+                throw ApiException.conflict("EVENT_CONFLICT","Event ID was already used for another payment/outcome");
+            store.expire(booking);
+            boolean terminal=Set.of("SUCCESS","FAILURE").contains(p.payment().state());
+            if(!terminal) {
+                store.jdbc().update("UPDATE payments SET state=?,lease_token=NULL,lease_until=NULL,updated_at=clock_timestamp() WHERE id=?",outcome.name(),id);
+                if(outcome==Outcome.SUCCESS) {
+                    int confirmed=store.jdbc().update("""
+                        UPDATE bookings SET state='CONFIRMED',updated_at=clock_timestamp()
+                        WHERE id=? AND state IN ('HELD','CHECKOUT') AND expires_at > clock_timestamp()
+                        """,booking);
+                    if(confirmed==1) store.audit(booking,"CONFIRMED");
+                    else {
+                        store.expire(booking);
+                        store.jdbc().update("UPDATE bookings SET reconciliation='REFUND_REQUIRED',updated_at=clock_timestamp() WHERE id=?",booking);
+                        store.audit(booking,"LATE_SUCCESS_REFUND_REQUIRED");
+                    }
+                } else {
+                    if(store.jdbc().update("UPDATE bookings SET state='PAYMENT_FAILED',updated_at=clock_timestamp() WHERE id=? AND state IN ('HELD','CHECKOUT')",booking)==1)
+                        store.audit(booking,"PAYMENT_FAILED");
+                }
+                store.audit(booking,"PAYMENT_"+outcome.name());
+            }
+            return store.view(booking,inserted==0 || terminal);
+        });
+    }
+}

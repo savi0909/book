@@ -1,0 +1,32 @@
+server:
+  port: ${PORT:8105}
+  tomcat:
+    threads:
+      max: 32
+    max-connections: 100
+    accept-count: 32
+spring:
+  application:
+    name: ticket-booking-lab
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5547/booking?connectTimeout=3&socketTimeout=5}
+    username: ${DB_USER:booking_demo}
+    password: ${DB_PASSWORD:booking_demo}
+    hikari:
+      maximum-pool-size: 8
+      connection-timeout: 3000
+  jackson:
+    deserialization:
+      accept-float-as-int: false
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      probes:
+        enabled: true
+lab:
+  instance: ${INSTANCE_ID:local}
+  maintenance-enabled: ${MAINTENANCE_ENABLED:true}
