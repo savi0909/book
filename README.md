@@ -52,3 +52,7 @@ Implementation entry: [BookingService](src/main/java/com/example/booking/Booking
 Production auth, actual provider integration, refunds, admission control and
 database failover remain outside the local lab. A database outage rejects operations;
 the application does not manufacture availability from an in-memory seat cache.
+
+## Code study
+
+[Detailed IntelliJ project study guide](docs/INTELLIJ_CODE_STUDY_TUTORIAL.md): ordered source reading, API/event traces, debugger checkpoints, exercises, tests, and engineering tradeoffs.
