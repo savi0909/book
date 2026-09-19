@@ -1,5 +1,12 @@
 # Ticket booking learning lab
 
+User-directed2026-10-03: this is the primary domain for foundations-first study
+of databases, pessimistic/optimistic locking, retries and retry storms. Read
+[the foundations tutorial](docs/DISTRIBUTED_SYSTEMS_FOUNDATIONS.md). Use local
+downloaded articles/original JavaScript/Python first, then web sources if needed.
+Seat-version optimistic locking and a controlled retry-storm harness are proposed,
+not existing mechanisms or authorization to change behavior during teaching.
+
 Independent Java 21 / Spring Boot 3.5.16 / Maven project. Read [README](README.md),
 [spec](docs/SYSTEM_SPEC.md), [guide](docs/USER_GUIDE.md), [API](docs/API_REFERENCE.md),
 [parity](PARITY.md), [verification](docs/VERIFICATION.md) and

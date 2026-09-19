@@ -1,5 +1,23 @@
 # Verification evidence
 
+## Foundations tutorial documentation check — 2026-10-03
+
+Added [the foundations tutorial](DISTRIBUTED_SYSTEMS_FOUNDATIONS.md) and README
+navigation for the learner's ticket-booking-first study of databases, locking,
+retry safety and retry storms. Inspected current Java/SQL/tests, original locking
+and Python retry-storm source, and downloaded WAL/retry articles; used official
+references for clarification. Optimistic seat versions and a controlled storm
+harness remain proposals; application behavior and infrastructure are unchanged.
+
+`node scripts/validate-artifacts.mjs` passed required-artifact, exported Postman
+script parsing and local Markdown target checks. `mvn -B -ntp validate` at the
+workspace passed all 21 reactor entries. Additional changed-document checks
+passed code-fence balance, local links, ticket focus and named test references;
+`git diff --check` passed. No application test, concurrency experiment or workload
+was rerun for this documentation task. The execution evidence below is historical.
+
+## Application verification — 2026-10-01
+
 Executed 2026-10-01 on Windows 11/PowerShell, Java 21.0.9 (Zulu), Maven 3.9.11,
 Docker Desktop engine 29.7.2, Node 24.11.0 and PostgreSQL 16.15 from postgres:16-alpine.
 Spring Boot 3.5.16 resolved and built successfully. Read [spec](SYSTEM_SPEC.md)
