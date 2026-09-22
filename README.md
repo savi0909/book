@@ -55,6 +55,8 @@ the application does not manufacture availability from an in-memory seat cache.
 
 ## Code study
 
+[Failure-handling and high-availability scenarios](docs/FAILURE_SCENARIOS.md): six prioritized additions, concrete failure injections, expected guarantees, and local source references.
+
 [Distributed systems foundations through ticket booking](docs/DISTRIBUTED_SYSTEMS_FOUNDATIONS.md): database internals, pessimistic and proposed optimistic locking, safe retries, retry storms, and an ordered learning track using this booking domain.
 
 [Detailed IntelliJ project study guide](docs/INTELLIJ_CODE_STUDY_TUTORIAL.md): ordered source reading, API/event traces, debugger checkpoints, exercises, tests, and engineering tradeoffs.

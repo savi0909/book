@@ -1,5 +1,15 @@
 # Verification evidence
 
+## Failure-scenario suggestions documentation check — 2026-10-04
+
+Added [six proposed scenarios](FAILURE_SCENARIOS.md), linked from README and the
+foundations tutorial. Inspected current batch/recovery/refund/configuration code,
+local failover/breaker/poison examples and the archived poison-pill article, then
+official Spring/PostgreSQL/outbox references. Artifact/link checks, six-scenario
+structure, code-fence balance and whitespace validation passed. Application code,
+infrastructure and runtime tests were not changed or exercised. This is a set of
+recommendations; no scenario was selected for implementation.
+
 ## Foundations tutorial documentation check — 2026-10-03
 
 Added [the foundations tutorial](DISTRIBUTED_SYSTEMS_FOUNDATIONS.md) and README

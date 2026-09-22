@@ -2,6 +2,10 @@
 
 Requested and refined: 2026-10-03. Primary learning project: `ticket-booking-lab`.
 
+For focused next additions, see [six failure-handling and availability scenarios](FAILURE_SCENARIOS.md),
+covering API failover, provider isolation, poison jobs, outbox delivery, refund
+recovery and database HA, with an experiment and proof obligation for each.
+
 Use this one domain to study databases, pessimistic locking, optimistic locking,
 safe retries, retry storms, and the distributed-system mechanisms around them.
 Start with the invariant and a concrete race, then inspect Java and SQL. Follow
