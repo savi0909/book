@@ -1,5 +1,19 @@
 # Ticket booking interview practice
 
+## Scenario 1: five points and a 60-second answer
+
+Read [API failover and graceful restart](API_FAILOVER_TUTORIAL.md) for the detailed
+study and three key points per subtopic. Lead with these five points:
+
+1. One client endpoint routes to multiple ready APIs; state remains in PostgreSQL.
+2. Separate process liveness, readiness and admission; drain rejects new work.
+3. A lost response can follow a successful database commit.
+4. Same booking/key/payload replays the original intent; the proxy does not retry writes.
+5. Test abrupt crash and graceful completion separately; name the remaining proxy/DB failure domains.
+
+Use these as the first answer, then expand on a requested subtopic. The longer
+study guide supplies evidence and tradeoffs; it is not a 20-point interview script.
+
 ## A 45-minute outline
 
 | Minutes | Explain / produce |

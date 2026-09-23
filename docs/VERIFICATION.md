@@ -1,5 +1,64 @@
 # Verification evidence
 
+## Scenario 1: API failover and graceful restart — 2026-10-04
+
+Delivered [the detailed tutorial](API_FAILOVER_TUTORIAL.md), optional HAProxy
+overlay, bounded local failure controls, Java/PostgreSQL integration coverage,
+Postman collection and Docker crash/drain experiment. Scenarios 2 and 3 remain
+queued for separate deliveries. Guide authorship does not establish learner mastery.
+
+| Executed check | Observed result |
+| --- | --- |
+| `mvn -B -ntp verify` | 25 tests, zero failures/errors/skips, real PostgreSQL Testcontainers |
+| `docker compose -f compose.yml -f compose.failover.yml config --quiet`, `build api-a api-b`, `up -d --wait` | Configuration valid; APIs built; database and both APIs healthy |
+| `docker compose -f compose.yml -f compose.failover.yml exec -T gateway haproxy -c -f /usr/local/etc/haproxy/haproxy.cfg` | Live gateway configuration accepted; HAProxy 3.2.25, digest pinned in overlay |
+| `node scripts/learn-failover.mjs` | Final run: 34 explicit checks, crash and graceful-stop paths passed; restoration true |
+| Newman 6.2.2 failover collection/environment | 17 requests, 26 assertions, zero failures |
+| Newman 6.2.2 original booking collection/environment | 74 executed requests, 109 assertions, zero failures |
+| Workspace `mvn -B -ntp validate` | All 21 reactor entries passed |
+| `node scripts/validate-artifacts.mjs` | 23 required artifacts, 74 named requests, 77 parsed script blocks, 30 Markdown files/643 local links; zero broken targets |
+| `git diff --check` and changed Markdown fence check | Passed |
+
+Final runtime run: 2026-10-04 08:58:50–08:59:14 UTC. Abrupt termination lost the
+original checkout response (harness status 0 denotes a fetch/connection failure,
+not an HTTP status). Recovery through B returned the same payment ID; SQL showed
+one payment row and the audit showed one checkout transition. B also accepted a
+fresh booking. Observed routing recovery was 1117ms, including command and polling
+overhead; this is a single observation, not a failover SLO.
+
+During graceful stop, A rejected new work and withdrew readiness while remaining
+live; B accepted fresh work. A's admitted delayed response completed with 202.
+The stop took 7038ms and exited 143 (SIGTERM), with no OOM. This validates response
+completion for this bounded request, not every shutdown timing or maintenance job.
+When both replicas were drained, the gateway returned a bounded 503.
+
+Java checks cover drain/readiness/liveness, rejection before mutation, committed
+intent visible during response delay, completion after drain, same-payment replay,
+delay bounds, and controls disabled by default. Existing concurrency/payment tests
+remain green. No new schema, actual payment provider or database HA was introduced.
+
+Ignored local evidence: `target/failover-maven.log`,
+`target/failover-runtime-evidence.json`, `target/failover-postman-evidence.json`,
+`target/failover-regression-postman-evidence.json`, associated console logs and
+`target/workspace-validate-failover.log`. Both API replicas and the gateway were
+restored accepting traffic; PostgreSQL and existing data remain retained. Each
+runtime execution creates four fresh event/hold fixtures. A stopped container
+named `booking-haproxy-config-check` is retained from config validation; no files,
+containers or volumes were deleted. Other learning stacks were not changed.
+
+Local Java 21/Maven/Node/Docker environment remains as described below. No load,
+database failover, host/zone failure, browser UI or production authentication test
+was performed. One gateway, PostgreSQL primary and host remain failure domains.
+
+Final command-check correction: an unsupported `--help` invocation from the
+workspace root began a partial experiment, created one event/hold and committed
+its checkout, then failed to locate Compose before any process kill. Both APIs
+were explicitly resumed and verified accepting with no waiting responses. Added
+and checked preflight rejection for a wrong working directory and unsupported
+arguments; `--help` now exits without running the experiment. The partial-run
+record is retained as `target/failover-wrong-directory-evidence.json`; the complete
+passing run remains `target/failover-runtime-evidence.json`. No evidence was deleted.
+
 ## Failure-scenario suggestions documentation check — 2026-10-04
 
 Added [six proposed scenarios](FAILURE_SCENARIOS.md), linked from README and the

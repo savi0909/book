@@ -52,6 +52,16 @@ class BookingIntegrationTest {
             return results;
         }
     }
+    @Test void failoverControlsAreDisabledByDefaultAndDelayCannotMutateCheckout() throws Exception {
+        assertThat(call("POST","/api/demo/failover/drain",null,null).statusCode()).isEqualTo(404);
+        Booking booking=hold(event(),1);
+        var request=HttpRequest.newBuilder(URI.create("http://localhost:"+port+"/api/bookings/"+booking.id()+"/checkout"))
+            .header("Content-Type","application/json").header("Idempotency-Key","disabled")
+            .header("X-Lab-Response-Delay-Ms","100")
+            .POST(HttpRequest.BodyPublishers.ofString("{\"scenario\":\"SUCCESS\",\"delayMs\":0}")).build();
+        assertThat(http.send(request,HttpResponse.BodyHandlers.ofString()).statusCode()).isEqualTo(404);
+        assertThat(bookings.get(booking.id()).payment()).isNull();
+    }
     @Test void manyBuyersCannotOversellOneSeat() throws Exception {
         Event e=event();
         var results=race(24,i->{try{return bookings.hold(request(e.id(),1,"racer-"+i),"key-"+UUID.randomUUID()).state();}

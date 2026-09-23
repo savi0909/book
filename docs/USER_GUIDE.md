@@ -1,5 +1,13 @@
 # User guide
 
+## Optional API failover study
+
+Start [the detailed scenario 1 tutorial](API_FAILOVER_TUTORIAL.md) for the optional
+`compose.failover.yml` overlay, shared endpoint `http://localhost:8107`, local
+drain/resume controls, Postman collection and real crash/graceful-stop experiment.
+The original API ports and database volume are retained. Run its failure script
+separately from either Postman collection or the original runtime script.
+
 ## Start and import
 
 Use Java 21, Maven 3.6.3+ (verified here with 3.9.11), Node for the optional runtime
@@ -18,8 +26,8 @@ Invoke-RestMethod http://localhost:8106/health
 ```
 
 Expect api-a and api-b instance values. Overall `/actuator/health` includes the
-database. Spring's default readiness/liveness groups report application state;
-use overall health when checking this lab's database dependency.
+database. Readiness includes `readinessState,db` and withdraws during drain or DB
+failure. Liveness remains separate from dependency health and admission.
 
 In Postman import [the collection](../postman/ticket-booking-lab.postman_collection.json)
 and [environment](../postman/local.postman_environment.json), select **Ticket booking

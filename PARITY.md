@@ -1,5 +1,17 @@
 # Source relationship and intentional differences
 
+## API failover extension — 2026-10-04
+
+Inspected original failover_mechanisms/failover-demo/configs/haproxy.cfg and
+src/services/server.js in the reference tree. Reused the shared-entry/health-check
+lesson, not its product/order contract. Original SIGTERM handling ends DB/Redis
+clients and exits without explicit HTTP listener drain; Java uses Spring graceful
+shutdown, atomic lifecycle admission and observable in-flight completion. No
+Redis dependency or unsafe generic POST replay was imported. The original source
+was not executed. Optional HAProxy and deterministic response-delay controls have
+their own real-process verification; this does not establish original API parity
+or database failover. See [tutorial](docs/API_FAILOVER_TUTORIAL.md).
+
 This is a **new ticket-booking API contract**. No original ticket-booking topic was
 found in the reference index/tree during discovery. Related locking/payment demos
 are conceptual sources, not interchangeable baselines. No direct original-to-Java

@@ -1,7 +1,8 @@
 # Six failure-handling and availability scenarios for ticket booking
 
-Suggested: 2026-10-04. These are proposed extensions, not newly implemented or
-executed experiments. Use the existing booking domain and preserve its seat,
+Updated: 2026-10-04. Scenario1 is implemented in the optional failover overlay;
+see [its tutorial and interview points](API_FAILOVER_TUTORIAL.md). Scenarios2/3
+are authorized next in separate deliveries;4–6 remain proposals. Preserve seat,
 expiry, request-key and payment invariants. Read the
 [foundations tutorial](DISTRIBUTED_SYSTEMS_FOUNDATIONS.md) for locking and retry
 basics; [verification](VERIFICATION.md) records existing execution evidence.
@@ -13,7 +14,7 @@ separate topology exercise.
 
 | Priority | Scenario | Main concepts | Current starting point |
 | --- | --- | --- | --- |
-| 1 | API crashes or is restarted during checkout | Load balancing, readiness, draining, ambiguous responses | Two APIs exist; no shared load-balancer endpoint |
+| 1 | API crashes or is restarted during checkout | Load balancing, readiness, draining, ambiguous responses | Implemented optional HAProxy8107, drain controls and crash/graceful experiments |
 | 2 | Payment provider becomes slow or unavailable | Bulkheads, circuit breaker, deadline/retry budgets, graceful degradation | Local receipt simulator; no independent provider dependency |
 | 3 | One recovery item fails repeatedly | Poison jobs, per-item isolation, quarantine, redrive, fairness | Batch loops can stop at one exception |
 | 4 | Booking commits but its confirmation event is lost | Transactional outbox, delivery retries, inbox deduplication | Booking/audit transaction exists; no notification outbox |
@@ -21,6 +22,9 @@ separate topology exercise.
 | 6 | PostgreSQL primary fails or becomes partitioned | Replication, fencing, failover/failback, RPO/RTO | One PostgreSQL primary; no database HA |
 
 ## 1. API failover and graceful restart
+
+Implemented design below; use [the detailed walkthrough](API_FAILOVER_TUTORIAL.md)
+and [verification](VERIFICATION.md) for current code, commands and executed results.
 
 **Failure story:** API A commits Alice's checkout, then dies before returning 202.
 Alice retries through a stable application address and reaches B. Separately,
@@ -235,14 +239,14 @@ Likewise, a failover dashboard counter does not prove split-brain prevention.
 
 ## Choose one measurable addition at a time
 
-For the next implementation, my recommendation is **API failover and draining**:
-reuse A/B and durable request keys, add one entry point, then test abrupt loss and
-planned restart. Follow with provider isolation and poison-job handling. Database
-HA comes after you can explain ambiguous commits and durable retry identity.
+The learner selected1–3 one at a time. API failover and draining is the current
+completed delivery; provider isolation and poison-job handling follow separately.
+Each guide must combine detailed, accessible study with3–5 interview points per
+scenario/subtopic. Database HA remains a later proposal.
 
 Each selected addition should include a normal trace, one precisely placed failure,
 finite test workload, invariant assertions, attempt/backlog/latency observations,
 recovery behavior, and updated API/Postman/docs where applicable. Record pass/fail
 against the stated scope rather than treating an HTTP 200 or healthy container as
-proof of recovery. No implementation selection or failure injection occurred in
-this suggestion/documentation session.
+proof of recovery. The original suggestion session ran no experiments; scenario1's
+later execution is recorded separately in verification.

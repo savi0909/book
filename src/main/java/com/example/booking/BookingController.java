@@ -15,8 +15,10 @@ public class BookingController {
     private final BookingService bookings;
     private final PaymentProcessor payments;
     private final String instance;
-    public BookingController(BookingService bookings,PaymentProcessor payments,@Value("${lab.instance}") String instance) {
-        this.bookings=bookings;this.payments=payments;this.instance=instance;
+    private final CheckoutResponseDelay responseDelay;
+    public BookingController(BookingService bookings,PaymentProcessor payments,@Value("${lab.instance}") String instance,
+                             CheckoutResponseDelay responseDelay) {
+        this.bookings=bookings;this.payments=payments;this.instance=instance;this.responseDelay=responseDelay;
     }
     @GetMapping("/health") Map<String,String> health() {return Map.of("status","up","instance",instance);}
     @PostMapping("/api/demo/events") ResponseEntity<Event> create(@Valid @RequestBody EventRequest request) {
@@ -34,8 +36,11 @@ public class BookingController {
     @GetMapping("/api/bookings/{id}") Booking get(@PathVariable UUID id) {return bookings.get(id);}
     @GetMapping("/api/bookings/{id}/audit") List<Map<String,Object>> audit(@PathVariable UUID id) {return bookings.audit(id);}
     @PostMapping("/api/bookings/{id}/checkout") ResponseEntity<Booking> checkout(@PathVariable UUID id,@RequestHeader("Idempotency-Key") String key,
-                                                                            @Valid @RequestBody CheckoutRequest request) {
+                                                                            @Valid @RequestBody CheckoutRequest request,
+                                     @RequestHeader(value="X-Lab-Response-Delay-Ms",defaultValue="0") int delayMs) {
+        responseDelay.validate(delayMs);
         Booking result=bookings.checkout(id,key,request);
+        responseDelay.afterCommit(id,delayMs);
         return ResponseEntity.status(result.replayed()?200:202).body(result);
     }
     @PostMapping("/api/bookings/{id}/cancel") Booking cancel(@PathVariable UUID id) {return bookings.cancel(id);}

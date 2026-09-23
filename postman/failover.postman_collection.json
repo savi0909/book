@@ -1,0 +1,495 @@
+{
+  "info": {
+    "name": "Ticket booking - API failover and drain",
+    "description": "Optional failover overlay required. Retains fixtures and toggles A drain. Run separately from learn-failover.mjs. Docker crash/shutdown assertions live in that script.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Resume A before study",
+      "request": {
+        "method": "POST",
+        "url": "{{apiA}}/api/demo/failover/resume",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ]
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200',()=>pm.response.to.have.status(200));pm.test(\"accepting\",()=>pm.expect(!pm.response.json().admission.draining).true);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Resume B before study",
+      "request": {
+        "method": "POST",
+        "url": "{{apiB}}/api/demo/failover/resume",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ]
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200',()=>pm.response.to.have.status(200));pm.test(\"accepting\",()=>pm.expect(!pm.response.json().admission.draining).true);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Shared endpoint identifies its replica",
+      "request": {
+        "method": "GET",
+        "url": "{{baseUrl}}/health",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ]
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200',()=>pm.response.to.have.status(200));pm.test(\"replica header\",()=>pm.expect(['api-a','api-b'].includes(pm.response.headers.get('X-Booking-Instance'))).true);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Proxy excludes demo controls",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/api/demo/failover/drain",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ]
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 404',()=>pm.response.to.have.status(404));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Create retained failover fixture",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/api/demo/events",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"failover-postman-{{runId}}\",\n  \"seatCount\": 2\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.environment.set('runId',pm.variables.replaceIn('{{$guid}}'));for(const k of ['eventId','bookingId','paymentId'])pm.environment.unset(k);"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 201',()=>pm.response.to.have.status(201));pm.environment.set('eventId',pm.response.json().id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Hold through shared endpoint",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/api/holds",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "failover-hold-{{runId}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"eventId\": \"{{eventId}}\",\n  \"seatNumber\": 1,\n  \"buyerId\": \"failover-{{runId}}\",\n  \"ttlSeconds\": 120\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 201',()=>pm.response.to.have.status(201));pm.environment.set('bookingId',pm.response.json().id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Checkout with bounded post-commit response delay",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/api/bookings/{{bookingId}}/checkout",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "failover-checkout-{{runId}}"
+          },
+          {
+            "key": "X-Lab-Response-Delay-Ms",
+            "value": "1000"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"scenario\": \"SUCCESS\",\n  \"delayMs\": 0\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 202',()=>pm.response.to.have.status(202));pm.environment.set('paymentId',pm.response.json().payment.id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Replay original checkout intent",
+      "request": {
+        "method": "POST",
+        "url": "{{baseUrl}}/api/bookings/{{bookingId}}/checkout",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "failover-checkout-{{runId}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"scenario\": \"SUCCESS\",\n  \"delayMs\": 0\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200',()=>pm.response.to.have.status(200));pm.test(\"same intent\",()=>pm.expect(pm.response.json().replayed&&pm.response.json().payment.id===pm.environment.get('paymentId')).true);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Drain replica A",
+      "request": {
+        "method": "POST",
+        "url": "{{apiA}}/api/demo/failover/drain",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ]
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200',()=>pm.response.to.have.status(200));pm.test(\"draining\",()=>pm.expect(pm.response.json().admission.draining).true);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Observe A admission",
+      "request": {
+        "method": "GET",
+        "url": "{{apiA}}/api/demo/failover/status",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ]
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200',()=>pm.response.to.have.status(200));pm.test(\"draining\",()=>pm.expect(pm.response.json().admission.draining).true);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "A readiness withdrawn",
+      "request": {
+        "method": "GET",
+        "url": "{{apiA}}/actuator/health/readiness",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ]
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 503',()=>pm.response.to.have.status(503));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "A remains live",
+      "request": {
+        "method": "GET",
+        "url": "{{apiA}}/actuator/health/liveness",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ]
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200',()=>pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "A rejects new business admission",
+      "request": {
+        "method": "GET",
+        "url": "{{apiA}}/api/events",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ]
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 503',()=>pm.response.to.have.status(503));pm.test(\"drain error\",()=>pm.expect(pm.response.json().code==='INSTANCE_DRAINING').true);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "B reads the durable booking",
+      "request": {
+        "method": "GET",
+        "url": "{{apiB}}/api/bookings/{{bookingId}}",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ]
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200',()=>pm.response.to.have.status(200));pm.test(\"same intent\",()=>pm.expect(pm.response.json().payment.id===pm.environment.get('paymentId')).true);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Resume replica A after study",
+      "request": {
+        "method": "POST",
+        "url": "{{apiA}}/api/demo/failover/resume",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ]
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200',()=>pm.response.to.have.status(200));pm.test(\"accepting\",()=>pm.expect(!pm.response.json().admission.draining).true);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "A readiness restored",
+      "request": {
+        "method": "GET",
+        "url": "{{apiA}}/actuator/health/readiness",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ]
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200',()=>pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reject out-of-range response delay",
+      "request": {
+        "method": "POST",
+        "url": "{{apiB}}/api/bookings/{{bookingId}}/checkout",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "failover-checkout-{{runId}}"
+          },
+          {
+            "key": "X-Lab-Response-Delay-Ms",
+            "value": "10001"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"scenario\": \"SUCCESS\",\n  \"delayMs\": 0\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 400',()=>pm.response.to.have.status(400));"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

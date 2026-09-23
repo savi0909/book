@@ -12,13 +12,16 @@ public class Maintenance {
     private final BookingService bookings;
     private final PaymentProcessor payments;
     private final boolean enabled;
-    public Maintenance(BookingService bookings,PaymentProcessor payments,@Value("${lab.maintenance-enabled:true}") boolean enabled) {
-        this.bookings=bookings;this.payments=payments;this.enabled=enabled;
+    private final AdmissionGate gate;
+    public Maintenance(BookingService bookings,PaymentProcessor payments,@Value("${lab.maintenance-enabled:true}") boolean enabled,
+                       AdmissionGate gate) {
+        this.bookings=bookings;this.payments=payments;this.enabled=enabled;this.gate=gate;
     }
     @Scheduled(fixedDelay=500,initialDelay=1000)
     public void tick() {
-        if(!enabled) return;
+        if(!enabled || !gate.enter()) return;
         try {bookings.expireBatch();payments.recoverBatch();}
         catch(RuntimeException error) {LOG.warn("Maintenance will retry: {}",error.getClass().getSimpleName());}
+        finally {gate.leave();}
     }
 }

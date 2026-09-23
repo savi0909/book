@@ -1,5 +1,22 @@
 # System specification
 
+## Scenario 1 extension — API failover and drain
+
+Optional `compose.failover.yml` adds a digest-pinned HAProxy on loopback 8107 over
+API A/B. Probes use readiness including database health; zero proxy retries avoid
+implicit write replay. A synchronized local admission gate closes new business
+requests and maintenance ticks while accepted work finishes. Drain sets Spring
+REFUSING_TRAFFIC; restart resets transient drain state. This is lifecycle admission,
+not a throughput quota, circuit breaker or fair waiting room.
+
+Gated local controls and a checkout response-delay header expose a deterministic
+post-commit/pre-response window. Delay never holds the checkout transaction.
+The server uses graceful shutdown with 15s per Spring phase; the overlay gives
+containers 20s stop grace. SIGKILL bypasses this path. Existing SQL identity/lease
+contracts recover uncertain work. No schema or payment-provider change is needed.
+See [the tutorial](API_FAILOVER_TUTORIAL.md), [API](API_REFERENCE.md) and current
+[evidence](VERIFICATION.md). A single proxy/DB/host remains; no DB/zone HA claim.
+
 ## Problem and bounded requirements
 
 Many buyers want the same seat. A successful reservation response must have a durable
@@ -159,7 +176,7 @@ Local limits: 8 JDBC connections and 32 servlet threads per JVM, 2s row-lock tim
 3s statement timeout, 5s JDBC socket timeout, 3s connect/pool timeout, 100-page maximum
 and 200 seats/event. These bound some waits, not end-to-end latency under every overload.
 No global admission, per-buyer quotas or stored-record cap exists. The two nodes share
-a single primary and provider database. HA, power-loss recovery, independent provider
+a single primary and provider database. Database/host HA, power-loss recovery, independent provider
 outages, callback authentication, real refund idempotency and sustained throughput
 require separate design/verification.
 

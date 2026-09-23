@@ -1,6 +1,7 @@
 # API reference
 
-Base URLs: `http://localhost:8105` and `http://localhost:8106`. JSON request/response,
+Base URLs: `http://localhost:8105` and `http://localhost:8106`; optional failover
+gateway `http://localhost:8107`. JSON request/response,
 camelCase fields, UUID identifiers, ISO-8601 UTC timestamps. No authentication,
 authorization, CORS enablement or caller ownership checks: these are local demo
 APIs. Event creation/callback/reconciliation/refund routes under `/api/demo` are
@@ -11,7 +12,7 @@ explicit teaching controls. No real provider endpoint or payment credential exis
 | GET /health | None | 200 process status/instance, independent of DB |
 | GET /actuator/health | None | Overall dependency health; 200 UP or 503 DOWN |
 | GET /actuator/health/liveness | None | Framework process probe |
-| GET /actuator/health/readiness | None | Default framework readiness probe; does not include DB separately. Use overall health for DB readiness |
+| GET /actuator/health/readiness | None | Includes readinessState and DB; 503 during drain or DB failure |
 | GET /actuator/info | None | 200; empty info object |
 | POST /api/demo/events | name, seatCount | 201 new retained fixture; no idempotency on event creation |
 | GET /api/events | limit, offset | 200 array ordered newest first, UUID tie break |
@@ -107,3 +108,35 @@ Codes include INVALID_REQUEST, INVALID_KEY, NOT_FOUND, SEAT_UNAVAILABLE,
 IDEMPOTENCY_CONFLICT, HOLD_NOT_VALID, PROVIDER_PENDING, OUTCOME_CONFLICT,
 EVENT_CONFLICT, NO_REFUND_REQUIRED and DATABASE_UNAVAILABLE. Unsupported HTTP
 paths/methods use Spring's default errors instead of this domain envelope.
+
+## Optional failover controls and response timing
+
+Enable only for the local study with `FAILURE_CONTROLS_ENABLED=true`; the optional
+Compose overlay sets this on both APIs. Routes are unavailable (404) by default.
+Call the individual replica port: HAProxy rejects the control path with 404.
+All normal API/health responses add `X-Booking-Instance` identifying the replica.
+Gateway-generated errors may be HTML and need not include that header.
+
+| Method/path | Behavior |
+| --- | --- |
+| GET /api/demo/failover/status | 200 with instance, admission{draining,inFlight,stopping}, waitingBookings UUID array |
+| POST /api/demo/failover/drain | Close new business/maintenance admission, withdraw readiness, return same status shape |
+| POST /api/demo/failover/resume | Reopen admission/readiness on a running replica; 409 INSTANCE_STOPPING if context closing |
+
+`inFlight` counts admitted business requests plus a maintenance tick, excluding
+health/control requests. An already admitted request continues after drain; new
+business routes return 503/INSTANCE_DRAINING and `Retry-After: 1`. Readiness includes
+DB health, so resume is not a promise that the dependency is healthy.
+
+Checkout additionally accepts integer header `X-Lab-Response-Delay-Ms` (default 0,
+range 0..10000). Positive delay requires enabled controls. Disabled positive delay
+returns 404/DEMO_CONTROL_DISABLED; out-of-range returns 400/INVALID_RESPONSE_DELAY
+before checkout mutation. Valid delay happens after checkout commits and before
+the response body is delivered. A waiting booking is visible in local status.
+Same-key/payload replay remains mandatory after response loss; delay does not
+extend hold expiry. The response represents state captured before its delay.
+
+Controls and fault header are unauthenticated local fixtures. Gateway exclusion
+of control routes is not production authentication; the fault header remains
+usable through the loopback gateway for the experiment. No crash endpoint exists;
+the runtime script sends scoped Docker signals. See [scenario guide](API_FAILOVER_TUTORIAL.md).

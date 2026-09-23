@@ -1,0 +1,21 @@
+# Opt in with: docker compose -f compose.yml -f compose.failover.yml up -d --wait
+services:
+  api-a:
+    environment:
+      FAILURE_CONTROLS_ENABLED: "true"
+    stop_grace_period: 20s
+  api-b:
+    environment:
+      FAILURE_CONTROLS_ENABLED: "true"
+    stop_grace_period: 20s
+  gateway:
+    image: haproxy:3.2-alpine@sha256:5d97434a423c2533cfeb42874d45cf6d69a840b60334582dfbfd5008e94c80be
+    ports: ["127.0.0.1:8107:8080"]
+    volumes:
+      - ./infra/haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
+    depends_on:
+      api-a:
+        condition: service_healthy
+      api-b:
+        condition: service_healthy
+    mem_limit: 96m

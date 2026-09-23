@@ -1,4 +1,5 @@
 server:
+  shutdown: graceful
   port: ${PORT:8105}
   tomcat:
     threads:
@@ -6,6 +7,8 @@ server:
     max-connections: 100
     accept-count: 32
 spring:
+  lifecycle:
+    timeout-per-shutdown-phase: 15s
   application:
     name: ticket-booking-lab
   datasource:
@@ -25,8 +28,12 @@ management:
         include: health,info
   endpoint:
     health:
+      group:
+        readiness:
+          include: readinessState,db
       probes:
         enabled: true
 lab:
+  failure-controls-enabled: ${FAILURE_CONTROLS_ENABLED:false}
   instance: ${INSTANCE_ID:local}
   maintenance-enabled: ${MAINTENANCE_ENABLED:true}

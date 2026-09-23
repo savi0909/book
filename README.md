@@ -49,11 +49,13 @@ Implementation entry: [BookingService](src/main/java/com/example/booking/Booking
 [PaymentProcessor](src/main/java/com/example/booking/PaymentProcessor.java),
 [migration](src/main/resources/db/migration/V1__booking.sql) and
 [integration tests](src/test/java/com/example/booking/BookingIntegrationTest.java).
-Production auth, actual provider integration, refunds, admission control and
+Production auth, actual provider integration, refunds, throughput admission control and
 database failover remain outside the local lab. A database outage rejects operations;
 the application does not manufacture availability from an in-memory seat cache.
 
 ## Code study
+
+[Scenario 1 — API failover and graceful restart](docs/API_FAILOVER_TUTORIAL.md): implemented optional HAProxy setup, deterministic crash/drain experiments, detailed source walkthrough, and five interview points. Provider isolation and poison-job handling follow in separate deliveries.
 
 [Failure-handling and high-availability scenarios](docs/FAILURE_SCENARIOS.md): six prioritized additions, concrete failure injections, expected guarantees, and local source references.
 

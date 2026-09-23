@@ -9,7 +9,10 @@ const required = ['pom.xml', 'README.md', 'AGENTS.md', 'CLAUDE.md', 'PARITY.md',
   'docs/SYSTEM_SPEC.md', 'docs/USER_GUIDE.md', 'docs/API_REFERENCE.md',
   'docs/INTERVIEW_GUIDE.md', 'docs/VERIFICATION.md', 'Dockerfile', 'compose.yml',
   'postman/ticket-booking-lab.postman_collection.json', 'postman/local.postman_environment.json',
-  'src/main/resources/db/migration/V1__booking.sql', 'src/test/java/com/example/booking/BookingIntegrationTest.java'];
+  'src/main/resources/db/migration/V1__booking.sql', 'src/test/java/com/example/booking/BookingIntegrationTest.java',
+  'compose.failover.yml', 'infra/haproxy.cfg', 'docs/API_FAILOVER_TUTORIAL.md',
+  'postman/failover.postman_collection.json', 'postman/failover.postman_environment.json',
+  'scripts/learn-failover.mjs', 'src/test/java/com/example/booking/FailoverIntegrationTest.java'];
 for (const name of required) assert.ok(fs.existsSync(path.join(project, name)), name);
 const collection = JSON.parse(fs.readFileSync(required[12], 'utf8'));
 const environment = JSON.parse(fs.readFileSync(required[13], 'utf8'));
@@ -23,6 +26,11 @@ function inspect(node) {
   for (const item of node.item ?? []) inspect(item);
 }
 inspect(collection);
+const failoverCollection = JSON.parse(fs.readFileSync('postman/failover.postman_collection.json', 'utf8'));
+const failoverEnvironment = JSON.parse(fs.readFileSync('postman/failover.postman_environment.json', 'utf8'));
+assert.equal(failoverCollection.info.schema, collection.info.schema);
+for (const name of ['baseUrl', 'apiA', 'apiB']) assert.ok(failoverEnvironment.values.some(v => v.key === name && v.enabled));
+inspect(failoverCollection);
 assert.ok(requests.every(r => r.name && r.event.some(e => e.listen === 'test')), 'named requests have assertions');
 const projectMarkdown = execFileSync('rg', ['--files', project, '-g', '*.md'], { encoding: 'utf8' }).trim().split(/\r?\n/);
 const shared = ['AGENTS.md', 'memory/PROJECT_CONTEXT.md', 'memory/PROGRESS.md', 'memory/DECISIONS.md',

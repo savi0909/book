@@ -1,5 +1,19 @@
 # Ticket booking learning lab
 
+## Current scenario study — 2026-10-04
+
+User-directed 2026-10-04: proceed with ticket-booking failure scenarios 1, 2 and
+3, one at a time. Each delivery needs a detailed, easy-to-follow study tutorial
+and a concise set of 3–5 interview points for the scenario and its subtopics.
+Scenario 1 (API failover/graceful restart) is implemented and verified; read
+[the tutorial](D:/java-projects/ticket-booking-lab/docs/API_FAILOVER_TUTORIAL.md)
+and [evidence](D:/java-projects/ticket-booking-lab/docs/VERIFICATION.md).
+Optional overlay: A8105/B8106/gateway8107/PostgreSQL5547; original data retained.
+Local controls default off; no database/host HA or production-auth claim.
+Finish this delivery, then stop. Provider isolation (2) and poison-job handling
+(3) are selected next, in separate deliveries; 4–6 remain proposals. Optimistic
+seat versions and the controlled retry-storm harness remain separate proposals.
+
 User-directed2026-10-03: this is the primary domain for foundations-first study
 of databases, pessimistic/optimistic locking, retries and retry storms. Read
 [the foundations tutorial](docs/DISTRIBUTED_SYSTEMS_FOUNDATIONS.md). Use local
