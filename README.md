@@ -55,6 +55,8 @@ the application does not manufacture availability from an in-memory seat cache.
 
 ## Code study
 
+[Next-session handover prompt](docs/NEXT_SESSION_HANDOVER.md): resume with scenario 2, provider isolation, carrying forward the verified baseline and detailed-study/interview preferences.
+
 [Scenario 1 — API failover and graceful restart](docs/API_FAILOVER_TUTORIAL.md): implemented optional HAProxy setup, deterministic crash/drain experiments, detailed source walkthrough, and five interview points. Provider isolation and poison-job handling follow in separate deliveries.
 
 [Failure-handling and high-availability scenarios](docs/FAILURE_SCENARIOS.md): six prioritized additions, concrete failure injections, expected guarantees, and local source references.
