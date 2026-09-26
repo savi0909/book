@@ -34,6 +34,7 @@ management:
       probes:
         enabled: true
 lab:
+  provider-url: ${PROVIDER_URL:}
   failure-controls-enabled: ${FAILURE_CONTROLS_ENABLED:false}
   instance: ${INSTANCE_ID:local}
   maintenance-enabled: ${MAINTENANCE_ENABLED:true}

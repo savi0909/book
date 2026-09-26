@@ -130,3 +130,24 @@ docker compose up -d --wait
 No clean, reset, volume removal or global Docker cleanup is required. Previous
 projects and original locking/payment stacks are preserved. No original scripts
 are needed for this new lab.
+
+## Provider outage study (scenario 2)
+
+Read [the full tutorial](PROVIDER_ISOLATION_TUTORIAL.md) and use the three-file
+Compose commands in [README](../README.md). Run node scripts/learn-provider.mjs
+from this directory; it creates retained fixtures and restores NORMAL mode.
+Import [provider collection](../postman/provider.postman_collection.json) with
+[environment](../postman/provider.postman_environment.json); Newman uses
+--delay-request500 (with a space: `--delay-request 500`). Fault controls are shared;
+run one experiment/collection at a time. Inspect GET /api/provider/status and
+GET /api/payments/{id}/recovery. Exhausted UNKNOWN needs operator reconcile using
+the same payment ID. Repeated manual calls are not an automatic retry strategy.
+
+On interruption restore with POST http://localhost:8123/control?NORMAL. Both APIs
+remain useful during provider failure; new checkout may503/PAYMENT_BACKLOG_FULL
+when shared count/age budget is exceeded. Replay the original key/input and
+inspect current state rather than creating another intent. Success after expiry
+can require refund reconciliation. The original booking collection assumes the
+default simulator's unlimited polling and must run without PROVIDER_URL. Retain
+and resolve uncertain remote intents before switching simulator authority.
+Stop/resume with all selected Compose files; do not delete either data volume.

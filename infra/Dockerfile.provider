@@ -1,0 +1,10 @@
+FROM eclipse-temurin:21-jdk-alpine AS compile
+WORKDIR /build
+COPY infra/ProviderStub.java .
+RUN javac ProviderStub.java
+FROM eclipse-temurin:21-jre-alpine
+WORKDIR /app
+COPY --from=compile /build/*.class ./
+RUN mkdir /data && chown 10001 /data
+USER 10001
+ENTRYPOINT ["java","-cp","/app","ProviderStub"]

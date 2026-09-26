@@ -1,149 +1,92 @@
-# Next-session handover: ticket booking scenario 2
+# Next-session handover: ticket booking scenario 3
 
-Prepared 2026-10-04. Copy the prompt below into the next session. Scenario 1 is
-complete; this prompt selects scenario 2 only. Scenario 3 follows in a separate
-session. Recheck repository and runtime state because they may change after handoff.
+Prepared 2026-10-04 after scenario 2. This selects scenario 3 only for the next
+separate delivery. Scenario 2 is complete; stop the current session after its kit.
 
 ```text
-Continue my distributed-systems study in D:/java-projects/ticket-booking-lab.
-Start scenario 2: payment-provider outage without exhausting booking capacity.
-Complete this one scenario, its detailed tutorial and verified learning kit,
-then stop. Do not start scenario 3 in this session or rebuild scenario 1.
+Continue D:/java-projects/ticket-booking-lab with scenario 3: poison-job isolation,
+quarantine and controlled redrive. Finish this one scenario and its learning kit,
+then stop. Do not rebuild scenarios 1 or 2 or start scenarios 4-6.
 
-MY LEARNING PREFERENCES
-- Use ticket booking as the primary domain; exclude URL shortener from this track.
-- Explain thoroughly in plain language, with concrete booking/payment examples.
-- Put substantive teaching in a Markdown tutorial under this project's docs/
-  folder and link it from README. Keep the chat delivery brief with clickable links.
-- Begin with the top 3–5 interview points and a short spoken interview answer.
-  For each major subtopic, identify its own top 3–5 points. Put deeper study,
-  tradeoffs and exercises below them; avoid a 10–20-point interview checklist.
-- Include source-reading order, transaction/request traces, failure diagrams,
-  runnable examples, expected observations and IntelliJ/debugging checkpoints.
-- Explain correctness first, then capacity, retry amplification, failure domains,
-  SLO/measurement limits, operational ownership and rollout reasoning.
-- Use my local downloaded articles and original JavaScript/Python examples first.
-  Consult official web documentation when clarification or current facts require it.
-  Distinguish source designs, implemented mechanisms and executed evidence.
+Read D:/java-projects/AGENTS.md and project AGENTS.md/CLAUDE.md. Load README,
+PARITY and docs/SYSTEM_SPEC.md, USER_GUIDE.md, API_REFERENCE.md, INTERVIEW_GUIDE.md,
+VERIFICATION.md, FAILURE_SCENARIOS.md, API_FAILOVER_TUTORIAL.md,
+PROVIDER_ISOLATION_TUTORIAL.md and DISTRIBUTED_SYSTEMS_FOUNDATIONS.md.
+Read the canonical tree at
+D:/AA-SYSTEM-DESIGN-ARCHITECTURE/sep-30-2026/sdir-p-main:
+AGENTS.md, memory/PROJECT_CONTEXT.md, memory/PROGRESS.md, memory/DECISIONS.md,
+docs/learning/PROJECT_DELIVERY_STANDARD.md, SPRING_BOOT_PARITY.md and
+cases/Ticket_Booking.md. Canonical memory has no Git metadata and persists locally.
 
-LOAD CONTEXT BEFORE WORK
-Java workspace: D:/java-projects.
-Read workspace AGENTS.md, then ticket-booking-lab/AGENTS.md and CLAUDE.md.
-Read the project's README.md, PARITY.md and these files under docs/:
-SYSTEM_SPEC.md, USER_GUIDE.md, API_REFERENCE.md, VERIFICATION.md,
-INTERVIEW_GUIDE.md, DISTRIBUTED_SYSTEMS_FOUNDATIONS.md,
-FAILURE_SCENARIOS.md (especially section 2), API_FAILOVER_TUTORIAL.md,
-and NEXT_SESSION_HANDOVER.md.
+Learning preferences: detailed plain-language Markdown tutorial under docs/,
+README link, 3-5 scenario interview points and short spoken answer; 3-5 points
+for each major subtopic, then deep explanations. Include source-reading order,
+transaction/request traces, diagrams, runnable examples and observations,
+IntelliJ checkpoints, tradeoffs/exercises, capacity/failure domains/SLO limits,
+operational ownership and rollout. Use downloaded local articles and original
+JS/Python source first. Archive:
+D:/AA-SYSTEM-DESIGN-ARCHITECTURE/SDIR-pdf/systemdr-roadmap-sources/_MANIFEST.csv.
+Keep source designs, implemented mechanisms and executed evidence distinct.
 
-Canonical reference tree:
-D:/AA-SYSTEM-DESIGN-ARCHITECTURE/sep-30-2026/sdir-p-main.
-Load its AGENTS.md, memory/PROJECT_CONTEXT.md, memory/PROGRESS.md,
-memory/DECISIONS.md, docs/learning/PROJECT_DELIVERY_STANDARD.md,
-docs/learning/SPRING_BOOT_PARITY.md and docs/learning/cases/Ticket_Booking.md.
-This newer handover supersedes the original ticket-booking build prompt for
-current scope. The canonical reference tree has no Git metadata; its memory
-updates persist locally, separate from the Java workspace's origin push.
+Baseline: Java21/Spring Boot3.5.16/Maven/PostgreSQL; seat-then-booking locks,
+SQL-clock expiry, active-seat uniqueness, scoped durable request keys, one
+payment per booking, immutable provider outcomes and late-success refunds.
+Scenario1 adds optional HAProxy8107, readiness/DB health, admission/drain,
+graceful shutdown and gated post-commit response delay; proxy retries disabled.
+Scenario2 adds optional independent Java provider on host8123/container8121,
+retained provider-data journal, two HTTP slots per API/no waiting queue and two
+actual provider processing slots across both APIs. Faults NORMAL/SLOW/UNAVAILABLE/
+LOSS, bounded1500ms surviving remote work. Connect200ms/request400ms;
+three-failure breaker/two-second cooldown/one half-open probe per API/generation
+fencing. V2 adds durable retry start/exhaustion/last error. Automatic dispatch
+budget4 or10s, capped exponential jitter and durable nextAt. Attempts include
+local rejections. Explicit demo reconcile bypasses the automatic budget once per
+request but respects active leases and never resets identity/budget. No provider
+HTTP under inventory transactions. Count>=100 or oldest unresolved>=30s pauses
+new remote-mode checkout; existing key/input replay precedes admission.
+Default simulator remains available without PROVIDER_URL. Original booking
+collection expects unlimited polling; use the default topology for that suite.
+Scenario2 collection/harness use the provider overlay and run sequentially.
 
-Article archive:
-D:/AA-SYSTEM-DESIGN-ARCHITECTURE/SDIR-pdf/systemdr-roadmap-sources.
-Use _MANIFEST.csv to find relevant articles. It contains 281 HTML articles;
-original URLs are in source-canonical-url metadata. It is distinct from the
-JS/Python reference repository. Preserve those original implementations.
+Topology: A8105/B8106/gateway8107/PostgreSQL5547/provider8123. Existing other
+project coordinators own8121/8122; never disturb them. Use:
+docker compose -f compose.yml -f compose.failover.yml -f compose.provider.yml ...
+Check actual state before work. Preserve booking-data/provider-data and fixtures.
+Read VERIFICATION for current results, corrections and exact evidence.
 
-COMPLETED BASELINE
-Java 21 / Spring Boot 3.5.16 / Maven; PostgreSQL seat locks, expiry, durable
-request keys, one payment per booking, local provider receipts and recovery.
-API A:8105, API B:8106, PostgreSQL:5547. Optional compose.failover.yml adds
-HAProxy on loopback8107. Existing data/volumes must remain intact.
+Scenario3 failure: an unexpected deterministic per-item exception can escape
+recoverBatch's loop to Maintenance.tick, skipping later items; expiry and recovery
+also share a catch. ProviderBoundary.Unavailable is already handled per payment.
+Do not label a global database/provider outage as a malformed poison job. Existing
+retryExhausted describes provider dispatch budget, not a poison quarantine.
 
-Scenario 1 added health-based routing, readiness including DB health, local
-admission/drain controls, graceful shutdown and a gated post-commit response
-delay. Controls default off; the optional overlay enables them. Proxy retries
-are disabled. A committed checkout whose response is lost is recovered through
-the other API using the same booking, key and payload. Read the actual source.
+Inspect PaymentProcessor, Maintenance, BookingStore, BookingService, LocalProvider,
+ProviderBoundary, both migrations and tests. Load the original poison-job source
+through the canonical index/tree and relevant archived article. Add explicitly
+gated deterministic fixtures; per-item failure classification/isolation,
+persistent quarantine reason/attempt history, bounded redrive using the original
+payment UUID, and fairness/continued healthy work. Use additive migrations, not
+rewritten history. Keep inventory transactions short and lock order intact.
+Uncertain acceptance still needs reconciliation after quarantine; stopping work
+never manufactures FAILURE or a refund. Success after expiry cannot steal a seat.
 
-Scenario 1 commit b7eb9a5f6b88dc196de115722a853b1497f8d352 was pushed to
-origin/main and verified with git ls-remote. A later handover-only commit may
-follow it; inspect actual HEAD instead of resetting to that commit.
-Verified baseline: 25 Java/PostgreSQL tests; 34 Docker failover checks with
-restoration true; failover Postman 17 requests/26 assertions; original Postman
-74 requests/109 assertions. All passed. Workspace 21-entry reactor validated.
-These are historical results, not evidence for future changes.
+Prove a failing first candidate does not block several healthy payments, attempts
+are bounded, quarantine visible and deliberate redrive safe after fixing cause.
+Verify restart/cross-replica ownership, duplicate redrive, shared outage behavior,
+backlog age/admission interactions and no loss of existing identity/refund semantics.
+Run meaningful real-PostgreSQL tests and appropriate scenario1/2 regressions.
+Deliver code/config, tutorial, spec/API/user/interview/parity docs, Postman with
+assertions, verification/evidence, agent context and canonical case/progress/decisions.
+Tests and tutorial delivery do not establish learner mastery.
 
-At handoff the two APIs, gateway and PostgreSQL were running and accepting work.
-Inspect actual state before changing anything. A stopped container named
-booking-haproxy-config-check and all exercise fixtures/evidence were retained.
-VERIFICATION.md records a corrected wrong-directory harness invocation and its
-preserved evidence. The script now rejects wrong directories/unsupported args
-before starting an experiment. Run scripts from the selected project directory.
-
-SCENARIO 2: IMPLEMENT AND TEACH
-Failure story: a payment provider is slow, unavailable, or accepts a payment
-but loses its response. Healthy browse/hold operations should retain capacity;
-accepted payment intents must remain discoverable and recoverable.
-
-Inspect LocalProvider, PaymentProcessor, Maintenance, BookingService, current
-SQL migrations, failover admission and tests before choosing the implementation.
-The current provider simulator shares PostgreSQL. Stopping that database does
-not demonstrate an independent provider outage. Introduce a bounded, separately
-controllable local provider stub/dependency; no real payments or external sends.
-
-Study these five connected mechanisms:
-1. Bulkhead: bounded provider concurrency and queue/admission behavior. State
-   whether each limit is per process or shared across both APIs.
-2. Deadlines: per-attempt and overall budgets. A caller timeout does not prove
-   remote work stopped; avoid freeing capacity while unbounded work continues.
-3. Circuit breaker: CLOSED/OPEN/HALF_OPEN, bounded probes and recovery behavior.
-4. Retry control: one retry owner, bounded attempts/budget, backoff with jitter,
-   durable deferral and stable payment identity. Avoid layered retry amplification.
-5. Graceful degradation/reconciliation: UNKNOWN for ambiguous acceptance,
-   backlog age/recovery metrics and a clear checkout-admission policy when the
-   backlog exceeds useful hold lifetime or the operational budget.
-
-Preserve short inventory transactions; provider calls must not hold seat locks
-or inventory DB connections. Preserve seat-then-booking lock order, SQL-clock
-expiry, active-seat uniqueness, scoped idempotency keys and immutable outcomes.
-Late success must retain refund reconciliation and must never steal a seat
-from a newer valid booking. No exactly-once network/payment claim.
-
-Original local reference: under the canonical tree, inspect
-Graceful_Service_Degradation/graceful-degradation-demo/src/circuit-breaker.js.
-Its Promise timeout does not cancel the operation and it lacks bounded half-open
-admission. Borrow the teaching model, not those correctness gaps. Discover other
-relevant retry/bulkhead references through the archive and reference tree.
-
-PROVE AND DELIVER
-Use finite deterministic experiments for slow/unavailable provider, ambiguous
-acceptance, exhausted retry budget and recovery. Assert concurrency bounds,
-actual in-flight work after timeouts, continued browse/hold progress, stable
-payment identity, bounded probes/attempts and durable reconciliation. Record
-backlog age and drain observations; do not convert local timings into an SLO.
-Preserve and run appropriate scenario 1/booking regressions after changes.
-
-Deliver incrementally: implementation, meaningful real-infrastructure tests,
-local Compose/config as needed, tutorial, API/user/spec/interview/parity docs,
-Postman collection/environment with assertions, verification and agent/context
-updates. Use additive migrations if needed; do not rewrite applied history.
-Update canonical case/progress/decisions to record what actually passed and
-what remains. Tutorial authorship/test success does not imply learner mastery.
-
-WORKFLOW AND BOUNDARIES
-Work autonomously within this selected scope; do not ask me to reconfirm it.
-Check Git status first. Preexisting unrelated .idea/compiler.xml,
-.idea/encodings.xml, staged .idea/jpa.xml and .idea/misc.xml edits were present
-at handoff; preserve them and do not include them in this task's commit.
-Never delete files/directories or run Maven clean, destructive reset or Docker
-prune without my explicit permission. Preserve other learning projects/stacks.
-After task-appropriate validation, commit only task changes, push to origin,
-and verify remote HEAD; do not claim an unverified push succeeded.
-Provide concise progress updates; incorporate additional notes into the active
-task. A status question does not cancel the work. Stop if I explicitly ask.
-
-Scenario 3 (poison-job isolation/quarantine/redrive) is selected for the following
-separate delivery. Scenarios 4–6, optimistic seat-version comparison and a general
-retry-storm harness remain proposals. Do not silently expand into them.
+Work autonomously. Preserve preexisting .idea/compiler.xml, encodings.xml,
+staged jpa.xml and misc.xml; check current Git status. Never delete files/directories
+or run Maven clean, reset or Docker prune without explicit permission. No public
+deployment or real payments. After successful validation commit only task changes,
+push origin and verify remote HEAD. Report limitations honestly. Stop after
+scenario3; optimistic seat versions/general retry-storm harness/connection storms
+and scenarios4-6 remain separate proposals.
 ```
 
-Start by reviewing [scenario 2's failure story](FAILURE_SCENARIOS.md#2-provider-outage-without-exhausting-booking-capacity).
-The completed lesson is [scenario 1](API_FAILOVER_TUTORIAL.md); its exact evidence
-is in [VERIFICATION](VERIFICATION.md).
+Start with [scenario 3](FAILURE_SCENARIOS.md#3-poison-job-isolation-and-controlled-redrive).
+Completed study: [scenario 2](PROVIDER_ISOLATION_TUTORIAL.md).

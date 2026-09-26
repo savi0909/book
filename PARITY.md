@@ -1,5 +1,18 @@
 # Source relationship and intentional differences
 
+## Provider isolation extension — 2026-10-04
+
+Read original Graceful_Service_Degradation/graceful-degradation-demo/src/circuit-breaker.js
+and local archived timeout/bulkhead/retry-storm articles. Original Promise.race
+is a caller timeout without operation cancellation; HALF_OPEN lacks probe
+admission. Java adds two immediate provider slots per API, one half-open probe,
+generation fencing, durable dispatch budgets/jitter and shared backlog admission.
+Independent Java stub adds two actual processing slots and retained receipts;
+slow/LOSS continuation is tested, not inferred from timer cancellation. Originals
+were inspected, not executed. No original booking API/performance parity claim.
+Default simulator remains available; overlay is a different finite study contract.
+See [tutorial](docs/PROVIDER_ISOLATION_TUTORIAL.md) and [verification](docs/VERIFICATION.md).
+
 ## API failover extension — 2026-10-04
 
 Inspected original failover_mechanisms/failover-demo/configs/haproxy.cfg and

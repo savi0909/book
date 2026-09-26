@@ -1,0 +1,196 @@
+{
+  "date": "2026-10-04",
+  "javaTests": {
+    "total": 29,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "providerRuntime": {
+    "startedAt": "2026-10-04T09:34:37.998Z",
+    "checks": [
+      "independent provider enabled",
+      "initial backlog drained",
+      "remote work in flight",
+      "hold works during slow provider",
+      "browse works during slow provider",
+      "remote continuation survives caller deadline",
+      "provider processing never exceeds two slots",
+      "ambiguous result stays discoverable",
+      "slow payments drain with same IDs",
+      "stable first payment identity",
+      "automatic budget exhausted",
+      "automatic attempts bounded",
+      "unavailable provider remains UNKNOWN",
+      "automatic polling does not reset budget",
+      "browse survives outage",
+      "operator reconciles exhausted payment",
+      "durable acceptance despite lost response",
+      "expired seat gets a new owner",
+      "late success reaches refund reconciliation",
+      "late payment does not steal seat",
+      "provider restarts with retained receipts",
+      "backlog drained"
+    ],
+    "fixtures": [
+      "30c8ccb7-8f21-4f8e-ace8-cfcd554c0a83",
+      "a03cfe25-6b07-4b19-9d0a-fb3d45e90046",
+      "8b0a1aac-cfaf-41cb-9e2b-77fce115c87a"
+    ],
+    "observations": [
+      {
+        "slowRemote": {
+          "active": 2,
+          "maximum": 2,
+          "calls": 2,
+          "receipts": 2,
+          "mode": "SLOW"
+        },
+        "apiA": {
+          "boundary": {
+            "state": "CLOSED",
+            "enabled": true,
+            "rejected": 0,
+            "limitPerProcess": 2,
+            "queueCapacity": 0,
+            "calls": 1,
+            "probeInFlight": false,
+            "inFlight": 0
+          },
+          "backlog": {
+            "unresolved": 2,
+            "exhausted": 0,
+            "oldestSeconds": 1.00104
+          },
+          "checkoutAdmission": true
+        }
+      },
+      {
+        "exhausted": {
+          "id": "c692c01b-7074-4d93-85a8-fb849486088b",
+          "state": "UNKNOWN",
+          "attempts": 4,
+          "retryStartedAt": "2026-10-04T09:34:41.485+00:00",
+          "retryExhausted": true,
+          "lastError": "CIRCUIT_OPEN",
+          "nextAt": "2026-10-04T09:34:44.612+00:00",
+          "leaseUntil": null
+        }
+      },
+      {
+        "drained": {
+          "boundary": {
+            "state": "CLOSED",
+            "enabled": true,
+            "rejected": 1,
+            "limitPerProcess": 2,
+            "queueCapacity": 0,
+            "calls": 8,
+            "probeInFlight": false,
+            "inFlight": 0
+          },
+          "backlog": {
+            "unresolved": 0,
+            "exhausted": 0,
+            "oldestSeconds": 0
+          },
+          "checkoutAdmission": true
+        }
+      }
+    ],
+    "restored": true,
+    "finishedAt": "2026-10-04T09:34:53.633Z"
+  },
+  "providerPostman": {
+    "requests": 12,
+    "assertions": 13,
+    "failures": 0
+  },
+  "bookingDefaultRegression": {
+    "requests": 74,
+    "assertions": 109,
+    "failures": 0
+  },
+  "failoverPostmanRegression": {
+    "requests": 17,
+    "assertions": 26,
+    "failures": 0
+  },
+  "overlayIncompatibleOriginalCollection": {
+    "requests": 188,
+    "assertions": 223,
+    "failures": 9
+  },
+  "originalCollectionNote": "Unlimited polling assumptions do not apply under the bounded provider overlay; retained failure evidence, affected UNKNOWN explicitly reconciled, default regression passed.",
+  "failoverRuntime": {
+    "run": "244ad629-d06d-4d38-8879-194b246e14cd",
+    "startedAt": "2026-10-04T09:43:42.873Z",
+    "checks": [
+      "A controls enabled",
+      "B controls enabled",
+      "shared endpoint reaches both replicas",
+      "shared endpoint excludes replica controls",
+      "both drained produces bounded 503",
+      "drain preserves liveness",
+      "abrupt: event created",
+      "abrupt: hold created",
+      "crash: intent visible before response",
+      "crash: proxy does not hide loss by replaying checkout",
+      "crash: replay acknowledged",
+      "crash: same payment ID",
+      "crash: one checkout audit",
+      "crash: exactly one durable payment row",
+      "crash: confirmation converged",
+      "surviving-b: event created",
+      "surviving-b: hold created",
+      "B admits fresh bookings after A failure",
+      "graceful: event created",
+      "graceful: hold created",
+      "drain observes admitted in-flight work",
+      "drain rejects new direct business traffic",
+      "drain withdraws readiness",
+      "drained process remains live",
+      "during-drain: event created",
+      "during-drain: hold created",
+      "B accepts new bookings during A shutdown",
+      "graceful stop allows admitted response to finish",
+      "graceful stop exits normally or via SIGTERM, without OOM",
+      "graceful: replay acknowledged",
+      "graceful: same payment ID",
+      "graceful: one checkout audit",
+      "graceful: exactly one durable payment row",
+      "graceful: confirmation converged"
+    ],
+    "scenarios": [
+      {
+        "name": "abrupt",
+        "bookingId": "89b3efaa-3fd8-4c13-9623-dd34c1b20626",
+        "originalResponseStatus": 0,
+        "routingRecoveryMs": 1191
+      },
+      {
+        "name": "graceful",
+        "bookingId": "2eae8e63-ad3d-4bb6-8729-5557b71d6d14",
+        "shutdownMs": 7461,
+        "exitCode": 143
+      }
+    ],
+    "restored": true,
+    "passed": true,
+    "finishedAt": "2026-10-04T09:44:07.014Z"
+  },
+  "reactorEntries": 21,
+  "limits": [
+    "Finite local correctness experiments; no production SLO or throughput benchmark.",
+    "No host/database HA, real payments, production auth or external exactly-once.",
+    "Controlled provider restart tested; torn-journal/storage failure not tested."
+  ],
+  "artifactAudit": {
+    "requiredFiles": 32,
+    "namedRequests": 86,
+    "scriptBlocks": 89,
+    "markdownFiles": 32,
+    "localLinks": 687,
+    "brokenLinks": 0
+  }
+}

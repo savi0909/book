@@ -128,3 +128,18 @@ This is a reference explanation, not a record of the learner's performance. In a
 separate practice-only session, explain it without reading, sketch the trace and
 answer two failure questions. Record only answers actually supplied. Review
 [verification](VERIFICATION.md) before making claims about tested behavior.
+
+## Scenario 2: provider outage
+
+Use [the provider tutorial](PROVIDER_ISOLATION_TUTORIAL.md) for five concise
+interview points, a spoken answer and 3-4 points per subtopic. Explain durable
+intent/stable identity; local versus actual remote bulkheads; deadline ambiguity;
+one retry owner/durable bounded jitter; breaker generations and one probe;
+backlog admission/replay; late-success refunds. Contrast four possible client
+calls across A/B with two processing slots at the one stub. Four attempts/10s
+bounds automatic dispatch, not resolution time. Count/age admission is an
+operational budget, not an adaptive per-hold guarantee. Explicit operator
+reconcile bypasses auto budget once per request and must not become a retry loop.
+Discuss capacity 2/1.5 operations/s in SLOW as an assumption, host/DB failure domains,
+operational ownership and production rollout/metrics limits. Execution evidence
+is finite correctness testing; no SLO or learner mastery claim.

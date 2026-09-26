@@ -1,0 +1,22 @@
+# Merge after the base and optional failover overlay. Existing booking volume is preserved.
+services:
+  provider:
+    build:
+      context: .
+      dockerfile: infra/Dockerfile.provider
+    ports: ["127.0.0.1:8123:8121"]
+    volumes: ["provider-data:/data"]
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O - http://localhost:8121/health >/dev/null"]
+      interval: 3s
+      timeout: 2s
+      retries: 20
+    mem_limit: 128m
+  api-a:
+    environment:
+      PROVIDER_URL: http://provider:8121
+  api-b:
+    environment:
+      PROVIDER_URL: http://provider:8121
+volumes:
+  provider-data:

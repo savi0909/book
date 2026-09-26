@@ -1,5 +1,75 @@
 # Verification evidence
 
+## Scenario 2 provider isolation - verified 2026-10-04
+
+Delivered independent Java provider stub, provider overlay, V2 retry metadata,
+bounded client/remote slots, deadlines, per-process breaker/probes/generations,
+durable capped jitter/budget, shared backlog admission, diagnostics, tutorial,
+Postman and scenario3 handover. Full committed summary:
+[evidence JSON](evidence/PROVIDER_ISOLATION_2026-10-04.json).
+
+| Command/check | Actual result |
+| --- | --- |
+| mvn -B -ntp verify | 29 Java tests passed,0 failures/errors/skips; real PostgreSQL and controlled HTTP dependency |
+| merged Compose config/build/up | Passed; A/B/PostgreSQL/provider healthy and gateway running; data retained |
+| node scripts/learn-provider.mjs | 22 checks passed, restoration true; independent SLOW/UNAVAILABLE/LOSS/restart |
+| provider Newman6.2.2, `--delay-request 500` | 12 requests/13 assertions,0 failures |
+| original booking Newman in default simulator mode | 74 requests/109 assertions,0 failures |
+| node scripts/learn-failover.mjs | 34 checks passed, restoration true; crash, graceful drain and same-ID recovery |
+| failover Newman6.2.2 | 17 requests/26 assertions,0 failures |
+| root mvn -B -ntp validate | 21 reactor entries passed |
+| script syntax/artifact/link/whitespace checks | 32 required files/86 named requests/89 parsed scripts/687 local links,0 broken |
+
+New integration assertions cover two concurrent slow calls and immediate third
+rejection; continued hold/browse; remote continuation after caller timeout;
+same-ID recovery; independent attempt-count and elapsed-time exhaustion;
+age-based checkout closure with replay discovery; one half-open probe,
+failed-probe reopen and successful recovery; stale-generation completion fencing.
+Runtime uses both APIs and the actual bounded standalone Java stub. At the slow
+observation: provider active2/maximum2, API A inFlight0, unresolved2,
+oldestSeconds1.00104. The unavailable fixture exhausted at4 dispatches with
+lastError CIRCUIT_OPEN. Final backlog count/age/exhausted all zero. Runtime began
+09:34:37.998Z and ended09:34:53.633Z; these finite observations are not an SLO or
+throughput/drain-rate benchmark. Stub restart retained receipts. Late success
+recorded REFUND_REQUIRED while replacement remained HELD.
+
+Raw local evidence: target/provider-runtime-evidence.json,
+provider-final-build.log, provider-newman-evidence.json,
+provider-booking-default-regression.json, provider-failover-newman-regression.json
+and failover-runtime-evidence.json. target is ignored; the compact summary above
+is committed. Fresh fixtures and both booking/provider volumes are retained.
+
+Corrections and boundaries:
+
+- Initial provider host port8121 was already allocated to url-shortener's
+  coordinator-b. Compose start failed to bind; it did not stop that project.
+  Selected free loopback8123, rebuilt/restarted the selected stack successfully.
+- Running the original unlimited-polling collection under the new bounded
+  overlay produced188 requests/223 assertions,8 failed assertions and one script
+  error. A delayed outcome exhausted before availability, then its unresolved
+  age closed new checkout. This is an incompatible scenario assumption, not a
+  green regression. Preserved target/provider-booking-overlay-incompatible.json,
+  explicitly reconciled the affected UNKNOWN, and reran in the default topology:
+  74/109 passed. The provider collection verifies the new contract separately.
+- A documentation write hit Windows default text-encoding/newline behavior;
+  corrected UTF-8/newlines and rechecked the scoped diff and Markdown links.
+- Newman reports Node's existing fs.F_OK deprecation warning; no test failure
+  is attributed to it.
+
+Final topology: A8105/B8106/gateway8107/PostgreSQL5547/provider8123, both overlays
+active, NORMAL provider mode, zero unresolved backlog and open checkout admission.
+No files/directories deleted, Maven clean, reset, prune or unrelated stack changes.
+Preexisting .idea edits/staged jpa.xml are preserved and excluded from this task.
+
+Limits: HTTP fault tests delay before headers; arbitrary streaming-body deadlines
+are not established. Two provider-processing slots cover one stub process, not a
+provider fleet. Journal controlled restart verified; torn writes/storage/host crash
+not tested. Count/age admission is not a per-hold lifetime guarantee. No production
+auth, real payments/refunds, external exactly-once, DB/host HA, benchmark or SLO.
+Unexpected poison exceptions can still interrupt a batch; scenario3 remains next.
+Tutorial/test completion does not establish learner mastery.
+
+
 ## Scenario 1: API failover and graceful restart — 2026-10-04
 
 Delivered [the detailed tutorial](API_FAILOVER_TUTORIAL.md), optional HAProxy

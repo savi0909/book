@@ -1,5 +1,34 @@
 # System specification
 
+## Scenario 2 extension — independent provider isolation
+
+The optional [provider overlay](../compose.provider.yml) adds a Java stub on
+loopback8123 with a separate retained journal, independent of booking PostgreSQL.
+Default behavior remains the original local simulator described below. Calls
+run outside inventory transactions; valid replies commit a local receipt
+observation separately. Callback application never performs provider HTTP.
+Two client-call slots per JVM/no waiting queue; two actual processing slots at
+one stub across both APIs. Stub dispatch executor:8 threads/queue32, backlog32.
+HTTP connect200ms/request400ms; remote SLOW/LOSS work remains bounded1500ms.
+Three dependency failures open a per-JVM breaker for2s; one half-open probe;
+generation fences stale completion. Readiness continues to include booking DB.
+
+V2 adds retryStartedAt/retryExhausted/lastError without altering V1. Automatic
+recovery admits at most4 claimed dispatches or10s since first claim, with capped
+exponential bounded jitter100..500/1000/2000ms and durable nextAt. Claims rejected
+by local breaker/bulkhead consume the dispatch budget too. Budget exhausted
+UNKNOWN remains discoverable; explicit operator reconcile can make one attempt
+without resetting budget. The deadline bounds automatic dispatch admission,
+not end-to-end outcome completion. Leases remain5s/token checked.
+
+Remote-mode new checkout uses a shared SQL advisory admission lock and rejects
+at100 unresolved intents or oldest age>=30s; replay is checked first. Browse/hold
+remain available. This operational age rule is not an adaptive hold-TTL policy.
+Late success preserves REFUND_REQUIRED and the newer seat owner. Provider counters
+are local/transient; backlog age/count/retry metadata are shared/persistent.
+See [detailed tutorial](PROVIDER_ISOLATION_TUTORIAL.md) and current verification.
+No real payments, exactly-once network guarantee, provider fleet quota or host HA.
+
 ## Scenario 1 extension — API failover and drain
 
 Optional `compose.failover.yml` adds a digest-pinned HAProxy on loopback 8107 over

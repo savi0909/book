@@ -15,7 +15,7 @@ separate topology exercise.
 | Priority | Scenario | Main concepts | Current starting point |
 | --- | --- | --- | --- |
 | 1 | API crashes or is restarted during checkout | Load balancing, readiness, draining, ambiguous responses | Implemented optional HAProxy8107, drain controls and crash/graceful experiments |
-| 2 | Payment provider becomes slow or unavailable | Bulkheads, circuit breaker, deadline/retry budgets, graceful degradation | Local receipt simulator; no independent provider dependency |
+| 2 | Payment provider becomes slow or unavailable | Bulkheads, circuit breaker, deadline/retry budgets, graceful degradation | Implemented optional independent Java stub, slots/deadlines/breaker/budgets |
 | 3 | One recovery item fails repeatedly | Poison jobs, per-item isolation, quarantine, redrive, fairness | Batch loops can stop at one exception |
 | 4 | Booking commits but its confirmation event is lost | Transactional outbox, delivery retries, inbox deduplication | Booking/audit transaction exists; no notification outbox |
 | 5 | Refund succeeds but its response is lost | Saga compensation, durable refund identity, reconciliation | REFUND_REQUIRED and simulated acknowledgment exist |
@@ -62,6 +62,10 @@ otherwise useful API to be removed or restarted indiscriminately.
 
 ## 2. Provider outage without exhausting booking capacity
 
+Implemented: [detailed tutorial](PROVIDER_ISOLATION_TUTORIAL.md) and [evidence](VERIFICATION.md).
+The design notes below motivated the extension; actual limits are two client slots
+per API and two processing slots at the one stub, not the illustrative four below.
+
 **Failure story:** the provider takes ten seconds, fails intermittently, or accepts
 payment and loses the response. Browse/hold requests should retain capacity while
 accepted payment intents remain discoverable and recoverable.
@@ -72,7 +76,7 @@ payment recovery -> bounded provider slots -> slow provider simulator
                          \-> defer durably when budget is exhausted
 ```
 
-**Add:** an independently controlled local provider stub; bounded provider-call
+**Implemented:** an independently controlled local provider stub; bounded provider-call
 concurrency; one retry owner; per-attempt and overall deadlines; jittered retry
 scheduling; a retry budget; and bounded half-open breaker probes. Retain the same
 payment identity. Record UNKNOWN where acceptance is ambiguous rather than
@@ -94,7 +98,8 @@ they are assumptions, not the lab's capacity.
 **Read/edit later:** [LocalProvider](../src/main/java/com/example/booking/LocalProvider.java),
 [PaymentProcessor](../src/main/java/com/example/booking/PaymentProcessor.java),
 [Maintenance](../src/main/java/com/example/booking/Maintenance.java).
-The current simulator shares PostgreSQL, so it cannot demonstrate an independent
+The default simulator shares PostgreSQL; the new optional stub has independent
+process/storage. The default cannot demonstrate an independent
 provider outage merely by stopping that database.
 
 ## 3. Poison-job isolation and controlled redrive
@@ -240,7 +245,7 @@ Likewise, a failover dashboard counter does not prove split-brain prevention.
 ## Choose one measurable addition at a time
 
 The learner selected1–3 one at a time. API failover and draining is the current
-completed delivery; provider isolation and poison-job handling follow separately.
+completed delivery alongside provider isolation; poison-job handling follows separately.
 Each guide must combine detailed, accessible study with3–5 interview points per
 scenario/subtopic. Database HA remains a later proposal.
 

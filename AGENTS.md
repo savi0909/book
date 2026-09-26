@@ -1,5 +1,21 @@
 # Ticket booking learning lab
 
+## Current scenario delivery - 2026-10-04
+
+Scenario 2 provider isolation is implemented and verified. Read
+[the provider tutorial](D:/java-projects/ticket-booking-lab/docs/PROVIDER_ISOLATION_TUTORIAL.md)
+and [verification](D:/java-projects/ticket-booking-lab/docs/VERIFICATION.md).
+Optional provider overlay adds host8123/container8121 and retained provider-data;
+A8105/B8106/gateway8107/PostgreSQL5547 data remain. Two HTTP slots per API,
+two actual stub processing slots, bounded deadlines/breaker probes, durable4/10s
+retry budget and shared100/30s backlog admission. Existing checkout keys replay;
+exhausted UNKNOWN retains reconciliation, late success requires refunds.
+Default simulator and original unlimited-polling collection remain separate.
+Stop this delivery. Scenario3 poison-job isolation is selected next, separately;
+4-6, optimistic seat versions and general retry-storm harness remain proposals.
+No real payments, production auth/HA/SLO or external exactly-once claim.
+
+
 ## Current scenario study — 2026-10-04
 
 User-directed 2026-10-04: proceed with ticket-booking failure scenarios 1, 2 and

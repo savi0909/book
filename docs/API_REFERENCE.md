@@ -140,3 +140,41 @@ Controls and fault header are unauthenticated local fixtures. Gateway exclusion
 of control routes is not production authentication; the fault header remains
 usable through the loopback gateway for the experiment. No crash endpoint exists;
 the runtime script sends scoped Docker signals. See [scenario guide](API_FAILOVER_TUTORIAL.md).
+
+## Scenario 2: optional independent provider boundary
+
+Set PROVIDER_URL using compose.provider.yml; empty defaults to the original local
+simulator. Read [the tutorial](PROVIDER_ISOLATION_TUTORIAL.md) for transaction and
+retry semantics. No new checkout fields or payment identities are introduced.
+
+| Method/path | Contract |
+| --- | --- |
+| GET /api/provider/status | boundary: enabled, state, inFlight, limitPerProcess=2, queueCapacity=0, probeInFlight, calls, rejected; backlog: unresolved, exhausted, oldestSeconds; checkoutAdmission advisory boolean |
+| GET /api/payments/{id}/recovery | id, state, attempts, retryStartedAt, retryExhausted, lastError, nextAt, leaseUntil; unknown UUID404 |
+| POST /api/demo/payments/{id}/reconcile | Existing operator endpoint; one dispatch may bypass automatic budget/nextAt, but respects active leases and preserves payment identity |
+
+Boundary state CLOSED/OPEN/HALF_OPEN and counters are per API and transient.
+Backlog and retry metadata persist across APIs/restart. lastError is historical;
+success may retain it. checkoutAdmission reports backlog policy; when boundary
+is disabled this policy is informational and not enforced on new checkout.
+New remote-mode checkout returns503/PAYMENT_BACKLOG_FULL at100 unresolved or
+oldest age>=30s. Existing key/input replay still returns200 before admission.
+A provider timeout/error/local rejection makes claimed work UNKNOWN and defers;
+a reconcile200 is current state, not a promise of payment success. Automatic
+budget: four dispatches or10s since first claim. attempts includes local rejected
+dispatches. Exhaustion is not FAILURE and manual reconcile does not reset it.
+A callback needs a locally observed receipt; reconcile first after remote LOSS.
+
+Independent stub (host http://localhost:8123, container provider:8121):
+
+| Method/path | Contract |
+| --- | --- |
+| GET /health | 200 text up, process liveness |
+| POST /control?NORMAL or SLOW or UNAVAILABLE or LOSS | 200 text selected mode; invalid mode400; other methods405; modes reset on restart |
+| GET /stats | JSON active, maximum, calls, receipts, mode; counters transient, receipts retained |
+| POST /payments/{UUID} | Internal text body OUTCOME,epochMillis; immutable identity/payload;200 existing/new receipt,409 changed input,503 capacity/outage |
+| GET /payments/{UUID} | Internal text receipt or404; same processing/fault limits apply |
+
+SLOW accepts then holds its processing slot1500ms before reply; LOSS accepts then
+holds1500ms and closes without response. UNAVAILABLE rejects before acceptance.
+All controls are unauthenticated local fixtures. No real payment/refund occurs.

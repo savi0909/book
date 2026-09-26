@@ -4,12 +4,20 @@ import org.springframework.stereotype.Component;
 import java.util.UUID;
 import static com.example.booking.Models.*;
 
-/** Local durable simulator only; never sends a network request or processes card data. */
+/** Local simulator or opt-in independent HTTP stub; never processes real payments. */
 @Component
 public class LocalProvider {
     private final BookingStore store;
-    public LocalProvider(BookingStore store) { this.store=store; }
+    private final ProviderBoundary boundary;
+    public LocalProvider(BookingStore store,ProviderBoundary boundary) { this.store=store;this.boundary=boundary; }
+    boolean remote() {return boundary.enabled();}
     Receipt accept(Payment p) {
+        if(boundary.enabled()) {
+            String value=boundary.call("/payments/"+p.id(),(p.scenario()==Scenario.FAILURE?"FAILURE":"SUCCESS")+","+p.readyAt().toEpochMilli());
+            String[] fields=value.split(",");
+            if(fields.length!=2 || !fields[0].equals(p.scenario()==Scenario.FAILURE?"FAILURE":"SUCCESS") || Long.parseLong(fields[1])!=p.readyAt().toEpochMilli())
+                throw new ProviderBoundary.Unavailable("INVALID_RECEIPT");
+        }
         // This transaction commits separately from inventory and callback processing.
         store.tx(() -> {
             store.jdbc().update("INSERT INTO provider_receipts(payment_id,outcome,available_at) VALUES (?,?,?) ON CONFLICT DO NOTHING",

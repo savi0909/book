@@ -12,7 +12,12 @@ const required = ['pom.xml', 'README.md', 'AGENTS.md', 'CLAUDE.md', 'PARITY.md',
   'src/main/resources/db/migration/V1__booking.sql', 'src/test/java/com/example/booking/BookingIntegrationTest.java',
   'compose.failover.yml', 'infra/haproxy.cfg', 'docs/API_FAILOVER_TUTORIAL.md',
   'postman/failover.postman_collection.json', 'postman/failover.postman_environment.json',
-  'scripts/learn-failover.mjs', 'src/test/java/com/example/booking/FailoverIntegrationTest.java'];
+  'scripts/learn-failover.mjs', 'src/test/java/com/example/booking/FailoverIntegrationTest.java',
+  'compose.provider.yml', 'infra/ProviderStub.java', 'infra/Dockerfile.provider',
+  'docs/PROVIDER_ISOLATION_TUTORIAL.md', 'postman/provider.postman_collection.json',
+  'postman/provider.postman_environment.json', 'scripts/learn-provider.mjs',
+  'src/test/java/com/example/booking/ProviderIsolationIntegrationTest.java',
+  'src/main/resources/db/migration/V2__provider_retry_budget.sql'];
 for (const name of required) assert.ok(fs.existsSync(path.join(project, name)), name);
 const collection = JSON.parse(fs.readFileSync(required[12], 'utf8'));
 const environment = JSON.parse(fs.readFileSync(required[13], 'utf8'));
@@ -31,6 +36,11 @@ const failoverEnvironment = JSON.parse(fs.readFileSync('postman/failover.postman
 assert.equal(failoverCollection.info.schema, collection.info.schema);
 for (const name of ['baseUrl', 'apiA', 'apiB']) assert.ok(failoverEnvironment.values.some(v => v.key === name && v.enabled));
 inspect(failoverCollection);
+const providerCollection = JSON.parse(fs.readFileSync('postman/provider.postman_collection.json', 'utf8'));
+const providerEnvironment = JSON.parse(fs.readFileSync('postman/provider.postman_environment.json', 'utf8'));
+assert.equal(providerCollection.info.schema, collection.info.schema);
+for (const name of ['baseUrl', 'providerUrl']) assert.ok(providerEnvironment.values.some(v => v.key === name && v.enabled));
+inspect(providerCollection);
 assert.ok(requests.every(r => r.name && r.event.some(e => e.listen === 'test')), 'named requests have assertions');
 const projectMarkdown = execFileSync('rg', ['--files', project, '-g', '*.md'], { encoding: 'utf8' }).trim().split(/\r?\n/);
 const shared = ['AGENTS.md', 'memory/PROJECT_CONTEXT.md', 'memory/PROGRESS.md', 'memory/DECISIONS.md',

@@ -55,12 +55,36 @@ the application does not manufacture availability from an in-memory seat cache.
 
 ## Code study
 
-[Next-session handover prompt](docs/NEXT_SESSION_HANDOVER.md): resume with scenario 2, provider isolation, carrying forward the verified baseline and detailed-study/interview preferences.
+[Scenario 2 — payment-provider isolation](docs/PROVIDER_ISOLATION_TUTORIAL.md): independent retained Java stub, bounded calls/work, deadlines, breaker, durable retry budget and backlog admission. Detailed walkthrough and interview points.
 
-[Scenario 1 — API failover and graceful restart](docs/API_FAILOVER_TUTORIAL.md): implemented optional HAProxy setup, deterministic crash/drain experiments, detailed source walkthrough, and five interview points. Provider isolation and poison-job handling follow in separate deliveries.
+[Next-session handover prompt](docs/NEXT_SESSION_HANDOVER.md): scenario 3, poison-job isolation, is selected for a separate delivery.
+
+[Scenario 1 — API failover and graceful restart](docs/API_FAILOVER_TUTORIAL.md): implemented optional HAProxy setup, deterministic crash/drain experiments, detailed source walkthrough, and five interview points. Provider isolation is delivered separately; poison-job handling remains next.
 
 [Failure-handling and high-availability scenarios](docs/FAILURE_SCENARIOS.md): six prioritized additions, concrete failure injections, expected guarantees, and local source references.
 
 [Distributed systems foundations through ticket booking](docs/DISTRIBUTED_SYSTEMS_FOUNDATIONS.md): database internals, pessimistic and proposed optimistic locking, safe retries, retry storms, and an ordered learning track using this booking domain.
 
 [Detailed IntelliJ project study guide](docs/INTELLIJ_CODE_STUDY_TUTORIAL.md): ordered source reading, API/event traces, debugger checkpoints, exercises, tests, and engineering tradeoffs.
+
+## Optional provider-isolation study
+
+Use all three files to retain failover controls and enable the independent stub:
+
+```powershell
+docker compose -f compose.yml -f compose.failover.yml -f compose.provider.yml config --quiet
+docker compose -f compose.yml -f compose.failover.yml -f compose.provider.yml build api-a api-b provider
+docker compose -f compose.yml -f compose.failover.yml -f compose.provider.yml up -d --wait
+node scripts/learn-provider.mjs
+npx --yes newman@6.2.2 run postman/provider.postman_collection.json -e postman/provider.postman_environment.json --delay-request 500
+```
+
+Provider: loopback8123 (container8121), retained provider-data journal. Public local
+fault controls; no real payments. Two provider-call slots per API, two actual
+processing slots at the stub, 400ms HTTP deadline, four automatic dispatches or
+10s dispatch budget; exhausted UNKNOWN needs explicit reconciliation. New checkout
+pauses at100 unresolved or30s oldest age; hold/browse and existing-key replay remain
+available. See [tutorial](docs/PROVIDER_ISOLATION_TUTORIAL.md) and [API](docs/API_REFERENCE.md).
+Original booking collection/harness use the default simulator, whose unlimited
+polling contract differs from this overlay. Run fault exercises sequentially.
+Stop/resume with the same files and stop/up; preserve both volumes.

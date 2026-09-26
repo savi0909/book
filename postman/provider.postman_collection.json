@@ -1,0 +1,354 @@
+{
+  "info": {
+    "name": "Ticket booking scenario 2: provider isolation",
+    "description": "Local mutating fixtures. Run after enabling the provider overlay. Use Newman --delay-request 500. Run the deterministic harness for timeout/LOSS/budget/restart evidence. On interrupted execution restore POST providerUrl/control?NORMAL.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "01 Provider NORMAL",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{providerUrl}}/control?NORMAL"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('control accepted',()=>pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "02 API isolation status",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/provider/status"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('overlay enabled and bounded',()=>{pm.response.to.have.status(200);const b=pm.response.json().boundary;pm.expect(b.enabled).eql(true);pm.expect(b.limitPerProcess).eql(2);pm.expect(b.queueCapacity).eql(0);});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "03 Fresh retained event",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/demo/events",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"name\":\"provider-postman-{{$guid}}\",\"seatCount\":2}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('event created',()=>pm.response.to.have.status(201));pm.environment.set('eventId',pm.response.json().id);pm.environment.set('runKey',pm.variables.replaceIn('{{$guid}}'));pm.environment.unset('bookingId');pm.environment.unset('paymentId');pm.environment.set('polls',0);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "04 Provider unavailable",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{providerUrl}}/control?UNAVAILABLE"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('outage injected',()=>pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "05 Browse during outage",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/events/{{eventId}}/seats"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('browse unaffected',()=>{pm.response.to.have.status(200);pm.expect(pm.response.json()).to.have.length(2);});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "06 Hold during outage",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "h-{{runKey}}"
+          }
+        ],
+        "url": "{{baseUrl}}/api/holds",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"eventId\":\"{{eventId}}\",\"seatNumber\":1,\"buyerId\":\"provider-{{runKey}}\",\"ttlSeconds\":120}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('hold succeeds',()=>{pm.response.to.have.status(201);pm.expect(pm.response.json().state).eql('HELD');});pm.environment.set('bookingId',pm.response.json().id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "07 Durable checkout during outage",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "c-{{runKey}}"
+          }
+        ],
+        "url": "{{baseUrl}}/api/bookings/{{bookingId}}/checkout",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"scenario\":\"SUCCESS\",\"delayMs\":0}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('durable intent accepted',()=>{pm.response.to.have.status(202);pm.expect(pm.response.json().payment.id).to.be.a('string');});pm.environment.set('paymentId',pm.response.json().payment.id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "08 Replay original intent",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "c-{{runKey}}"
+          }
+        ],
+        "url": "{{baseUrl}}/api/bookings/{{bookingId}}/checkout",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"scenario\":\"SUCCESS\",\"delayMs\":0}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('same payment identity',()=>{pm.response.to.have.status(200);pm.expect(pm.response.json().payment.id).eql(pm.environment.get('paymentId'));pm.expect(pm.response.json().replayed).eql(true);});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "09 Visible recovery metadata",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/payments/{{paymentId}}/recovery"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('bounded persisted attempt count',()=>{pm.response.to.have.status(200);const p=pm.response.json();pm.expect(p.attempts).to.be.at.most(4);pm.expect(p.retryExhausted).to.be.a('boolean');});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "10 Restore provider",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{providerUrl}}/control?NORMAL"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('normal restored',()=>pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "11 Reconcile same payment",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/demo/payments/{{paymentId}}/reconcile",
+        "body": {
+          "mode": "raw",
+          "raw": "{}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('identity preserved',()=>{pm.response.to.have.status(200);pm.expect(pm.response.json().payment.id).eql(pm.environment.get('paymentId'));});const p=pm.response.json();const n=Number(pm.environment.get('polls'))+1;pm.environment.set('polls',n);if(p.payment.state!=='SUCCESS' && n<15){pm.execution.setNextRequest('11 Reconcile same payment');}else{pm.test('recovery confirms',()=>pm.expect(p.state).eql('CONFIRMED'));}"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "12 Provider receipt bound",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{providerUrl}}/stats"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('shared processing cap',()=>{pm.response.to.have.status(200);pm.expect(pm.response.json().maximum).to.be.at.most(2);pm.expect(pm.response.json().mode).eql('NORMAL');});"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

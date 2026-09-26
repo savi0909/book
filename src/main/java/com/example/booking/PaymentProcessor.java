@@ -10,14 +10,27 @@ public class PaymentProcessor {
     private final LocalProvider provider;
     public PaymentProcessor(BookingStore store,LocalProvider provider) {this.store=store;this.provider=provider;}
     public Payment get(UUID id) {return store.paymentRow(id).payment();}
+    public Map<String,Object> recoveryStatus(UUID id) {
+        get(id);
+        return store.jdbc().queryForMap("""
+            SELECT id, state, attempts, retry_started_at AS "retryStartedAt",retry_exhausted AS "retryExhausted",
+              last_error AS "lastError",next_at AS "nextAt",lease_until AS "leaseUntil"
+            FROM payments WHERE id=?
+            """,id);
+    }
     public Booking reconcile(UUID id) {
         recover(id,true);
         UUID booking=get(id).bookingId();
         return store.tx(() -> {store.locked(booking);store.expire(booking);return store.view(booking,false);});
     }
     public int recoverBatch() {
+        if(provider.remote()) store.jdbc().update("""
+            UPDATE payments SET retry_exhausted=true WHERE state IN ('PENDING','UNKNOWN') AND NOT retry_exhausted
+              AND (attempts>=4 OR retry_started_at<=clock_timestamp()-interval '10 seconds')
+              AND (lease_until IS NULL OR lease_until<=clock_timestamp())
+            """);
         var ids=store.jdbc().queryForList("""
-            SELECT id FROM payments WHERE state IN ('PENDING','UNKNOWN') AND next_at <= clock_timestamp()
+            SELECT id FROM payments WHERE state IN ('PENDING','UNKNOWN') AND NOT retry_exhausted AND next_at <= clock_timestamp()
               AND (lease_until IS NULL OR lease_until <= clock_timestamp()) ORDER BY next_at LIMIT 20
             """,UUID.class);
         for(UUID id:ids) recover(id,false);
@@ -27,16 +40,22 @@ public class PaymentProcessor {
         UUID token=UUID.randomUUID();
         var claimed=store.tx(() -> store.jdbc().query("""
             UPDATE payments SET lease_token=?, lease_until=clock_timestamp()+interval '5 seconds',
-              attempts=attempts+1,updated_at=clock_timestamp()
-            WHERE id=? AND state IN ('PENDING','UNKNOWN') AND (? OR next_at <= clock_timestamp())
-              AND (lease_until IS NULL OR lease_until <= clock_timestamp()) RETURNING *
-            """,BookingStore.PAYMENT,token,id,force));
+              attempts=attempts+1,retry_started_at=COALESCE(retry_started_at,clock_timestamp()),updated_at=clock_timestamp()
+            WHERE id=? AND state IN ('PENDING','UNKNOWN') AND (? OR (NOT retry_exhausted AND next_at <= clock_timestamp()))
+              AND (lease_until IS NULL OR lease_until <= clock_timestamp())
+              AND (? OR NOT ? OR (attempts<4 AND (retry_started_at IS NULL OR retry_started_at>clock_timestamp()-interval '10 seconds'))) RETURNING *
+            """,BookingStore.PAYMENT,token,id,force,force,provider.remote()));
         if(claimed.isEmpty()) return;
         Payment p=claimed.getFirst().payment();
         // No inventory transaction/lock is alive here. A crash after acceptance
         // leaves an idempotent provider receipt and a recoverable leased intent.
-        Receipt receipt=provider.accept(p);
+        Receipt receipt;
+        try {receipt=provider.accept(p);}
+        catch(ProviderBoundary.Unavailable error) {
+            defer(id,token,error.getMessage(),p.attempts());return;
+        }
         if(!receipt.ready() || (p.scenario()==Scenario.UNKNOWN && p.attempts()==1)) {
+            if(provider.remote()) {defer(id,token,"OUTCOME_PENDING",p.attempts());return;}
             store.tx(() -> {
                 store.jdbc().update("""
                     UPDATE payments SET state='UNKNOWN',next_at=GREATEST(ready_at,clock_timestamp()+interval '3 seconds'),
@@ -49,18 +68,35 @@ public class PaymentProcessor {
         }
         apply(id,"provider/"+id,receipt.outcome(),token);
     }
+    void defer(UUID id,UUID token,String reason,int attempts) {
+        // Capped exponential backoff with bounded jitter; only this durable worker owns retries. No sleep holds a DB connection.
+        long cap=Math.min(2000,500L << Math.min(3,Math.max(0,attempts-1)));
+        long delay=java.util.concurrent.ThreadLocalRandom.current().nextLong(100,cap+1);
+        store.tx(() -> {
+            store.jdbc().update("""
+                UPDATE payments SET state='UNKNOWN',last_error=?,
+                  retry_exhausted=(attempts>=4 OR retry_started_at <= clock_timestamp()-interval '10 seconds'),
+                  next_at=clock_timestamp()+(? * interval '1 millisecond'),
+                  lease_token=NULL,lease_until=NULL,updated_at=clock_timestamp()
+                WHERE id=? AND lease_token=? AND state IN ('PENDING','UNKNOWN')
+                """,reason,delay,id,token);
+            return null;
+        });
+    }
     public Booking callback(UUID id,CallbackRequest request) {
         return apply(id,request.eventId(),request.outcome(),null);
     }
     Booking apply(UUID id,String eventId,Outcome outcome,UUID token) {
         UUID booking=get(id).bookingId();
+        // Receipt is an immutable local observation; no HTTP call under inventory locks.
+        Receipt observed=provider.lookup(id);
         return store.tx(() -> {
             store.locked(booking);
             PaymentRow p=BookingStore.one(store.jdbc().query("SELECT * FROM payments WHERE id=? FOR UPDATE",BookingStore.PAYMENT,id));
             if(token!=null && (!token.equals(p.leaseToken()) || !Boolean.TRUE.equals(store.jdbc().queryForObject(
                 "SELECT lease_until > clock_timestamp() FROM payments WHERE id=?",Boolean.class,id))))
                 return store.view(booking,true);
-            Receipt receipt=provider.lookup(id);
+            Receipt receipt=observed;
             if(!receipt.ready()) throw ApiException.conflict("PROVIDER_PENDING","Simulated outcome is not yet available");
             if(receipt.outcome()!=outcome) throw ApiException.conflict("OUTCOME_CONFLICT","Callback disagrees with the immutable local provider receipt");
             int inserted=store.jdbc().update("INSERT INTO provider_events(event_id,payment_id,outcome) VALUES (?,?,?) ON CONFLICT DO NOTHING",eventId,id,outcome.name());

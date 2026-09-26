@@ -7,7 +7,8 @@ import static com.example.booking.Models.*;
 @Service
 public class BookingService {
     private final BookingStore store;
-    public BookingService(BookingStore store) { this.store = store; }
+    private final ProviderBoundary boundary;
+    public BookingService(BookingStore store,ProviderBoundary boundary) { this.store = store;this.boundary=boundary; }
     public Event createEvent(EventRequest request) {
         return store.tx(() -> {
             UUID id = UUID.randomUUID();
@@ -85,6 +86,8 @@ public class BookingService {
                 store.expire(id);
                 return store.view(id,true);
             }
+            if(boundary.enabled()) store.jdbc().queryForList("SELECT pg_advisory_xact_lock(81058106)");
+            if(boundary.enabled() && !providerAdmission()) throw new ApiException(503,"PAYMENT_BACKLOG_FULL","New checkout paused; existing keys remain discoverable");
             // Expiry is tested by the actual mutation, after waiting for locks.
             int changed = store.jdbc().update("""
                 UPDATE bookings SET state = 'CHECKOUT', updated_at = clock_timestamp()
@@ -130,6 +133,19 @@ public class BookingService {
     public List<Map<String,Object>> audit(UUID id) {
         store.row(id);
         return store.jdbc().queryForList("SELECT id,action,created_at AS \"createdAt\" FROM booking_audit WHERE booking_id=? ORDER BY id LIMIT 100",id);
+    }
+    boolean providerAdmission() {
+        return Boolean.TRUE.equals(store.jdbc().queryForObject("""
+            SELECT count(*) < 100 AND COALESCE(min(created_at)>clock_timestamp()-interval '30 seconds',true)
+            FROM payments WHERE state IN ('PENDING','UNKNOWN')
+            """,Boolean.class));
+    }
+    public Map<String,Object> providerBacklog() {
+        return store.jdbc().queryForMap("""
+            SELECT count(*) AS unresolved, count(*) FILTER (WHERE retry_exhausted) AS exhausted,
+              COALESCE(EXTRACT(EPOCH FROM clock_timestamp()-min(created_at)),0) AS "oldestSeconds"
+            FROM payments WHERE state IN ('PENDING','UNKNOWN')
+            """);
     }
     public Map<String,Object> stats() {
         return Map.of("bookings",store.jdbc().queryForList("SELECT state,count(*) AS count FROM bookings GROUP BY state ORDER BY state"),

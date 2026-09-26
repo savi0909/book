@@ -12,13 +12,14 @@ import static com.example.booking.Models.*;
 @RestController
 @Validated
 public class BookingController {
+    private final ProviderBoundary boundary;
     private final BookingService bookings;
     private final PaymentProcessor payments;
     private final String instance;
     private final CheckoutResponseDelay responseDelay;
     public BookingController(BookingService bookings,PaymentProcessor payments,@Value("${lab.instance}") String instance,
-                             CheckoutResponseDelay responseDelay) {
-        this.bookings=bookings;this.payments=payments;this.instance=instance;this.responseDelay=responseDelay;
+                             CheckoutResponseDelay responseDelay,ProviderBoundary boundary) {
+        this.boundary=boundary;this.bookings=bookings;this.payments=payments;this.instance=instance;this.responseDelay=responseDelay;
     }
     @GetMapping("/health") Map<String,String> health() {return Map.of("status","up","instance",instance);}
     @PostMapping("/api/demo/events") ResponseEntity<Event> create(@Valid @RequestBody EventRequest request) {
@@ -45,8 +46,12 @@ public class BookingController {
     }
     @PostMapping("/api/bookings/{id}/cancel") Booking cancel(@PathVariable UUID id) {return bookings.cancel(id);}
     @GetMapping("/api/payments/{id}") Payment payment(@PathVariable UUID id) {return payments.get(id);}
+    @GetMapping("/api/payments/{id}/recovery") Map<String,Object> recovery(@PathVariable UUID id) {return payments.recoveryStatus(id);}
     @PostMapping("/api/demo/payments/{id}/callback") Booking callback(@PathVariable UUID id,@Valid @RequestBody CallbackRequest request) {return payments.callback(id,request);}
     @PostMapping("/api/demo/payments/{id}/reconcile") Booking reconcile(@PathVariable UUID id) {return payments.reconcile(id);}
     @PostMapping("/api/demo/payments/{id}/refund") Booking refund(@PathVariable UUID id) {return bookings.refund(id);}
+    @GetMapping("/api/provider/status") Map<String,Object> providerStatus() {
+        return Map.of("boundary",boundary.status(),"backlog",bookings.providerBacklog(),"checkoutAdmission",bookings.providerAdmission());
+    }
     @GetMapping("/api/stats") Map<String,Object> stats() {return bookings.stats();}
 }
