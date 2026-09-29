@@ -1,5 +1,17 @@
 # Source relationship and intentional differences
 
+## Poison-job extension — 2026-10-04
+
+Inspected original poison pill/poison-pill-demo/app/app.py and archived article
+172-the-poison-pill-request-how-one-bad.html. Python demonstrates unsafe payload
+patterns/SIGTERM and a validating route with process-local counters. Java adds
+per-payment durable quarantine/history and keyed bounded redrive to its SQL lease
+worker; no Python HTTP contract or process-crash parity claim. Originals were
+inspected, not launched/reset. Three caught item failures stop automatic dispatch;
+provider/DB exceptions remain separate. Original payment UUID, immutable receipt,
+checkout replay, lease fencing and late-success refunds remain.
+See [tutorial](docs/POISON_JOB_TUTORIAL.md) and [verification](docs/VERIFICATION.md).
+
 ## Provider isolation extension — 2026-10-04
 
 Read original Graceful_Service_Degradation/graceful-degradation-demo/src/circuit-breaker.js

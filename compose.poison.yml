@@ -1,0 +1,11 @@
+# Deterministic scenario 3: explicit recovery ticks, default local provider, retained DB.
+# Do not merge compose.provider.yml: its host8123 is now owned by URL-shortener API C.
+services:
+  api-a:
+    environment:
+      POISON_CONTROLS_ENABLED: "true"
+      MAINTENANCE_ENABLED: "false"
+  api-b:
+    environment:
+      POISON_CONTROLS_ENABLED: "true"
+      MAINTENANCE_ENABLED: "false"

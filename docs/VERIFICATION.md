@@ -1,5 +1,76 @@
 # Verification evidence
 
+## Scenario 3 poison-job isolation - verified 2026-10-04
+
+Delivered additive V3, per-claimed-item exception isolation, independent maintenance
+phase catches, durable quarantine/history, token/lease fencing and keyed bounded
+original-ID redrive. Tutorial: [poison-job study](POISON_JOB_TUTORIAL.md).
+Compact committed summary: [evidence JSON](evidence/POISON_ISOLATION_2026-10-04.json).
+
+| Command/check | Actual result |
+| --- | --- |
+| mvn -B -ntp verify | 42 tests,0 failures/errors/skips; real PostgreSQL Testcontainers; existing provider HTTP and failover tests included |
+| merged base+failover+poison config/build/up | Passed; existing booking database upgraded V2→V3; data retained |
+| node scripts/learn-poison.mjs | 23 checks passed, restoration true |
+| poison Newman6.2.2 | 24 requests/35 assertions,0 failures |
+| original booking Newman, scheduled default simulator | 75 requests/110 assertions,0 failures; polling count can vary |
+| failover Newman on final rebuilt images | 17 requests/26 assertions,0 failures |
+| root mvn -B -ntp validate | 21 reactor entries passed |
+| scripts/validate-artifacts.mjs, syntax/Compose/whitespace checks | Passed; see compact JSON for exact artifact/link counts |
+
+Java coverage proves first failed candidate permits four later healthy confirmations,
+three-failure automatic quarantine, immutable same-ID receipt reuse, cross-worker
+duplicate redrive serialization, active/stale lease protection,2-redrive lifetime cap,
+late-success refund/new owner safety, conservative DB/provider classification,
+malformed provider timestamp handling, quarantine backlog age/admission with
+existing-key replay, expiry-phase independence, disabled fixtures/default404 controls,
+lost-response redrive key consumption/replay and invalid-key/missing-fixture handling.
+DB-failure injection in the Java item test uses a mocked provider throwing Spring's
+infrastructure exception **after real PostgreSQL claim commit**; runtime additionally
+pauses/unpauses the actual retained PostgreSQL and observes503 with no false quarantine.
+
+Runtime uses both actual API containers and default simulator. The fixture throws
+after receipt commit. It records exactly3 item failures/dispatches before quarantine,
+restarts A and observes retained quarantine through both APIs, races same-key redrive
+on A/B and observes only one extra dispatch/one confirmation audit. It separately
+expires/reassigns a seat before late redrive and observes REFUND_REQUIRED while the
+replacement remains HELD. Broken redrives stop at5 total attempts; same-key replay
+does not increment; a verified immutable callback resolves the retained obligation.
+No sustained-load, throughput or recovery-lag SLO claim follows from these finite checks.
+
+Final images rebuilt after final Java validation. Final topology is **base+failover**:
+A8105/B8106/gateway8107/PostgreSQL5547, automatic maintenance enabled, poison fixture
+controls absent, default simulator, zero unresolved/quarantined/exhausted backlog and
+open checkout admission. Historical provider container/journal stopped and retained.
+Provider overlay's8123 is now owned by URL-shortener API C: its runtime suite was not
+rerun on that port; existing provider Java/controlled-HTTP tests passed. All nine
+URL-shortener services remain running; none were restarted/paused by this task.
+The poison overlay is available for learner-controlled deterministic manual ticks.
+
+Raw ignored evidence: target/poison-final-build.log, poison-runtime-evidence.json,
+poison-newman-evidence.json, poison-booking-regression.json,
+poison-failover-regression.json, poison-reactor.log and artifact-evidence.json.
+Fresh event/booking/payment/receipt/history/audit fixtures and both prior volumes
+are retained. No file deletion, Maven clean, reset, prune or orphan removal.
+Preexisting IntelliJ edits/staged jpa.xml preserved and excluded from task commit.
+Canonical memory updated locally; that reference tree has no Git metadata.
+
+Corrections: fixed a test-constructor type mismatch before passing validation;
+classified malformed provider timestamps as dependency errors; corrected missing
+fixture404 handling. Compose reports the intentionally retained stopped provider
+as an orphan; no removal performed. Newman emits Node's fs.F_OK deprecation warning
+without assertion failures. Historical scenario1/2 evidence below remains historical.
+
+Limits: catches RuntimeException after claim, not process kills/OOM/CPU hangs or
+pre-claim errors. All DB exceptions conservatively abort the batch, including
+item-specific SQL errors. No starvation-freedom under unbounded arrivals. A crash
+before durable failure recording does not increment itemFailures; remote mode
+still has its separate durable dispatch cap. A redrive crash after admission
+consumes its key/cap; replay discovers state without re-execution. Old workers
+ignore quarantine and must drain before rollout. No external payments/refunds,
+production auth/DB-host HA, exactly-once or production SLO/learner-mastery claim.
+Scenarios1–3 complete; stop.4–6/optimistic seats/retry-storm harness remain proposals.
+
 ## Scenario 2 provider isolation - verified 2026-10-04
 
 Delivered independent Java provider stub, provider overlay, V2 retry metadata,

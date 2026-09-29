@@ -1,5 +1,11 @@
 @AGENTS.md
 
+Latest study: [poison-job isolation](docs/POISON_JOB_TUTORIAL.md), scenario3.
+Read current verification/handover. Maximum2 keyed redrives, persistent UNKNOWN
+quarantine and separate dependency classification; no budget/identity resets.
+Default scheduled mode restored after manual study; provider8123 conflicts with
+shortener C. Scenarios1–3 complete; stop instead of automatically starting4–6.
+
 Read the linked local spec, guide, API, parity, verification and interview guide,
 then canonical learning memory before work. Preserve originals and prior projects.
 

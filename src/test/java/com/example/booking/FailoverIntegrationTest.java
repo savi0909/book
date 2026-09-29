@@ -101,4 +101,8 @@ class FailoverIntegrationTest {
         }
         assertThat(bookings.get(booking.id()).payment()).isNull();
     }
+    @Test void poisonMutationsAreAbsentByDefaultButDiagnosticsAvailable() throws Exception {
+        assertThat(call("POST","/api/demo/recovery/tick","{}").statusCode()).isEqualTo(404);
+        assertThat(call("GET","/api/recovery/status",null).statusCode()).isEqualTo(200);
+    }
 }

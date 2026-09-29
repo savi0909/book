@@ -1,0 +1,133 @@
+{
+  "date": "2026-10-04",
+  "scenario": 3,
+  "java": {
+    "tests": 42,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "command": "mvn -B -ntp verify"
+  },
+  "runtime": {
+    "startedAt": "2026-10-04T16:30:17.205Z",
+    "finishedAt": "2026-10-04T16:30:36.992Z",
+    "checks": [
+      "manual recovery topology",
+      "default provider avoids occupied8123",
+      "first failed item does not skip four healthy payments",
+      "first failure preserves UNKNOWN",
+      "exactly three attempts quarantined",
+      "quarantine stops automatic dispatch",
+      "ordinary reconcile cannot bypass quarantine",
+      "quarantine survives API restart",
+      "cross-replica duplicate redrive dispatched once",
+      "fixed redrive confirms original identity",
+      "one confirmation audit",
+      "three item failures quarantine 6362e18c-169b-48ed-8652-f4b706a322eb",
+      "late success requires refund",
+      "replacement owner stays HELD",
+      "three item failures quarantine f2691bfc-80cf-4cc1-9c1e-33a90f601161",
+      "third redrive denied",
+      "broken redrives bounded at five total attempts",
+      "same key replay remains discoverable",
+      "verified callback resolves exhausted quarantine",
+      "durable failure and redrive history",
+      "shared DB outage returns503",
+      "DB outage created no false quarantine",
+      "gateway business read works"
+    ],
+    "restored": true,
+    "retainedEvents": [
+      "486dac93-03d3-464b-ae11-25e50340f295",
+      "c7fc3d0e-23c4-4409-9de4-6990d7ba6443"
+    ],
+    "quarantine": {
+      "id": "ea5e1791-5640-4b1f-8b28-2ee6df8e236b",
+      "state": "UNKNOWN",
+      "attempts": 3,
+      "retryStartedAt": "2026-10-04T16:30:17.693+00:00",
+      "retryExhausted": false,
+      "lastError": null,
+      "nextAt": "2026-10-04T16:30:21.174+00:00",
+      "leaseUntil": null,
+      "itemFailures": 3,
+      "quarantinedAt": "2026-10-04T16:30:20.174+00:00",
+      "quarantineReason": "PoisonFixtureException",
+      "redriveCount": 0
+    }
+  },
+  "postman": {
+    "poison": {
+      "requests": 24,
+      "assertions": 35,
+      "failures": 0
+    },
+    "bookingDefault": {
+      "requests": 75,
+      "assertions": 110,
+      "failures": 0
+    },
+    "failover": {
+      "requests": 17,
+      "assertions": 26,
+      "failures": 0
+    }
+  },
+  "rootReactor": {
+    "entries": 21,
+    "passed": true
+  },
+  "finalTopology": {
+    "files": [
+      "compose.yml",
+      "compose.failover.yml"
+    ],
+    "defaultSimulator": true,
+    "scheduledMaintenance": true,
+    "poisonControls": false,
+    "providerRetainedStopped": true,
+    "otherStacksUnchanged": true,
+    "recovery": {
+      "quarantined": 0,
+      "oldestSeconds": 0,
+      "redrives": 0
+    },
+    "provider": {
+      "boundary": {
+        "queueCapacity": 0,
+        "limitPerProcess": 2,
+        "rejected": 0,
+        "enabled": false,
+        "state": "CLOSED",
+        "inFlight": 0,
+        "probeInFlight": false,
+        "calls": 0
+      },
+      "checkoutAdmission": true,
+      "backlog": {
+        "unresolved": 0,
+        "exhausted": 0,
+        "quarantined": 0,
+        "oldestSeconds": 0
+      }
+    }
+  },
+  "retention": "Booking and provider volumes, fixtures/history retained; no files deleted or cleanup/reset/prune",
+  "limits": [
+    "RuntimeException after successful claim only; no process-kill/OOM containment",
+    "All SQL exceptions conservatively abort batch without item quarantine",
+    "No starvation-freedom or recovery-lag SLO under unbounded arrivals",
+    "Redrive admission survives crash; same key never redispatches",
+    "Old workers ignore quarantine; drain before rollout",
+    "Historical provider8123 conflicts with shortener C; runtime provider suite not rerun; Java HTTP suite passed",
+    "No actual payments/refunds, production auth/HA or external exactly-once"
+  ],
+  "artifacts": {
+    "requiredFiles": 43,
+    "namedRequests": 110,
+    "scriptBlocks": 116,
+    "markdownFiles": 33,
+    "localLinks": 727,
+    "brokenLinks": 0
+  }
+}

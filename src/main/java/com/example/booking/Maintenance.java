@@ -20,8 +20,12 @@ public class Maintenance {
     @Scheduled(fixedDelay=500,initialDelay=1000)
     public void tick() {
         if(!enabled || !gate.enter()) return;
-        try {bookings.expireBatch();payments.recoverBatch();}
-        catch(RuntimeException error) {LOG.warn("Maintenance will retry: {}",error.getClass().getSimpleName());}
+        try {
+            try {bookings.expireBatch();}
+            catch(RuntimeException error) {LOG.warn("Expiry will retry: {}",error.getClass().getSimpleName());}
+            try {payments.recoverBatch();}
+            catch(RuntimeException error) {LOG.warn("Recovery dependency/batch failure: {}",error.getClass().getSimpleName());}
+        }
         finally {gate.leave();}
     }
 }

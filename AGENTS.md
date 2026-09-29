@@ -1,5 +1,22 @@
 # Ticket booking learning lab
 
+## Current scenario 3 delivery - 2026-10-04
+
+Read [poison tutorial](docs/POISON_JOB_TUTORIAL.md) and [verification](docs/VERIFICATION.md).
+Scenario3 implements per-item processing isolation, durable3-failure quarantine,
+history and keyed maximum2 lifetime redrives using the original payment UUID.
+Provider/DB failures stay separate; UNKNOWN/quarantine remains reconciliation
+liability. Redrive does not reset budgets; same-key replay cannot dispatch.
+Active token/unexpired lease fences failure recording. Quarantine stays until
+terminal apply; late SUCCESS preserves REFUND_REQUIRED and newer seat ownership.
+Older workers ignore quarantine: drain before rollout; do not mix old/new workers.
+Optional compose.poison.yml enables safe after-accept fixtures and manual recovery
+ticks with both schedulers disabled. Default controls/injection off; base+failover
+restores scheduled operation. Historical provider8123 now conflicts with shortener
+API C; preserve that service and retained provider-data. Read current topology.
+Scenarios1–3 delivered separately; stop here.4–6/optimistic seats/retry storms remain
+proposals. This latest section supersedes earlier 'scenario3 next' handover notes.
+
 ## Current scenario delivery - 2026-10-04
 
 Scenario 2 provider isolation is implemented and verified. Read

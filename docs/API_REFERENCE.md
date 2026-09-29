@@ -1,5 +1,29 @@
 # API reference
 
+## Scenario 3 recovery diagnostics and gated controls
+
+| Method/path | Input | Behavior |
+| --- | --- | --- |
+| GET /api/payments/{id}/recovery | UUID | Existing fields plus itemFailures, quarantinedAt, quarantineReason and redriveCount;200/404 |
+| GET /api/payments/{id}/recovery/history | UUID | Latest100 history records, newest first;200/404 |
+| GET /api/recovery/status | None | quarantined unresolved count, oldestSeconds, redrives on currently quarantined unresolved payments;200 |
+| GET /api/demo/recovery/controls | None | fixturesEnabled/maintenanceEnabled; optional control |
+| POST /api/demo/recovery/payments/{id}/fixture | `{"enabled":true}` or false | Enable/fix after-accept fault;200;400 missing enabled;409 terminal/active lease |
+| POST /api/demo/recovery/tick | No body required | One recovery batch, not expiry;200 candidates selected, not completions |
+| POST /api/demo/recovery/payments/{id}/redrive | Idempotency-Key | One original-ID attempt;200 `{replayed,recovery}`; same key returns current state without dispatch |
+
+The last four controls are absent404 unless POISON_CONTROLS_ENABLED=true. Key
+syntax matches checkout. Redrive409 codes: NOT_QUARANTINED, RECOVERY_LEASED,
+REDRIVE_EXHAUSTED. Maximum2 lifetime admissions. Replays check the durable key
+first, even after resolution/exhaustion. Lost response/process death after claim
+consumes the key; replay does not rerun it. Quarantine remains until terminal result;
+counters/provider budgets never reset. Ordinary reconcile now rejects409
+PAYMENT_QUARANTINED. Verified immutable callbacks remain supported. History fields:
+id, action, reason, requestKey, createdAt; reasons contain only exception classes.
+The provider backlog adds quarantined count; unresolved count/age includes it.
+Diagnostics are separate SQL reads, not one atomic snapshot.
+See [tutorial](POISON_JOB_TUTORIAL.md) and [Postman](../postman/poison.postman_collection.json).
+
 Base URLs: `http://localhost:8105` and `http://localhost:8106`; optional failover
 gateway `http://localhost:8107`. JSON request/response,
 camelCase fields, UUID identifiers, ISO-8601 UTC timestamps. No authentication,

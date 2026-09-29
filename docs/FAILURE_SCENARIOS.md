@@ -1,5 +1,11 @@
 # Six failure-handling and availability scenarios for ticket booking
 
+Latest delivery2026-10-04: scenarios1–3 are implemented in separate studies.
+Scenario3 [tutorial](POISON_JOB_TUTORIAL.md) and [verification](VERIFICATION.md)
+supersede the pre-implementation observation below. It adds per-claimed-item
+failure handling, persistent quarantine/history and bounded keyed redrive.
+Scenarios4–6 remain proposals; stop after the selected scenario3 delivery.
+
 Updated: 2026-10-04. Scenario1 is implemented in the optional failover overlay;
 see [its tutorial and interview points](API_FAILOVER_TUTORIAL.md). Scenarios2/3
 are authorized next in separate deliveries;4–6 remain proposals. Preserve seat,
@@ -16,7 +22,7 @@ separate topology exercise.
 | --- | --- | --- | --- |
 | 1 | API crashes or is restarted during checkout | Load balancing, readiness, draining, ambiguous responses | Implemented optional HAProxy8107, drain controls and crash/graceful experiments |
 | 2 | Payment provider becomes slow or unavailable | Bulkheads, circuit breaker, deadline/retry budgets, graceful degradation | Implemented optional independent Java stub, slots/deadlines/breaker/budgets |
-| 3 | One recovery item fails repeatedly | Poison jobs, per-item isolation, quarantine, redrive, fairness | Batch loops can stop at one exception |
+| 3 | One recovery item fails repeatedly | Poison jobs, per-item isolation, quarantine, redrive, fairness | Implemented durable quarantine/history and bounded keyed redrive; see scenario3 tutorial |
 | 4 | Booking commits but its confirmation event is lost | Transactional outbox, delivery retries, inbox deduplication | Booking/audit transaction exists; no notification outbox |
 | 5 | Refund succeeds but its response is lost | Saga compensation, durable refund identity, reconciliation | REFUND_REQUIRED and simulated acknowledgment exist |
 | 6 | PostgreSQL primary fails or becomes partitioned | Replication, fencing, failover/failback, RPO/RTO | One PostgreSQL primary; no database HA |
@@ -103,6 +109,10 @@ process/storage. The default cannot demonstrate an independent
 provider outage merely by stopping that database.
 
 ## 3. Poison-job isolation and controlled redrive
+
+Implemented: [detailed tutorial](POISON_JOB_TUTORIAL.md). The original observations
+below describe the motivation before this delivery; current claims/evidence are
+in [verification](VERIFICATION.md).
 
 **Failure story:** one persisted recovery item deterministically fails, while
 other buyers have valid pending payments. Repeatedly processing that item must

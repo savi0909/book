@@ -1,5 +1,23 @@
 # User guide
 
+## Optional poison-job study
+
+Start [scenario3 tutorial](POISON_JOB_TUTORIAL.md) for exact base+failover+poison
+commands, source reading and IntelliJ checkpoints. It uses the default simulator,
+retained PostgreSQL5547 and APIs8105/8106/gateway8107. Both automatic maintenance
+loops are disabled in the poison overlay: use explicit recovery ticks. Run
+scripts/learn-poison.mjs and then the poison Postman collection sequentially;
+both create retained fixtures. Import [collection](../postman/poison.postman_collection.json)
+and [environment](../postman/poison.postman_environment.json). Expect a healthy
+booking to confirm while a bad item reaches UNKNOWN quarantine after3 failures.
+Fix the fixture and redrive using a unique key; same-key replay must not dispatch.
+The runtime harness briefly restarts A and pauses/unpauses this project's DB.
+Use base+failover without poison to resume scheduled maintenance after study.
+Quarantine persists across topology changes; it is never payment failure.
+
+Historical provider host8123 is currently owned by URL-shortener C; do not start
+the provider overlay on that port. Other project services remain undisturbed.
+
 ## Optional API failover study
 
 Start [the detailed scenario 1 tutorial](API_FAILOVER_TUTORIAL.md) for the optional

@@ -1,4 +1,37 @@
-# Next-session handover: ticket booking scenario 3
+# Next-session handover: review completed ticket scenarios 1–3
+
+Latest delivery2026-10-04: scenario3 is implemented and verified. Read
+[poison tutorial](POISON_JOB_TUTORIAL.md) and [verification](VERIFICATION.md).
+Scenarios1–3 are complete; stop after this kit. Do not automatically start4–6,
+optimistic seat versions, the general retry-storm harness or connection storms.
+
+```text
+Review D:/java-projects/ticket-booking-lab's completed scenarios1–3.
+Load workspace/project AGENTS and current docs/VERIFICATION.md, SYSTEM_SPEC.md,
+API_REFERENCE.md, USER_GUIDE.md, PARITY.md and all three scenario tutorials.
+Load canonical memory at D:/AA-SYSTEM-DESIGN-ARCHITECTURE/sep-30-2026/sdir-p-main.
+Scenario3: additive V3, per-claimed-item catches,3 failures quarantine UNKNOWN,
+durable history, keyed maximum2 lifetime redrives, no budget resets. Provider/DB
+failure stays separate. Same-key replay discovers state without another attempt;
+crash after claim consumes key; wait for lease then choose a new key if available.
+Late success requires REFUND_REQUIRED and cannot steal a newer owner's seat.
+Default base+failover scheduled simulator topology restored; poison controls off.
+For deterministic study use base+failover+compose.poison.yml: both schedulers off,
+explicit recovery tick, safely gated after-accept fixture. Run tutorial/Postman
+sequentially. Provider overlay's historical8123 conflicts with shortener API C;
+preserve other project services and retained booking/provider volumes.
+Explain-back questions: why UNKNOWN survives quarantine; why provider budget is
+separate; how same-key redrive is serialized across replicas; what happens when
+acceptance precedes poison failure; why old workers must drain before rollout.
+Teaching/review-only work does not authorize new application scenarios. Keep
+substantive requested teaching in docs/, README-linked. Commit/push validated
+requested changes, preserve .idea edits, never delete files or run clean/prune.
+```
+
+The following prompt is retained as **historical pre-implementation context**.
+It does not select scenario3 again or supersede the completed delivery above.
+
+## Historical scenario3 implementation handover
 
 Prepared 2026-10-04 after scenario 2. This selects scenario 3 only for the next
 separate delivery. Scenario 2 is complete; stop the current session after its kit.

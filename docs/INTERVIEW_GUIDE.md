@@ -1,5 +1,12 @@
 # Ticket booking interview practice
 
+Scenario3: [poison-job tutorial](POISON_JOB_TUTORIAL.md) includes five scenario
+points, a short spoken answer and3–5 points per major subtopic: processing boundaries,
+durable scheduling, classification, redrive and operational rollout/capacity. Explain
+why quarantined UNKNOWN remains liability, why redrive uses the same UUID and why
+old recovery workers must drain before enabling a new quarantine policy. Reproduce
+the healthy-batch, duplicate-redrive and late-refund evidence.
+
 ## Scenario 1: five points and a 60-second answer
 
 Read [API failover and graceful restart](API_FAILOVER_TUTORIAL.md) for the detailed

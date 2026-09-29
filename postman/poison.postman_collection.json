@@ -1,0 +1,784 @@
+{
+  "info": {
+    "name": "Ticket booking scenario 3: poison isolation",
+    "description": "Enable compose.poison.yml; maintenance must be OFF on both replicas. Default local provider. Sequential retained fixtures; three retries use1100ms waits. No deletion/reset. Runtime harness adds restart, cross-replica race, late refund, redrive exhaustion and DB pause.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "01 Explicit manual topology",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/demo/recovery/controls"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200',()=>pm.response.to.have.status(200));pm.test('automatic maintenance off',()=>pm.expect(pm.response.json().maintenanceEnabled).eql(false));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "02 Fresh retained event",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/demo/events",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"name\":\"poison-{{$guid}}\",\"seatCount\":2}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 201',()=>pm.response.to.have.status(201));pm.environment.set('eventId',pm.response.json().id);pm.environment.set('runKey',pm.variables.replaceIn('{{$guid}}'));['bad','good','paymentId'].forEach(k=>pm.environment.unset(k));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Hold bad",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "h-bad-{{runKey}}"
+          }
+        ],
+        "url": "{{baseUrl}}/api/holds",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"eventId\":\"{{eventId}}\",\"seatNumber\":1,\"buyerId\":\"bad-{{runKey}}\",\"ttlSeconds\":120}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 201',()=>pm.response.to.have.status(201));pm.environment.set('bad',pm.response.json().id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Checkout bad",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "c-bad-{{runKey}}"
+          }
+        ],
+        "url": "{{baseUrl}}/api/bookings/{{bad}}/checkout",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"scenario\":\"SUCCESS\",\"delayMs\":0}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 202',()=>pm.response.to.have.status(202));pm.environment.set('paymentId',pm.response.json().payment.id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Enable deterministic after-accept fault",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/demo/recovery/payments/{{paymentId}}/fixture",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"enabled\":true}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200',()=>pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Hold good",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "h-good-{{runKey}}"
+          }
+        ],
+        "url": "{{baseUrl}}/api/holds",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"eventId\":\"{{eventId}}\",\"seatNumber\":2,\"buyerId\":\"good-{{runKey}}\",\"ttlSeconds\":120}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 201',()=>pm.response.to.have.status(201));pm.environment.set('good',pm.response.json().id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Checkout good",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "c-good-{{runKey}}"
+          }
+        ],
+        "url": "{{baseUrl}}/api/bookings/{{good}}/checkout",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"scenario\":\"SUCCESS\",\"delayMs\":0}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 202',()=>pm.response.to.have.status(202));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "First batch continues",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/demo/recovery/tick",
+        "body": {
+          "mode": "raw",
+          "raw": "{}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200',()=>pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Healthy booking confirmed",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/bookings/{{good}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200',()=>pm.response.to.have.status(200));pm.test('healthy item progressed',()=>pm.expect(pm.response.json().state).eql('CONFIRMED'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "First failure is UNKNOWN",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/payments/{{paymentId}}/recovery"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200',()=>pm.response.to.have.status(200));pm.test('isolated failure deferred',()=>{const r=pm.response.json();pm.expect(r.itemFailures).eql(1);pm.expect(r.state).eql('UNKNOWN');pm.expect(r.quarantinedAt).eql(null);});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Retry batch 2",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/demo/recovery/tick",
+        "body": {
+          "mode": "raw",
+          "raw": "{}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "setTimeout(() => {}, 1100);"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200',()=>pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Retry batch 3",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/demo/recovery/tick",
+        "body": {
+          "mode": "raw",
+          "raw": "{}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "setTimeout(() => {}, 1100);"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200',()=>pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Quarantine visible",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/payments/{{paymentId}}/recovery"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200',()=>pm.response.to.have.status(200));pm.test('bounded three attempts',()=>{const r=pm.response.json();pm.expect(r.attempts).eql(3);pm.expect(r.itemFailures).eql(3);pm.expect(r.quarantinedAt).to.be.a('string');pm.expect(r.quarantineReason).eql('PoisonFixtureException');});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Quarantine batch skips payment",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/demo/recovery/tick",
+        "body": {
+          "mode": "raw",
+          "raw": "{}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "setTimeout(() => {}, 1100);"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200',()=>pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Ordinary reconcile denied",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/demo/payments/{{paymentId}}/reconcile",
+        "body": {
+          "mode": "raw",
+          "raw": "{}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 409',()=>pm.response.to.have.status(409));pm.test('deliberate redrive required',()=>pm.expect(pm.response.json().code).eql('PAYMENT_QUARANTINED'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "History is durable",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/payments/{{paymentId}}/recovery/history"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200',()=>pm.response.to.have.status(200));pm.test('quarantine action retained',()=>pm.expect(pm.response.json().some(x=>x.action==='QUARANTINED')).eql(true));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Quarantine aggregate",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/recovery/status"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200',()=>pm.response.to.have.status(200));pm.test('quarantine counted',()=>pm.expect(Number(pm.response.json().quarantined)).to.be.at.least(1));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Fix fixture cause",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/demo/recovery/payments/{{paymentId}}/fixture",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"enabled\":false}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200',()=>pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Keyed redrive original payment",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "r-{{runKey}}"
+          }
+        ],
+        "url": "{{baseUrl}}/api/demo/recovery/payments/{{paymentId}}/redrive",
+        "body": {
+          "mode": "raw",
+          "raw": "{}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200',()=>pm.response.to.have.status(200));pm.test('one bounded redrive applies',()=>{const r=pm.response.json();pm.expect(r.replayed).eql(false);pm.expect(r.recovery.state).eql('SUCCESS');pm.expect(r.recovery.attempts).eql(4);pm.expect(r.recovery.redriveCount).eql(1);pm.expect(r.recovery.quarantinedAt).eql(null);});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Same key redrive replay",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "r-{{runKey}}"
+          }
+        ],
+        "url": "{{baseUrl}}/api/demo/recovery/payments/{{paymentId}}/redrive",
+        "body": {
+          "mode": "raw",
+          "raw": "{}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200',()=>pm.response.to.have.status(200));pm.test('no additional dispatch',()=>{const r=pm.response.json();pm.expect(r.replayed).eql(true);pm.expect(r.recovery.attempts).eql(4);});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Different key terminal redrive rejected",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "other-{{runKey}}"
+          }
+        ],
+        "url": "{{baseUrl}}/api/demo/recovery/payments/{{paymentId}}/redrive",
+        "body": {
+          "mode": "raw",
+          "raw": "{}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 409',()=>pm.response.to.have.status(409));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Original booking identity preserved",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/bookings/{{bad}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200',()=>pm.response.to.have.status(200));pm.test('confirmation uses original payment',()=>{const b=pm.response.json();pm.expect(b.state).eql('CONFIRMED');pm.expect(b.payment.id).eql(pm.environment.get('paymentId'));});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Confirmation happens once",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/bookings/{{bad}}/audit"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200',()=>pm.response.to.have.status(200));pm.test('one confirmation audit',()=>pm.expect(pm.response.json().filter(x=>x.action==='CONFIRMED').length).eql(1));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Malformed fixture rejected",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/demo/recovery/payments/{{paymentId}}/fixture",
+        "body": {
+          "mode": "raw",
+          "raw": "{}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 400',()=>pm.response.to.have.status(400));"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

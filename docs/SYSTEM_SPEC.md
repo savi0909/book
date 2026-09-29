@@ -1,5 +1,35 @@
 # System specification
 
+## Scenario 3 extension — poison-job isolation
+
+V3 adds durable itemFailures(0..3), quarantinedAt/reason, redriveCount(0..2),
+optional poison fixture and recovery_history. Claims, caught item failures,
+quarantine, redrive keys and applied outcomes persist. Unexpected RuntimeException
+after a successful claim defers UNKNOWN1s and quarantines on the third recorded
+failure. Failure recording requires the current token and an unexpired lease.
+Automatic candidates exclude quarantine, order nextAt/UUID and retain20-item
+batches. Provider failures retain scenario2 policy; DataAccessException and
+TransactionException abort the batch without item quarantine. Maintenance expiry
+and payment phases now have independent catches within lifecycle admission.
+
+Quarantine does not mean payment FAILURE and still contributes to unresolved
+count/age checkout admission. Ordinary reconcile rejects quarantine. A gated keyed
+redrive locks the payment row and records its key/cap admission in the same
+transaction as the original-ID lease claim. At most2 lifetime extra dispatches;
+same-key replay does not dispatch. Active leases reject; no retry counters/budgets
+reset. Quarantine remains until terminal application, including when redrive defers.
+A crash after claim still consumes that key; investigate, wait for lease expiry
+and use another deliberate key if available. Verified callbacks can resolve outcomes
+after redrive exhaustion. Inventory transitions retain seat→booking→payment locking
+and late-success refund obligations. No inventory transaction spans provider work.
+
+The optional compose.poison.yml enables deterministic controls and disables both
+automatic maintenance loops. Default controls/fixture injection are off; diagnostics
+remain available. Fault occurs after simulator acceptance, before callback apply.
+Existing data/migrations retained. Older workers ignore quarantine: drain them
+before rollout; mixed-version automatic recovery is unsafe. No process-crash
+containment or starvation-freedom/SLO claim. See [tutorial](POISON_JOB_TUTORIAL.md).
+
 ## Scenario 2 extension — independent provider isolation
 
 The optional [provider overlay](../compose.provider.yml) adds a Java stub on

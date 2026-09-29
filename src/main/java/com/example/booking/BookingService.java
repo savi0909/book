@@ -143,6 +143,7 @@ public class BookingService {
     public Map<String,Object> providerBacklog() {
         return store.jdbc().queryForMap("""
             SELECT count(*) AS unresolved, count(*) FILTER (WHERE retry_exhausted) AS exhausted,
+              count(*) FILTER (WHERE quarantined_at IS NOT NULL) AS quarantined,
               COALESCE(EXTRACT(EPOCH FROM clock_timestamp()-min(created_at)),0) AS "oldestSeconds"
             FROM payments WHERE state IN ('PENDING','UNKNOWN')
             """);

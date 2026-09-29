@@ -17,7 +17,14 @@ const required = ['pom.xml', 'README.md', 'AGENTS.md', 'CLAUDE.md', 'PARITY.md',
   'docs/PROVIDER_ISOLATION_TUTORIAL.md', 'postman/provider.postman_collection.json',
   'postman/provider.postman_environment.json', 'scripts/learn-provider.mjs',
   'src/test/java/com/example/booking/ProviderIsolationIntegrationTest.java',
-  'src/main/resources/db/migration/V2__provider_retry_budget.sql'];
+  'src/main/resources/db/migration/V2__provider_retry_budget.sql',
+  'src/main/resources/db/migration/V3__poison_job_isolation.sql', 'compose.poison.yml',
+  'docs/POISON_JOB_TUTORIAL.md', 'postman/poison.postman_collection.json',
+  'postman/poison.postman_environment.json', 'scripts/learn-poison.mjs',
+  'scripts/generate-poison-postman.mjs', 'src/test/java/com/example/booking/PoisonIsolationIntegrationTest.java',
+  'src/main/java/com/example/booking/RecoveryIsolation.java',
+  'src/main/java/com/example/booking/PoisonController.java',
+  'src/main/java/com/example/booking/RecoveryController.java'];
 for (const name of required) assert.ok(fs.existsSync(path.join(project, name)), name);
 const collection = JSON.parse(fs.readFileSync(required[12], 'utf8'));
 const environment = JSON.parse(fs.readFileSync(required[13], 'utf8'));
@@ -41,6 +48,11 @@ const providerEnvironment = JSON.parse(fs.readFileSync('postman/provider.postman
 assert.equal(providerCollection.info.schema, collection.info.schema);
 for (const name of ['baseUrl', 'providerUrl']) assert.ok(providerEnvironment.values.some(v => v.key === name && v.enabled));
 inspect(providerCollection);
+const poisonCollection = JSON.parse(fs.readFileSync('postman/poison.postman_collection.json', 'utf8'));
+const poisonEnvironment = JSON.parse(fs.readFileSync('postman/poison.postman_environment.json', 'utf8'));
+assert.equal(poisonCollection.info.schema, collection.info.schema);
+assert.ok(poisonEnvironment.values.some(v => v.key === 'baseUrl' && v.enabled));
+inspect(poisonCollection);
 assert.ok(requests.every(r => r.name && r.event.some(e => e.listen === 'test')), 'named requests have assertions');
 const projectMarkdown = execFileSync('rg', ['--files', project, '-g', '*.md'], { encoding: 'utf8' }).trim().split(/\r?\n/);
 const shared = ['AGENTS.md', 'memory/PROJECT_CONTEXT.md', 'memory/PROGRESS.md', 'memory/DECISIONS.md',

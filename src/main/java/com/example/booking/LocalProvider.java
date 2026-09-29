@@ -15,7 +15,10 @@ public class LocalProvider {
         if(boundary.enabled()) {
             String value=boundary.call("/payments/"+p.id(),(p.scenario()==Scenario.FAILURE?"FAILURE":"SUCCESS")+","+p.readyAt().toEpochMilli());
             String[] fields=value.split(",");
-            if(fields.length!=2 || !fields[0].equals(p.scenario()==Scenario.FAILURE?"FAILURE":"SUCCESS") || Long.parseLong(fields[1])!=p.readyAt().toEpochMilli())
+            boolean valid=false;
+            try {valid=fields.length==2 && fields[0].equals(p.scenario()==Scenario.FAILURE?"FAILURE":"SUCCESS") && Long.parseLong(fields[1])==p.readyAt().toEpochMilli();}
+            catch(NumberFormatException invalid) { /* Malformed dependency response is not a poison item. */ }
+            if(!valid)
                 throw new ProviderBoundary.Unavailable("INVALID_RECEIPT");
         }
         // This transaction commits separately from inventory and callback processing.
