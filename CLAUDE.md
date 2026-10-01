@@ -1,5 +1,10 @@
 @AGENTS.md
 
+Latest continuation: [transactional outbox scenario4](docs/TRANSACTIONAL_OUTBOX_TUTORIAL.md).
+Read current AGENTS/evidence. Atomic snapshot source + separate atomic inbox/effect
+and leased ack, monotonic versions, retained history, no sends/external exactly-once.
+Optional manual overlay; default scheduled mode restored. Stop after4;5–6 remain proposals.
+
 Latest study: [poison-job isolation](docs/POISON_JOB_TUTORIAL.md), scenario3.
 Read current verification/handover. Maximum2 keyed redrives, persistent UNKNOWN
 quarantine and separate dependency classification; no budget/identity resets.

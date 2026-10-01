@@ -1,5 +1,36 @@
 # System specification
 
+## Scenario4 extension — transactional outbox and local inbox
+
+V4 adds delivery_version to bookings and retained booking_outbox, notification_inbox,
+local_notification_receipts and booking_delivery_projection. Actual CONFIRMED/CANCELLED
+transitions increment sequence and insert one immutable schemaVersion1 snapshot in
+the same inventory transaction as state/audit. Replays emit no duplicate source
+event. Late success without confirmation emits none. Pre-V4 history is unbackfilled;
+delivery_version0 is the cutover baseline, not optimistic seat locking.
+
+Dispatcher selects20 due undelivered events, conditionally claims5s/random token,
+commits before consume and acknowledges separately with current token/unexpired
+lease. Sink locks per-booking projection and atomically commits inbox plus advancing
+snapshot/receipt. Duplicate event ID increments deliveries without another effect.
+Older snapshot produces STALE_IGNORED inbox only; version comparison prevents old
+confirmation overriding already observed cancellation. Snapshot skips are supported;
+no FIFO/delta-processing or externally ordered-send claim. Source/consumer/ack are
+separate commits but share PostgreSQL availability.
+
+DB/transaction failure aborts dispatch batch and retains claim until lease expiry;
+other RuntimeException defers item2s and permits later items. Outbox retries remain
+enabled indefinitely with due/lease bounds; payment poison3-failure quarantine is
+not applied implicitly. No whole-workflow delivery deadline or dead-letter policy.
+Scheduler ticks500ms after completion, gated by maintenance+outbox flags and lifecycle
+admission; default scheduler thread is shared with maintenance. Optional outbox
+overlay disables both loops and enables bounded0..10000ms after-consume delay and
+manual controls; defaults off/no delay. Gateway excludes replica mutation controls.
+Diagnostics expose per-booking source/inbox/receipt/projection plus pending count/age.
+Old writers ignore outbox; drain them before source rollout. No historical backfill,
+real sends/broker, HA/auth/SLO or external exactly-once claim. See
+[tutorial](TRANSACTIONAL_OUTBOX_TUTORIAL.md) and [verification](VERIFICATION.md).
+
 ## Scenario 3 extension — poison-job isolation
 
 V3 adds durable itemFailures(0..3), quarantinedAt/reason, redriveCount(0..2),

@@ -1,5 +1,18 @@
 # Source relationship and intentional differences
 
+## Scenario4 outbox extension — 2026-10-05
+
+Inspected original global-payment-system/services/processor/server.js: PostgreSQL
+COMMIT precedes Redis metrics/publish, exposing a dual-write gap. No dedicated
+original outbox demo was found in canonical index/tree or local article manifest.
+Consulted official AWS outbox guidance after local source inspection. Java adds
+atomic booking confirmation/cancellation snapshots, persistent leased dispatch,
+atomic local inbox/receipt and monotonic snapshot projection. Original contracts
+were inspected, not executed/ported. Sink is the same PostgreSQL failure domain
+with a separate transaction, no broker/network/actual email. No source API parity,
+external exactly-once or FIFO delivery claim. Retained delivery/inbox rows have no
+cleanup/reset. See [tutorial](docs/TRANSACTIONAL_OUTBOX_TUTORIAL.md) and evidence.
+
 ## Poison-job extension — 2026-10-04
 
 Inspected original poison pill/poison-pill-demo/app/app.py and archived article

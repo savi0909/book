@@ -1,4 +1,33 @@
-# Next-session handover: review completed ticket scenarios 1–3
+# Next-session handover: review completed ticket scenarios1–4
+
+Latest user continuation2026-10-05 selected and delivered scenario4. Read
+[transactional outbox tutorial](TRANSACTIONAL_OUTBOX_TUTORIAL.md) and current
+[verification](VERIFICATION.md). The following section supersedes older stop-at3
+and historical implementation prompts retained below.
+
+```text
+Review completed ticket-booking-lab scenarios1–4, one detailed study at a time.
+Load workspace/project AGENTS plus canonical memory and current spec/API/guide/
+parity/verification/interview docs. Focus on docs/TRANSACTIONAL_OUTBOX_TUTORIAL.md:
+V4 source transaction stores CONFIRMED/CANCELLED snapshots; source versions are
+event sequence, not optimistic seats. Outbox claim commits before local sink;
+inbox/receipt/projection commit together; separate token/unexpired-lease ack.
+Two actual API crashes prove committed delivery-work recovery and duplicate-safe
+local effects. Old confirmation cannot overwrite observed cancellation2. No
+historical backfill, real sends/broker/auth/HA/external exactly-once claim.
+Default base+failover scheduled topology restored; optional compose.outbox.yml
+disables both loops/enables bounded local fault controls. Preserve all volumes,
+event/inbox/receipt fixtures and other stacks; provider8123 conflicts with shortener C.
+Explain the three commits, inbox/effect atomicity, source/consumer failure domains,
+snapshot-vs-delta ordering, old-writer drain and operational count/age ownership.
+Scenarios1–4 complete; stop. Refund saga5, database HA6, optimistic seats/general
+retry storms remain separate proposals; do not implement automatically during review.
+Requested substantive teaching goes in docs/, README-linked; validated changes
+are committed/pushed with remote verification. Preserve .idea edits/staged jpa.xml;
+never delete files/directories, run Maven clean or Docker prune without permission.
+```
+
+## Historical scenario3 review handover
 
 Latest delivery2026-10-04: scenario3 is implemented and verified. Read
 [poison tutorial](POISON_JOB_TUTORIAL.md) and [verification](VERIFICATION.md).

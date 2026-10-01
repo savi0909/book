@@ -1,5 +1,20 @@
 # User guide
 
+## Transactional outbox study
+
+Use [scenario4 tutorial](TRANSACTIONAL_OUTBOX_TUTORIAL.md) for base+failover+outbox
+startup commands, source order, actual crash experiments and IntelliJ checkpoints.
+It retains APIs8105/8106/gateway8107/PostgreSQL5547/default simulator, without new
+ports or real sends. Outbox overlay disables both maintenance/dispatch loops;
+explicit payment reconcile confirms, manual outbox dispatch delivers. Source state
+and event commit together; inbox+receipt+projection commit separately before ack.
+Run scripts/learn-outbox.mjs, then [Postman collection](../postman/outbox.postman_collection.json)
+with [environment](../postman/outbox.postman_environment.json) sequentially. Fresh
+fixtures/history are retained. Two API crashes demonstrate committed work recovery
+and duplicate consumption without repeated local receipt. Reordered cancellation
+must leave projection CANCELLED2 and ignore older confirmation. Use base+failover
+without the study overlay to resume both automatic loops; no data deletion/reset.
+
 ## Optional poison-job study
 
 Start [scenario3 tutorial](POISON_JOB_TUTORIAL.md) for exact base+failover+poison

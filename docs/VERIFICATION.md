@@ -1,5 +1,79 @@
 # Verification evidence
 
+## Scenario4 transactional outbox - verified2026-10-05
+
+User continued concepts implementation after3. Delivered additive V4, atomic
+confirmation/cancellation snapshots, recoverable leased dispatcher, atomic local
+inbox/receipt and monotonic booking projection, diagnostics, gated crash/reorder
+controls and full incremental learning kit. [Tutorial](TRANSACTIONAL_OUTBOX_TUTORIAL.md)
+and [compact evidence](evidence/OUTBOX_2026-10-05.json).
+
+| Executed command/check | Actual result |
+| --- | --- |
+| mvn -B -ntp verify | 53 tests,0 failures/errors/skips; real PostgreSQL plus existing controlled-provider HTTP/failover regressions |
+| base+failover+outbox config/build/up | Passed; retained booking DB migratedV3→V4, historical data retained |
+| node scripts/learn-outbox.mjs | 26 actual Docker/HTTP checks passed,restoration true |
+| outbox Newman6.2.2 | 26 requests/41 assertions,0 failures |
+| poison Newman in poison overlay | 24 requests/35 assertions,0 failures |
+| original booking Newman, scheduled default mode | 73 requests/108 assertions,0 failures; polling count varies |
+| failover Newman, scheduled default mode | 17 requests/26 assertions,0 failures |
+| root mvn -B -ntp validate | 21 reactor entries passed |
+| artifact/Markdown/Postman-script validation | 56 required files/136 named requests/142 parsed script blocks;zero broken links; see JSON for final link count |
+
+New11 PostgreSQL tests establish committed pending work; confirmation/outbox rollback
+with separately committed provider receipt retained; cancellation/event rollback
+and replay; consumer response loss after effect commit; duplicate-safe receipt;
+cancellation-first stale confirmation suppression; inbox/effect rollback and16
+concurrent duplicate consumes; active/stale lease fencing and free unrelated hold;
+conservative shared-DB exception handling; no false confirmation on late success;
+per-item failure continuation; required source transaction and lifecycle admission.
+Existing test additionally checks absent-by-default outbox controls/available status.
+The DB-failure unit path mocks sink failure after real PostgreSQL claim commit;
+this delivery does not claim a new actual DB outage experiment.
+
+Runtime SIGKILL1 occurs after source confirmation/outbox commit and before dispatch;
+B observes the same source event and delivers it. SIGKILL2 occurs after local inbox/
+receipt commit and before ack, verified through waitingEvents and B diagnostics.
+The actual HTTP response is lost, live lease prevents a second claim, then B reclaims
+after expiry: attempts2/inbox deliveries2/local receipts1, deliveredAt set. A/B race
+claims one original event once. Cancellation2 consumed before confirmation1 leaves
+projection CANCELLED2, stale inbox disposition and only cancellation receipt.
+Gateway diagnostics200/control404 checked. These are finite correctness observations,
+not measured throughput, email delivery, strict fairness or an SLO.
+
+Final topology restored to base+failover A8105/B8106/gateway8107/PostgreSQL5547:
+both scheduled maintenance and outbox dispatch enabled, study controls off,
+default payment simulator; pending outbox0 and unresolved/quarantined payments0.
+Retained historical provider container remains stopped because its8123 is owned
+by URL-shortener C. All nine shortener services remained running/undisturbed.
+Independent-provider runtime suite not rerun on conflicting port; its existing
+Java/controlled-HTTP tests passed. Optional outbox overlay remains for manual study.
+
+V4 success confirmed in retained flyway_schema_history.28 old CONFIRMED bookings
+with delivery_version0 demonstrate the intentional pre-cutover boundary: no historical
+event backfill or retrospective notifications. Newly written transitions use V4.
+All booking/provider volumes and source/inbox/receipt/history fixtures retained.
+No files/directories deleted, Maven clean, reset, prune or orphan removal.
+Original IntelliJ edits/staged jpa.xml preserved and excluded. Canonical memory
+updated locally, without Git metadata; Java task changes delivered through origin.
+
+Raw ignored evidence: target/outbox-build.log, outbox-runtime-evidence.json,
+outbox-newman-evidence.json, outbox-poison-regression.json,
+outbox-booking-regression.json, outbox-failover-regression.json,
+outbox-reactor.log and artifact-evidence.json. Compose orphan warning concerns
+intentionally retained provider; no removal. Newman fs.F_OK deprecation warning
+has no failed assertions. Original local JavaScript reference inspected, not executed;
+official AWS source consulted after local discovery, no original contract parity.
+
+Limits: same PostgreSQL availability domain for source/sink despite separate commits;
+local notification ledger only, no broker/real email or external exactly-once. Monotonic
+snapshot projection does not guarantee FIFO/delta semantics or read-after-cancel
+before cancellation arrives. Outbox retries have no exhaustion/quarantine policy;
+new permanent delivery bugs need investigation. Existing default scheduler thread
+is shared with payment/expiry work. Old source writers ignore outbox and must drain
+before rollout. No production auth/HA/load/SLO/learner-mastery claim.1–4 complete;
+stop.5–6/optimistic seats/general retry-storm harness remain separate proposals.
+
 ## Scenario 3 poison-job isolation - verified 2026-10-04
 
 Delivered additive V3, per-claimed-item exception isolation, independent maintenance

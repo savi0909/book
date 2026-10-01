@@ -70,6 +70,14 @@ public class BookingStore {
     void audit(UUID booking, String action) {
         jdbc.update("INSERT INTO booking_audit(booking_id, action) VALUES (?, ?)", booking, action);
     }
+    void enqueueSnapshot(UUID booking,String kind) {
+        if(!org.springframework.transaction.support.TransactionSynchronizationManager.isActualTransactionActive())
+            throw new IllegalStateException("Outbox snapshot must join the inventory transaction");
+        jdbc.update("""
+            INSERT INTO booking_outbox(id,booking_id,booking_version,kind)
+            SELECT ?,id,delivery_version,? FROM bookings WHERE id=?
+            """,UUID.randomUUID(),kind,booking);
+    }
     void expire(UUID booking) {
         if (jdbc.update("""
             UPDATE bookings SET state = 'EXPIRED', updated_at = clock_timestamp()

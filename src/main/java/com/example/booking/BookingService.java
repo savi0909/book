@@ -108,11 +108,12 @@ public class BookingService {
             store.expire(id);
             BookingRow b = store.row(id);
             if (Set.of("HELD","CHECKOUT","CONFIRMED").contains(b.state())) {
-                store.jdbc().update("UPDATE bookings SET state='CANCELLED',updated_at=clock_timestamp() WHERE id=?",id);
+                store.jdbc().update("UPDATE bookings SET state='CANCELLED',delivery_version=delivery_version+1,updated_at=clock_timestamp() WHERE id=?",id);
                 Payment p = store.paymentFor(id);
                 if (p != null && p.state().equals("SUCCESS"))
                     store.jdbc().update("UPDATE bookings SET reconciliation='REFUND_REQUIRED' WHERE id=?",id);
                 store.audit(id,"CANCELLED");
+                store.enqueueSnapshot(id,"CANCELLED");
                 return store.view(id,false);
             }
             return store.view(id,true);

@@ -1,0 +1,820 @@
+{
+  "info": {
+    "name": "Ticket scenario 4: transactional outbox and inbox",
+    "description": "Enable base+failover+outbox overlay; both maintenance/dispatch loops OFF. Local retained fixtures, no sends/deletion/reset. Run sequentially. The runtime harness additionally proves actual API crashes at both commit gaps.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "01 Manual outbox topology",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/demo/outbox/controls"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200',()=>pm.response.to.have.status(200));pm.test('automatic dispatcher disabled',()=>pm.expect(pm.response.json().automaticDispatch).eql(false));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "02 Fresh retained event",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/demo/events",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"name\":\"outbox-{{$guid}}\",\"seatCount\":2}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 201',()=>pm.response.to.have.status(201));pm.environment.set('eventId',pm.response.json().id);pm.environment.set('runKey',pm.variables.replaceIn('{{$guid}}'));['first','second','paymentId','outboxId','confirmId','cancelId'].forEach(k=>pm.environment.unset(k));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Hold first",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "h-first-{{runKey}}"
+          }
+        ],
+        "url": "{{baseUrl}}/api/holds",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"eventId\":\"{{eventId}}\",\"seatNumber\":1,\"buyerId\":\"first-{{runKey}}\",\"ttlSeconds\":120}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 201',()=>pm.response.to.have.status(201));pm.environment.set('first',pm.response.json().id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Checkout first",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "c-first-{{runKey}}"
+          }
+        ],
+        "url": "{{baseUrl}}/api/bookings/{{first}}/checkout",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"scenario\":\"SUCCESS\",\"delayMs\":0}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 202',()=>pm.response.to.have.status(202));pm.environment.set('paymentId',pm.response.json().payment.id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Confirm first",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/demo/payments/{{paymentId}}/reconcile",
+        "body": {
+          "mode": "raw",
+          "raw": "{}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200',()=>pm.response.to.have.status(200));pm.test('source confirmed',()=>pm.expect(pm.response.json().state).eql('CONFIRMED'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Durable pending confirmation",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/bookings/{{first}}/delivery"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200',()=>pm.response.to.have.status(200));pm.test('commit includes pending event',()=>{const d=pm.response.json();pm.expect(d.events.length).eql(1);pm.expect(d.events[0].kind).eql('CONFIRMED');pm.expect(d.events[0].bookingVersion).eql(1);pm.expect(d.events[0].deliveredAt).eql(null);pm.expect(d.notifications.length).eql(0);});pm.environment.set('outboxId',pm.response.json().events[0].id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Bounded post-consume delay",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/demo/outbox/events/{{outboxId}}/delay",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"delayMs\":50}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200',()=>pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "B dispatches original event",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{apiB}}/api/demo/outbox/events/{{outboxId}}/dispatch",
+        "body": {
+          "mode": "raw",
+          "raw": "{}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200',()=>pm.response.to.have.status(200));pm.test('one claim',()=>pm.expect(pm.response.json().claimed).eql(true));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Already acknowledged event skips",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/demo/outbox/events/{{outboxId}}/dispatch",
+        "body": {
+          "mode": "raw",
+          "raw": "{}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200',()=>pm.response.to.have.status(200));pm.test('no additional attempt',()=>pm.expect(pm.response.json().claimed).eql(false));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Duplicate consumer delivery",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/demo/outbox/events/{{outboxId}}/consume",
+        "body": {
+          "mode": "raw",
+          "raw": "{}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200',()=>pm.response.to.have.status(200));pm.test('inbox deduplication',()=>pm.expect(pm.response.json().replayed).eql(true));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "One local receipt after duplicate",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/bookings/{{first}}/delivery"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200',()=>pm.response.to.have.status(200));pm.test('effect once, deliveries twice',()=>{const d=pm.response.json();pm.expect(d.notifications.length).eql(1);pm.expect(d.inbox[0].deliveries).eql(2);pm.expect(d.events[0].attempts).eql(1);pm.expect(d.events[0].deliveredAt).to.be.a('string');pm.expect(d.projection[0].state).eql('CONFIRMED');});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Hold second",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "h-second-{{runKey}}"
+          }
+        ],
+        "url": "{{baseUrl}}/api/holds",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"eventId\":\"{{eventId}}\",\"seatNumber\":2,\"buyerId\":\"second-{{runKey}}\",\"ttlSeconds\":120}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 201',()=>pm.response.to.have.status(201));pm.environment.set('second',pm.response.json().id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Checkout second",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "c-second-{{runKey}}"
+          }
+        ],
+        "url": "{{baseUrl}}/api/bookings/{{second}}/checkout",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"scenario\":\"SUCCESS\",\"delayMs\":0}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 202',()=>pm.response.to.have.status(202));pm.environment.set('paymentId',pm.response.json().payment.id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Confirm second",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/demo/payments/{{paymentId}}/reconcile",
+        "body": {
+          "mode": "raw",
+          "raw": "{}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200',()=>pm.response.to.have.status(200));pm.test('source confirmed',()=>pm.expect(pm.response.json().state).eql('CONFIRMED'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Cancel second before delivery",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/bookings/{{second}}/cancel",
+        "body": {
+          "mode": "raw",
+          "raw": "{}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200',()=>pm.response.to.have.status(200));pm.test('source cancelled',()=>pm.expect(pm.response.json().state).eql('CANCELLED'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Cancellation has next version",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/bookings/{{second}}/delivery"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200',()=>pm.response.to.have.status(200));pm.test('two immutable snapshots',()=>{const e=pm.response.json().events;pm.expect(e.length).eql(2);pm.expect(e[0].bookingVersion).eql(1);pm.expect(e[1].bookingVersion).eql(2);pm.expect(e[1].kind).eql('CANCELLED');});const e=pm.response.json().events;pm.environment.set('confirmId',e[0].id);pm.environment.set('cancelId',e[1].id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Deliver cancellation first",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/demo/outbox/events/{{cancelId}}/consume",
+        "body": {
+          "mode": "raw",
+          "raw": "{}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200',()=>pm.response.to.have.status(200));pm.test('newest snapshot applied',()=>pm.expect(pm.response.json().disposition).eql('APPLIED'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Older confirmation ignored",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/demo/outbox/events/{{confirmId}}/consume",
+        "body": {
+          "mode": "raw",
+          "raw": "{}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200',()=>pm.response.to.have.status(200));pm.test('out-of-order stale event ignored',()=>pm.expect(pm.response.json().disposition).eql('STALE_IGNORED'));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Projection never reactivates",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/bookings/{{second}}/delivery"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200',()=>pm.response.to.have.status(200));pm.test('cancelled projection, no stale notification',()=>{const d=pm.response.json();pm.expect(d.projection[0].state).eql('CANCELLED');pm.expect(d.projection[0].bookingVersion).eql(2);pm.expect(d.notifications.length).eql(1);pm.expect(d.notifications[0].kind).eql('CANCELLED');});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Recovery batch acknowledges both events",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/demo/outbox/tick",
+        "body": {
+          "mode": "raw",
+          "raw": "{}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200',()=>pm.response.to.have.status(200));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Acknowledgements preserve projection",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/bookings/{{second}}/delivery"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200',()=>pm.response.to.have.status(200));pm.test('both acknowledged, effect unchanged',()=>{const d=pm.response.json();pm.expect(d.events.every(e=>e.deliveredAt!==null)).eql(true);pm.expect(d.notifications.length).eql(1);pm.expect(d.projection[0].state).eql('CANCELLED');});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Outbox count and age visible",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/outbox/status"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200',()=>pm.response.to.have.status(200));pm.test('operational metadata',()=>{const r=pm.response.json();pm.expect(Number(r.pending)).to.be.at.least(0);pm.expect(Number(r.oldestSeconds)).to.be.at.least(0);});"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Delay over bound rejected",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/demo/outbox/events/{{outboxId}}/delay",
+        "body": {
+          "mode": "raw",
+          "raw": "{\"delayMs\":10001}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 400',()=>pm.response.to.have.status(400));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Missing delay rejected",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/demo/outbox/events/{{outboxId}}/delay",
+        "body": {
+          "mode": "raw",
+          "raw": "{}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 400',()=>pm.response.to.have.status(400));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Unknown event rejected",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/demo/outbox/events/{{$guid}}/dispatch",
+        "body": {
+          "mode": "raw",
+          "raw": "{}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 404',()=>pm.response.to.have.status(404));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Replica controls excluded at gateway",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{gatewayUrl}}/api/demo/outbox/tick",
+        "body": {
+          "mode": "raw",
+          "raw": "{}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 404',()=>pm.response.to.have.status(404));"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

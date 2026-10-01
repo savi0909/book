@@ -34,6 +34,8 @@ management:
       probes:
         enabled: true
 lab:
+  outbox-controls-enabled: ${OUTBOX_CONTROLS_ENABLED:false}
+  outbox-dispatch-enabled: ${OUTBOX_DISPATCH_ENABLED:true}
   poison-controls-enabled: ${POISON_CONTROLS_ENABLED:false}
   provider-url: ${PROVIDER_URL:}
   failure-controls-enabled: ${FAILURE_CONTROLS_ENABLED:false}

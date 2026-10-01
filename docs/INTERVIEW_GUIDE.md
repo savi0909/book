@@ -1,5 +1,13 @@
 # Ticket booking interview practice
 
+Scenario4: [transactional outbox tutorial](TRANSACTIONAL_OUTBOX_TUTORIAL.md) gives
+five points/spoken answer plus3–5 points for atomic source work, recoverable delivery,
+inbox/ordering and operations/rollout. Trace the source/consumer/ack commits, explain
+why duplicate delivery is expected and distinguish event identity from ordering
+version. Demonstrate cancellation-first delivery without projection reactivation;
+explain snapshot versus delta semantics and why local receipt uniqueness cannot
+prove exactly-once email. Define old-writer drain and historical cutover policy.
+
 Scenario3: [poison-job tutorial](POISON_JOB_TUTORIAL.md) includes five scenario
 points, a short spoken answer and3–5 points per major subtopic: processing boundaries,
 durable scheduling, classification, redrive and operational rollout/capacity. Explain

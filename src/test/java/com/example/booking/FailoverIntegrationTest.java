@@ -104,5 +104,7 @@ class FailoverIntegrationTest {
     @Test void poisonMutationsAreAbsentByDefaultButDiagnosticsAvailable() throws Exception {
         assertThat(call("POST","/api/demo/recovery/tick","{}").statusCode()).isEqualTo(404);
         assertThat(call("GET","/api/recovery/status",null).statusCode()).isEqualTo(200);
+        assertThat(call("POST","/api/demo/outbox/tick","{}").statusCode()).isEqualTo(404);
+        assertThat(call("GET","/api/outbox/status",null).statusCode()).isEqualTo(200);
     }
 }

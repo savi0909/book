@@ -1,0 +1,278 @@
+{
+  "date": "2026-10-05",
+  "scenario": 4,
+  "java": {
+    "tests": 53,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "command": "mvn -B -ntp verify"
+  },
+  "runtime": {
+    "startedAt": "2026-10-05T11:26:33.353Z",
+    "finishedAt": "2026-10-05T11:26:55.034Z",
+    "checks": [
+      "both dispatch schedulers disabled",
+      "default simulator, other provider port untouched",
+      "committed confirmation has durable pending event",
+      "nothing consumed before dispatch",
+      "B sees confirmation and work after A crash",
+      "B delivers committed event after crash",
+      "A restored",
+      "consumer committed before dispatcher ack",
+      "inbox and receipt durable while outbox pending",
+      "active lease rejects another dispatcher",
+      "booking DB remains usable during post-consume delay",
+      "actual kill loses dispatch HTTP response",
+      "B reclaims event after lease expiry",
+      "duplicate consumed twice but local effect once",
+      "recovered event acknowledged",
+      "acknowledged event is not dispatched again",
+      "A restored after second crash",
+      "two replicas claim same event only once",
+      "one local receipt after replica race",
+      "confirmation and cancellation snapshots have increasing versions",
+      "old confirmation ignored after cancellation",
+      "projection remains cancelled at version2",
+      "stale confirmation produces no local notification",
+      "backlog drained",
+      "gateway delivery diagnostics work",
+      "gateway excludes replica controls"
+    ],
+    "restored": true,
+    "retainedEvents": [
+      "3d14a196-de4c-4716-b3f8-9e811ee74bb8",
+      "05faa34a-1138-4010-9821-fc7b7a8f133e",
+      "430a6397-24c2-4be0-969e-74d955509a56",
+      "140f06ca-5e9d-4be4-802c-2f4f84da5903"
+    ],
+    "observations": [
+      {
+        "ackGap": {
+          "bookingId": "ac512ee6-eb9b-4152-92c5-7127acc95ead",
+          "events": [
+            {
+              "id": "7f168d83-c537-441b-b0ed-8830e74861d4",
+              "bookingVersion": 1,
+              "kind": "CONFIRMED",
+              "schemaVersion": 1,
+              "attempts": 1,
+              "createdAt": "2026-10-05T11:26:41.326+00:00",
+              "nextAt": "2026-10-05T11:26:41.326+00:00",
+              "deliveredAt": null,
+              "leaseUntil": "2026-10-05T11:26:46.382+00:00",
+              "lastError": null
+            }
+          ],
+          "projection": [
+            {
+              "bookingVersion": 1,
+              "state": "CONFIRMED"
+            }
+          ],
+          "inbox": [
+            {
+              "eventId": "7f168d83-c537-441b-b0ed-8830e74861d4",
+              "disposition": "APPLIED",
+              "deliveries": 1
+            }
+          ],
+          "notifications": [
+            {
+              "eventId": "7f168d83-c537-441b-b0ed-8830e74861d4",
+              "bookingVersion": 1,
+              "kind": "CONFIRMED"
+            }
+          ]
+        }
+      },
+      {
+        "redelivery": {
+          "bookingId": "ac512ee6-eb9b-4152-92c5-7127acc95ead",
+          "events": [
+            {
+              "id": "7f168d83-c537-441b-b0ed-8830e74861d4",
+              "bookingVersion": 1,
+              "kind": "CONFIRMED",
+              "schemaVersion": 1,
+              "attempts": 2,
+              "createdAt": "2026-10-05T11:26:41.326+00:00",
+              "nextAt": "2026-10-05T11:26:41.326+00:00",
+              "deliveredAt": "2026-10-05T11:26:46.445+00:00",
+              "leaseUntil": null,
+              "lastError": null
+            }
+          ],
+          "projection": [
+            {
+              "bookingVersion": 1,
+              "state": "CONFIRMED"
+            }
+          ],
+          "inbox": [
+            {
+              "eventId": "7f168d83-c537-441b-b0ed-8830e74861d4",
+              "disposition": "APPLIED",
+              "deliveries": 2
+            }
+          ],
+          "notifications": [
+            {
+              "eventId": "7f168d83-c537-441b-b0ed-8830e74861d4",
+              "bookingVersion": 1,
+              "kind": "CONFIRMED"
+            }
+          ]
+        }
+      },
+      {
+        "outOfOrder": {
+          "bookingId": "a18118ce-7d0d-4980-b776-f9cb6e00de7c",
+          "events": [
+            {
+              "id": "b0d98fdd-23e7-4853-8569-1b1d57fe25ad",
+              "bookingVersion": 1,
+              "kind": "CONFIRMED",
+              "schemaVersion": 1,
+              "attempts": 0,
+              "createdAt": "2026-10-05T11:26:53.156+00:00",
+              "nextAt": "2026-10-05T11:26:53.156+00:00",
+              "deliveredAt": null,
+              "leaseUntil": null,
+              "lastError": null
+            },
+            {
+              "id": "9f7d6691-adee-4838-8377-8e5ca160e79a",
+              "bookingVersion": 2,
+              "kind": "CANCELLED",
+              "schemaVersion": 1,
+              "attempts": 0,
+              "createdAt": "2026-10-05T11:26:53.175+00:00",
+              "nextAt": "2026-10-05T11:26:53.175+00:00",
+              "deliveredAt": null,
+              "leaseUntil": null,
+              "lastError": null
+            }
+          ],
+          "projection": [
+            {
+              "bookingVersion": 2,
+              "state": "CANCELLED"
+            }
+          ],
+          "inbox": [
+            {
+              "eventId": "b0d98fdd-23e7-4853-8569-1b1d57fe25ad",
+              "disposition": "STALE_IGNORED",
+              "deliveries": 1
+            },
+            {
+              "eventId": "9f7d6691-adee-4838-8377-8e5ca160e79a",
+              "disposition": "APPLIED",
+              "deliveries": 1
+            }
+          ],
+          "notifications": [
+            {
+              "eventId": "9f7d6691-adee-4838-8377-8e5ca160e79a",
+              "bookingVersion": 2,
+              "kind": "CANCELLED"
+            }
+          ]
+        }
+      }
+    ]
+  },
+  "postman": {
+    "outbox": {
+      "requests": 26,
+      "assertions": 41,
+      "failures": 0
+    },
+    "poisonRegression": {
+      "requests": 24,
+      "assertions": 35,
+      "failures": 0
+    },
+    "bookingRegression": {
+      "requests": 73,
+      "assertions": 108,
+      "failures": 0
+    },
+    "failoverRegression": {
+      "requests": 17,
+      "assertions": 26,
+      "failures": 0
+    }
+  },
+  "rootReactor": {
+    "entries": 21,
+    "passed": true
+  },
+  "finalTopology": {
+    "files": [
+      "compose.yml",
+      "compose.failover.yml"
+    ],
+    "maintenance": true,
+    "outboxAutomatic": true,
+    "outboxControls": false,
+    "poisonControls": false,
+    "defaultSimulator": true,
+    "providerRetainedStopped": true,
+    "outbox": {
+      "pending": 0,
+      "oldestSeconds": 0,
+      "retried": 0
+    },
+    "payments": {
+      "backlog": {
+        "unresolved": 0,
+        "exhausted": 0,
+        "quarantined": 0,
+        "oldestSeconds": 0
+      },
+      "checkoutAdmission": true,
+      "boundary": {
+        "calls": 0,
+        "probeInFlight": false,
+        "inFlight": 0,
+        "state": "CLOSED",
+        "enabled": false,
+        "rejected": 0,
+        "limitPerProcess": 2,
+        "queueCapacity": 0
+      }
+    }
+  },
+  "sources": {
+    "localProcessor": "Designing_for_Global_Payment_Systems/global-payment-system/services/processor/server.js",
+    "dedicatedOriginalOutboxFound": false,
+    "officialGuidance": "https://docs.aws.amazon.com/prescriptive-guidance/latest/cloud-design-patterns/transactional-outbox.html",
+    "originalsExecuted": false
+  },
+  "retention": "No deletion/reset/prune; booking/provider volumes, source events/inbox/receipts and other stacks retained",
+  "limits": [
+    "Separate source/consumer/ack commits share PostgreSQL failure domain",
+    "Only local notification ledger, no broker or actual sends",
+    "Event ID deduplicates; version monotonicity applies to snapshots, not deltas or FIFO transport",
+    "Existing pre-V4 history unbackfilled; old writers must drain before rollout",
+    "Outbox retries have no exhaustion/quarantine policy or delivery-lag SLO",
+    "Historical provider8123 conflicts with shortener C; provider Java HTTP regressions passed, independent-provider runtime not rerun",
+    "No production auth/HA or external exactly-once claim"
+  ],
+  "artifacts": {
+    "requiredFiles": 56,
+    "namedRequests": 136,
+    "scriptBlocks": 142,
+    "markdownFiles": 34,
+    "localLinks": 765,
+    "brokenLinks": 0
+  },
+  "retainedMigration": {
+    "version": 4,
+    "success": true,
+    "oldConfirmedAtVersionZero": 28,
+    "backfilled": false
+  }
+}

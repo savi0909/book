@@ -24,7 +24,14 @@ const required = ['pom.xml', 'README.md', 'AGENTS.md', 'CLAUDE.md', 'PARITY.md',
   'scripts/generate-poison-postman.mjs', 'src/test/java/com/example/booking/PoisonIsolationIntegrationTest.java',
   'src/main/java/com/example/booking/RecoveryIsolation.java',
   'src/main/java/com/example/booking/PoisonController.java',
-  'src/main/java/com/example/booking/RecoveryController.java'];
+  'src/main/java/com/example/booking/RecoveryController.java',
+  'src/main/resources/db/migration/V4__transactional_outbox.sql', 'compose.outbox.yml',
+  'docs/TRANSACTIONAL_OUTBOX_TUTORIAL.md', 'postman/outbox.postman_collection.json',
+  'postman/outbox.postman_environment.json', 'scripts/learn-outbox.mjs',
+  'scripts/generate-outbox-postman.mjs', 'src/test/java/com/example/booking/OutboxIntegrationTest.java',
+  'src/main/java/com/example/booking/OutboxDispatcher.java', 'src/main/java/com/example/booking/OutboxWorker.java',
+  'src/main/java/com/example/booking/LocalNotificationSink.java', 'src/main/java/com/example/booking/DeliveryController.java',
+  'src/main/java/com/example/booking/OutboxController.java'];
 for (const name of required) assert.ok(fs.existsSync(path.join(project, name)), name);
 const collection = JSON.parse(fs.readFileSync(required[12], 'utf8'));
 const environment = JSON.parse(fs.readFileSync(required[13], 'utf8'));
@@ -53,6 +60,11 @@ const poisonEnvironment = JSON.parse(fs.readFileSync('postman/poison.postman_env
 assert.equal(poisonCollection.info.schema, collection.info.schema);
 assert.ok(poisonEnvironment.values.some(v => v.key === 'baseUrl' && v.enabled));
 inspect(poisonCollection);
+const outboxCollection = JSON.parse(fs.readFileSync('postman/outbox.postman_collection.json', 'utf8'));
+const outboxEnvironment = JSON.parse(fs.readFileSync('postman/outbox.postman_environment.json', 'utf8'));
+assert.equal(outboxCollection.info.schema, collection.info.schema);
+for(const name of ['baseUrl','apiB','gatewayUrl']) assert.ok(outboxEnvironment.values.some(v=>v.key===name&&v.enabled));
+inspect(outboxCollection);
 assert.ok(requests.every(r => r.name && r.event.some(e => e.listen === 'test')), 'named requests have assertions');
 const projectMarkdown = execFileSync('rg', ['--files', project, '-g', '*.md'], { encoding: 'utf8' }).trim().split(/\r?\n/);
 const shared = ['AGENTS.md', 'memory/PROJECT_CONTEXT.md', 'memory/PROGRESS.md', 'memory/DECISIONS.md',

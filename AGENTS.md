@@ -1,5 +1,25 @@
 # Ticket booking learning lab
 
+## Latest scenario4 delivery - 2026-10-05
+
+User continued the concepts implementation after scenario3. Read
+[outbox tutorial](docs/TRANSACTIONAL_OUTBOX_TUTORIAL.md) and [evidence](docs/VERIFICATION.md).
+V4 adds booking delivery_version/outbox/local inbox/receipts/projection. Actual
+CONFIRMED/CANCELLED transitions emit once inside the inventory transaction;
+no retroactive event backfill or optimistic seat locking. Claim5s/token commits
+before local consume; inbox/effect/projection commit together; ack requires
+current token/unexpired lease. Delivery is recoverable with duplicates, no actual
+sends/broker/external exactly-once. Monotonic snapshots ignore stale confirmation
+after cancellation; no FIFO or delta semantics. DB errors abort batch, other item
+errors defer2s; no outbox exhaustion/quarantine policy is silently inherited.
+Default worker requires maintenance+dispatch flags and lifecycle gate. Optional
+compose.outbox.yml enables bounded after-consume delay/manual controls with both
+loops off; base+failover restores scheduled operation. Gateway excludes replica
+outbox controls. Preserve retained events/inbox/receipts/data and other services.
+Old writers ignore outbox: drain before rollout. Historical provider8123 conflicts
+with shortener C. Scenarios1–4 complete; stop;5–6/optimistic seats/retry storms remain
+proposals. This section supersedes earlier stop-at3 notes for the new continuation.
+
 ## Current scenario 3 delivery - 2026-10-04
 
 Read [poison tutorial](docs/POISON_JOB_TUTORIAL.md) and [verification](docs/VERIFICATION.md).

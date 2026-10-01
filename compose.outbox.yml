@@ -1,0 +1,12 @@
+# Explicit dispatch study, default simulator and retained booking/provider volumes.
+services:
+  api-a:
+    environment:
+      OUTBOX_CONTROLS_ENABLED: "true"
+      OUTBOX_DISPATCH_ENABLED: "false"
+      MAINTENANCE_ENABLED: "false"
+  api-b:
+    environment:
+      OUTBOX_CONTROLS_ENABLED: "true"
+      OUTBOX_DISPATCH_ENABLED: "false"
+      MAINTENANCE_ENABLED: "false"

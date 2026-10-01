@@ -1,5 +1,9 @@
 # Six failure-handling and availability scenarios for ticket booking
 
+Latest continuation2026-10-05: user resumed after scenario3 and scenario4 is now
+implemented separately. Read [outbox tutorial](TRANSACTIONAL_OUTBOX_TUTORIAL.md)
+and [verification](VERIFICATION.md). Scenarios1–4 complete;5–6 remain proposals.
+
 Latest delivery2026-10-04: scenarios1–3 are implemented in separate studies.
 Scenario3 [tutorial](POISON_JOB_TUTORIAL.md) and [verification](VERIFICATION.md)
 supersede the pre-implementation observation below. It adds per-claimed-item
@@ -23,7 +27,7 @@ separate topology exercise.
 | 1 | API crashes or is restarted during checkout | Load balancing, readiness, draining, ambiguous responses | Implemented optional HAProxy8107, drain controls and crash/graceful experiments |
 | 2 | Payment provider becomes slow or unavailable | Bulkheads, circuit breaker, deadline/retry budgets, graceful degradation | Implemented optional independent Java stub, slots/deadlines/breaker/budgets |
 | 3 | One recovery item fails repeatedly | Poison jobs, per-item isolation, quarantine, redrive, fairness | Implemented durable quarantine/history and bounded keyed redrive; see scenario3 tutorial |
-| 4 | Booking commits but its confirmation event is lost | Transactional outbox, delivery retries, inbox deduplication | Booking/audit transaction exists; no notification outbox |
+| 4 | Booking commits but its confirmation event is lost | Transactional outbox, delivery retries, inbox deduplication | Implemented atomic source events, leased dispatch, local inbox/receipt and versioned projection |
 | 5 | Refund succeeds but its response is lost | Saga compensation, durable refund identity, reconciliation | REFUND_REQUIRED and simulated acknowledgment exist |
 | 6 | PostgreSQL primary fails or becomes partitioned | Replication, fencing, failover/failback, RPO/RTO | One PostgreSQL primary; no database HA |
 
@@ -145,6 +149,9 @@ additive migration for recovery metadata if selected. Use safe deterministic
 exceptions in a gated test fixture rather than an actual parser/OOM crash.
 
 ## 4. Confirmation delivery across the commit/publish gap
+
+Implemented: [detailed tutorial](TRANSACTIONAL_OUTBOX_TUTORIAL.md). Notes below
+describe the original proposal; current semantics/evidence are in verification.
 
 **Failure story:** Alice's booking becomes CONFIRMED, but the API dies before
 scheduling her ticket email. Later, a dispatcher publishes an event and dies

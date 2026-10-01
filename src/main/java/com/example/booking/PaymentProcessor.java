@@ -136,10 +136,13 @@ public class PaymentProcessor {
                 store.jdbc().update("INSERT INTO recovery_history(payment_id,action) VALUES (?,'OUTCOME_APPLIED')",id);
                 if(outcome==Outcome.SUCCESS) {
                     int confirmed=store.jdbc().update("""
-                        UPDATE bookings SET state='CONFIRMED',updated_at=clock_timestamp()
+                        UPDATE bookings SET state='CONFIRMED',delivery_version=delivery_version+1,updated_at=clock_timestamp()
                         WHERE id=? AND state IN ('HELD','CHECKOUT') AND expires_at > clock_timestamp()
                         """,booking);
-                    if(confirmed==1) store.audit(booking,"CONFIRMED");
+                    if(confirmed==1) {
+                        store.audit(booking,"CONFIRMED");
+                        store.enqueueSnapshot(booking,"CONFIRMED");
+                    }
                     else {
                         store.expire(booking);
                         store.jdbc().update("UPDATE bookings SET reconciliation='REFUND_REQUIRED',updated_at=clock_timestamp() WHERE id=?",booking);

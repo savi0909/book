@@ -1,5 +1,35 @@
 # API reference
 
+## Scenario4 delivery diagnostics and optional controls
+
+| Method/path | Input | Behavior |
+| --- | --- | --- |
+| GET /api/bookings/{id}/delivery | Booking UUID | 200 bookingId plus events/projection/inbox/notifications arrays;404 missing booking |
+| GET /api/outbox/status | None | 200 pending undelivered count, oldestSeconds and retried count among pending |
+| GET /api/demo/outbox/controls | None | automaticDispatch and local waitingEvents |
+| POST /api/demo/outbox/tick | No body required | 200 candidate count for one real delivery batch, not completion count |
+| POST /api/demo/outbox/events/{id}/delay | `{"delayMs":50}` | 200 original event/delay;400 missing/noninteger/outside0..10000;404 unknown event |
+| POST /api/demo/outbox/events/{id}/dispatch | Original outbox UUID | 200 `{eventId,claimed}`; force ignores nextAt, respects live lease/delivered marker;404 unknown event |
+| POST /api/demo/outbox/events/{id}/consume | Original outbox UUID | 200 `{eventId,replayed,disposition}`; consumes original committed snapshot without source ack;404 unknown event |
+
+The last five routes are absent404 by default and require OUTBOX_CONTROLS_ENABLED=true.
+Use direct A/B; gateway excludes /api/demo/outbox with404. Defaults automatically
+dispatch only when both maintenance and outbox dispatch flags are enabled. These
+controls accept no arbitrary message payload and no idempotency header is needed:
+they reuse the original immutable event ID. A live lease/already delivered dispatch
+returns claimed=false. claimed=true means an attempt was admitted, not necessarily
+that ack completed; inspect diagnostics. Same event redelivery may increment inbox
+deliveries; its advancing local notification receipt appears once.
+
+Event diagnostics fields: id,bookingVersion,kind,schemaVersion,attempts,createdAt,
+nextAt,deliveredAt,leaseUntil,lastError. Projection array is empty before consumption,
+otherwise one bookingVersion/state row. Inbox fields:eventId,disposition,deliveries;
+notification fields:eventId,bookingVersion,kind. Event/inbox/notification lists are
+ordered by per-booking version, limited100; projection is an eventually updated
+snapshot, not authoritative seat ownership. Separate diagnostic queries are not
+one atomic snapshot. STALE_IGNORED records no local notification. See
+[tutorial](TRANSACTIONAL_OUTBOX_TUTORIAL.md) and [Postman](../postman/outbox.postman_collection.json).
+
 ## Scenario 3 recovery diagnostics and gated controls
 
 | Method/path | Input | Behavior |

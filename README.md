@@ -55,11 +55,13 @@ the application does not manufacture availability from an in-memory seat cache.
 
 ## Code study
 
+[Scenario 4 — transactional outbox, inbox and event ordering](docs/TRANSACTIONAL_OUTBOX_TUTORIAL.md): atomic confirmation/cancellation snapshots, recoverable dispatcher, duplicate-safe local receipts, versioned projection, actual crash experiments and interview points.
+
 [Scenario 3 — poison-job isolation and controlled redrive](docs/POISON_JOB_TUTORIAL.md): per-item failures, persistent quarantine/history, bounded keyed redrive, safe late-success reconciliation, detailed walkthrough and interview points.
 
 [Scenario 2 — payment-provider isolation](docs/PROVIDER_ISOLATION_TUTORIAL.md): independent retained Java stub, bounded calls/work, deadlines, breaker, durable retry budget and backlog admission. Detailed walkthrough and interview points.
 
-[Next-session handover](docs/NEXT_SESSION_HANDOVER.md): review completed scenarios1–3; later concepts remain separate proposals.
+[Next-session handover](docs/NEXT_SESSION_HANDOVER.md): review completed scenarios1–4; later concepts remain separate proposals.
 
 [Scenario 1 — API failover and graceful restart](docs/API_FAILOVER_TUTORIAL.md): implemented optional HAProxy setup, deterministic crash/drain experiments, detailed source walkthrough, and five interview points. Provider and poison-job isolation have separate studies.
 
