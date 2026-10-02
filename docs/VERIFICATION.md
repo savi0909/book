@@ -1,5 +1,16 @@
 # Verification evidence
 
+## API 1 Postman learning collection - verified2026-10-05
+
+Added [a single-request importable collection](../postman/api-01-create-event.postman_collection.json)
+for POST /api/demo/events, with a collection-local baseUrl and saved eventId.
+Executed `npx --yes newman@6.2.2 run postman/api-01-create-event.postman_collection.json`
+against the already-running replica A: one request, HTTP201, five assertions,
+zero failures. This created one retained event fixture; no stack changes.
+Checks cover returned request fields, UUID, JSON and database default fields,
+not an independent seat-row count. Artifact validation covers collection JSON,
+script syntax and local documentation links. Original full collections preserved.
+
 ## Scenario4 transactional outbox - verified2026-10-05
 
 User continued concepts implementation after3. Delivered additive V4, atomic

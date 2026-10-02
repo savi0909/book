@@ -1,0 +1,60 @@
+{
+  "info": {
+    "name": "Ticket booking - API 1 - Create demo event",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "One API for the IntelliJ walkthrough: POST /api/demo/events. Import this file, open Create demo event, and click Send when replica A is running. baseUrl is included; no environment import is required. Each send creates a new retained event and three seats. Local fixture only; no payment occurs. Study docs/API_01_CREATE_EVENT_WALKTHROUGH.md."
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8105", "type": "string" },
+    { "key": "eventId", "value": "", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "Create demo event",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"My first concert\",\n  \"seatCount\": 3\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": "{{baseUrl}}/api/demo/events",
+        "description": "Creates one event and its numbered seats in a single PostgreSQL transaction. Returns HTTP 201 with event metadata. Each send creates another event; this endpoint has no request-key deduplication. If a selected Postman environment defines baseUrl, it overrides the collection value."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Event created: HTTP 201', function () { pm.response.to.have.status(201); });",
+              "pm.test('Response is JSON', function () { pm.response.to.be.json; });",
+              "if (pm.response.code === 201) {",
+              "  const event = pm.response.json();",
+              "  const sent = JSON.parse(pm.variables.replaceIn(pm.request.body.raw));",
+              "  pm.test('Response matches the submitted event', function () {",
+              "    pm.expect(event.name).to.eql(sent.name);",
+              "    pm.expect(event.seatCount).to.eql(sent.seatCount);",
+              "  });",
+              "  pm.test('Generated event ID is a UUID', function () {",
+              "    pm.expect(event.id).to.be.a('string').and.match(/^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i);",
+              "  });",
+              "  pm.test('Database defaults are returned', function () {",
+              "    pm.expect(event.priceMinor).to.eql(5000);",
+              "    pm.expect(event.currency).to.eql('INR');",
+              "    pm.expect(event.createdAt).to.be.a('string');",
+              "    pm.expect(Number.isNaN(Date.parse(event.createdAt))).to.eql(false);",
+              "  });",
+              "  pm.collectionVariables.set('eventId', event.id);",
+              "}"
+            ]
+          }
+        }
+      ],
+      "response": []
+    }
+  ]
+}

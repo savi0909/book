@@ -45,6 +45,14 @@ function inspect(node) {
   for (const item of node.item ?? []) inspect(item);
 }
 inspect(collection);
+const apiOneCollection = JSON.parse(fs.readFileSync('postman/api-01-create-event.postman_collection.json', 'utf8'));
+assert.equal(apiOneCollection.info.schema, collection.info.schema);
+assert.equal(apiOneCollection.item.length, 1, 'API 1 collection stays focused on one request');
+assert.equal(apiOneCollection.item[0].request.method, 'POST');
+assert.equal(apiOneCollection.item[0].request.url, '{{baseUrl}}/api/demo/events');
+assert.ok(apiOneCollection.variable.some(v => v.key === 'baseUrl' && v.value === 'http://localhost:8105'));
+assert.deepEqual(JSON.parse(apiOneCollection.item[0].request.body.raw), { name: 'My first concert', seatCount: 3 });
+inspect(apiOneCollection);
 const failoverCollection = JSON.parse(fs.readFileSync('postman/failover.postman_collection.json', 'utf8'));
 const failoverEnvironment = JSON.parse(fs.readFileSync('postman/failover.postman_environment.json', 'utf8'));
 assert.equal(failoverCollection.info.schema, collection.info.schema);

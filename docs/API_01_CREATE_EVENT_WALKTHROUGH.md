@@ -131,7 +131,18 @@ Answers, when you want to check: **one and three; database column defaults; roll
 
 ## Optional: try just this request
 
-If replica A is already running, send the request from step 1 using Postman. Use one request, rather than running the complete collection. Record the real returned event ID.
+Import [the API 1 Postman collection](../postman/api-01-create-event.postman_collection.json):
+
+1. In Postman, click **Import**, then select that JSON file.
+2. Open **Ticket booking - API 1 - Create demo event → Create demo event**.
+3. Select **No environment**; the collection includes `baseUrl = http://localhost:8105`.
+4. When replica A is running, click **Send** once. Read the response and the test results.
+
+The tests check HTTP 201, the returned fields and the generated UUID. They save
+the response ID in the collection variable `eventId`; they do not independently
+query the database to count seats. No separate environment file is needed.
+
+Record the real returned event ID. Keep today's practice to this single request.
 
 Sending this request again creates another event, even with the same name and count. This endpoint has no request-key deduplication contract; avoid repeated sends if you want just one fixture.
 

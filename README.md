@@ -57,6 +57,8 @@ the application does not manufacture availability from an in-memory seat cache.
 
 [Start with API 1 — create a demo event](docs/API_01_CREATE_EVENT_WALKTHROUGH.md): one endpoint at a time, short IntelliJ reading steps, the request-to-SQL path and one small exercise.
 
+Import [the API 1 learning collection](postman/api-01-create-event.postman_collection.json) for one ready-to-send request; its local URL is included. The [full booking collection](postman/ticket-booking-lab.postman_collection.json) remains available with the [local environment](postman/local.postman_environment.json).
+
 [Scenario 4 — transactional outbox, inbox and event ordering](docs/TRANSACTIONAL_OUTBOX_TUTORIAL.md): atomic confirmation/cancellation snapshots, recoverable dispatcher, duplicate-safe local receipts, versioned projection, actual crash experiments and interview points.
 
 [Scenario 3 — poison-job isolation and controlled redrive](docs/POISON_JOB_TUTORIAL.md): per-item failures, persistent quarantine/history, bounded keyed redrive, safe late-success reconciliation, detailed walkthrough and interview points.
