@@ -1,5 +1,15 @@
 # Ticket booking learning lab
 
+## Current API study preference - 2026-10-05
+
+User requests one API at a time, with manageable IntelliJ code walkthroughs.
+Start with POST /api/demo/events; read
+[API 1 walkthrough](docs/API_01_CREATE_EVENT_WALKTHROUGH.md). Keep each lesson
+focused, offer pause points and one small exercise, and wait for learner readiness
+before advancing. This request is teaching/documentation only; existing application
+code and infrastructure stay preserved. Do not resume scenario implementation
+from a request to review or explain an API.
+
 ## Latest scenario4 delivery - 2026-10-05
 
 User continued the concepts implementation after scenario3. Read
