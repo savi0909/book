@@ -1,5 +1,16 @@
 # Verification evidence
 
+## API 2 list-events study - verified2026-10-05
+
+Added [the focused walkthrough](API_02_LIST_EVENTS_WALKTHROUGH.md) and
+[one GET request collection](../postman/api-02-list-events.postman_collection.json).
+Executed `npx --yes newman@6.2.2 run postman/api-02-list-events.postman_collection.json`
+against running replica A: one request, HTTP200, six assertions, zero failures.
+Checks cover JSON/array shape, page-size bound, event fields and descending
+timestamps; no independent UUID tie-order or fixture-presence assertion.
+No application changes, fixture writes or stack operations. Artifact validator
+also checks this collection's shape, script syntax and documentation links.
+
 ## API 1 Postman learning collection - verified2026-10-05
 
 Added [a single-request importable collection](../postman/api-01-create-event.postman_collection.json)

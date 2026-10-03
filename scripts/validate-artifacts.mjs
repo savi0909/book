@@ -53,6 +53,13 @@ assert.equal(apiOneCollection.item[0].request.url, '{{baseUrl}}/api/demo/events'
 assert.ok(apiOneCollection.variable.some(v => v.key === 'baseUrl' && v.value === 'http://localhost:8105'));
 assert.deepEqual(JSON.parse(apiOneCollection.item[0].request.body.raw), { name: 'My first concert', seatCount: 3 });
 inspect(apiOneCollection);
+const apiTwoCollection = JSON.parse(fs.readFileSync('postman/api-02-list-events.postman_collection.json', 'utf8'));
+assert.equal(apiTwoCollection.info.schema, collection.info.schema);
+assert.equal(apiTwoCollection.item.length, 1, 'API 2 collection stays focused on one request');
+assert.equal(apiTwoCollection.item[0].request.method, 'GET');
+assert.equal(apiTwoCollection.item[0].request.url.raw, '{{baseUrl}}/api/events?limit=3&offset=0');
+assert.ok(apiTwoCollection.variable.some(v => v.key === 'baseUrl' && v.value === 'http://localhost:8105'));
+inspect(apiTwoCollection);
 const failoverCollection = JSON.parse(fs.readFileSync('postman/failover.postman_collection.json', 'utf8'));
 const failoverEnvironment = JSON.parse(fs.readFileSync('postman/failover.postman_environment.json', 'utf8'));
 assert.equal(failoverCollection.info.schema, collection.info.schema);

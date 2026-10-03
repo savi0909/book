@@ -1,0 +1,67 @@
+{
+  "info": {
+    "name": "Ticket booking - API 2 - List events",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "One API for docs/API_02_LIST_EVENTS_WALKTHROUGH.md. Import, select No environment, open List events and click Send when replica A is running. Reads retained events; creates no fixtures. No API 1 event ID or separate environment is required."
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8105", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "List events",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/events?limit=3&offset=0",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "events"],
+          "query": [
+            { "key": "limit", "value": "3", "description": "Maximum events returned: 1 to 100; default 50." },
+            { "key": "offset", "value": "0", "description": "Ordered rows to skip: 0 to 10000; default 0." }
+          ]
+        },
+        "description": "Returns HTTP 200 and an event array, newest first with UUID tie break. An empty array is valid. Edit limit and offset in Params to explore pagination."
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+              "pm.test('Response is JSON', function () { pm.response.to.be.json; });",
+              "if (pm.response.code === 200) {",
+              "  const events = pm.response.json();",
+              "  pm.test('Response is an array', function () { pm.expect(events).to.be.an('array'); });",
+              "  if (Array.isArray(events)) {",
+              "    const limitParam = pm.request.url.query.get('limit');",
+              "    const limit = limitParam === undefined ? 50 : Number(pm.variables.replaceIn(limitParam));",
+              "    pm.test('Page does not exceed the requested limit', function () { pm.expect(events.length).to.be.at.most(limit); });",
+              "    pm.test('Each event has the expected fields', function () {",
+              "      events.forEach(function (event) {",
+              "        pm.expect(event.id).to.be.a('string').and.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i);",
+              "        pm.expect(event.name).to.be.a('string');",
+              "        pm.expect(event.seatCount).to.be.a('number').and.within(1, 200);",
+              "        pm.expect(event.priceMinor).to.be.a('number').and.above(0);",
+              "        pm.expect(event.currency).to.be.a('string').and.have.lengthOf(3);",
+              "        pm.expect(event.createdAt).to.be.a('string');",
+              "        pm.expect(Number.isNaN(Date.parse(event.createdAt))).to.eql(false);",
+              "      });",
+              "    });",
+              "    pm.test('Timestamps are ordered newest first', function () {",
+              "      for (let i = 1; i < events.length; i++) {",
+              "        pm.expect(Date.parse(events[i - 1].createdAt)).to.be.at.least(Date.parse(events[i].createdAt));",
+              "      }",
+              "    });",
+              "  }",
+              "}"
+            ]
+          }
+        }
+      ],
+      "response": []
+    }
+  ]
+}
