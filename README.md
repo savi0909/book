@@ -55,6 +55,8 @@ the application does not manufacture availability from an in-memory seat cache.
 
 ## Code study
 
+[API 1 lambda execution walkthrough](docs/API_01_LAMBDA_EXECUTION_WALKTHROUGH.md): who calls each lambda, what `work.get()` does, return flow and IntelliJ breakpoints.
+
 [API 2 — list events](docs/API_02_LIST_EVENTS_WALKTHROUGH.md): query parameters, SQL ordering, pagination and row mapping. Import [its single-request Postman collection](postman/api-02-list-events.postman_collection.json).
 
 [Start with API 1 — create a demo event](docs/API_01_CREATE_EVENT_WALKTHROUGH.md): one endpoint at a time, short IntelliJ reading steps, the request-to-SQL path and one small exercise.

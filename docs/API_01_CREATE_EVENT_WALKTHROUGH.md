@@ -82,6 +82,9 @@ public Event createEvent(EventRequest request) {
 
 The `() -> { ... }` is a lambda: a block of work passed to `store.tx` to execute inside a transaction.
 
+If the two nested lambdas are confusing, pause here and read
+[how the lambdas execute, one call at a time](API_01_LAMBDA_EXECUTION_WALKTHROUGH.md).
+
 | Line | What happens for our request |
 | --- | --- |
 | `UUID.randomUUID()` | Creates the event's identifier. |
