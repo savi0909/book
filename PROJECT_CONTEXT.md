@@ -100,9 +100,20 @@ Restore normal mode by omitting that overlay. Read
 
 ## Next work and publishing
 
+Latest direction on2026-10-05: **do not implement yet**. Current study is the
+[100K hot-show, live availability and retry-storm plan](docs/HOT_SHOW_AVAILABILITY_AND_RETRY_PLAN.md).
+Study generic scenario2 protections first, then separately select the controlled
+generic-hold retry comparison. Movie SSE/snapshot fan-out, waiting room and shared
+hold admission are proposals, not delivered features. Existing database-time
+expiry already permits safe rebooking independently of delayed durable cleanup.
+The33-seat example is conceptual; screen constraints remain200-500.
+
 Selected later work: [same-day thousands-user simulation](docs/MOVIE_LOAD_SIMULATION_PLAN.md).
-Choose generator host/tool, resource budget and workload shape before implementation.
-No sustained workload has been run. Other proposals are in [future work](docs/FUTURE_WORK.md).
+Selected machine roles: **Abhishek hosts actual services; Ankita generates business
+load over Tailscale**. Choose tool/resource budget, workload shape and scoped private
+ingress before implementation. Published movie ports currently bind loopback;
+tailnet connectivity/reachability has not been verified or configured. No sustained
+workload has been run. Other proposals are in [future work](docs/FUTURE_WORK.md).
 Do not start additional scenarios/features solely because they appear there.
 
 No origin is configured as of this context update. Await the user's fresh empty

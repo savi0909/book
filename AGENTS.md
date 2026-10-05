@@ -13,6 +13,16 @@ movie/standalone sections take precedence for this repository.
 
 ## Current movie expansion - 2026-10-05
 
+Latest user override: **do not implement yet**. Read
+[hot-show/availability/retry plan](docs/HOT_SHOW_AVAILABILITY_AND_RETRY_PLAN.md).
+Study existing generic scenario2 protections first; the general hold retry-storm
+comparison and movie availability stream/admission are still unbuilt. Existing
+DB-time logical expiry/owner-checked cleanup must not be confused with live push.
+Future experiment topology is now selected: Abhishek runs actual services;
+Ankita is the business-load generator over Tailscale. Endpoint/ingress/tool/resource
+budgets remain unresolved; no networking changes or workload are authorized now.
+The 33-seat hot-show example does not change current200-500 screen validation.
+
 User explicitly selected movie booking in this standalone repository, overriding
 earlier teaching-only/stop-at-API3 scope for this delivery. Read movie tutorial,
 API/ADR/verification/FUTURE_WORK. V5:5-100 screens,200-500 seats,2-3 categories,

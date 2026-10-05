@@ -2,6 +2,12 @@
 
 Saved plan, not an executed load test. Start with [movie tutorial](MOVIE_BOOKING_TUTORIAL.md).
 
+Latest user direction2026-10-05: **do not implement yet**. Read
+[hot-show availability/retry analysis](HOT_SHOW_AVAILABILITY_AND_RETRY_PLAN.md).
+Study implemented generic provider-isolation protections first, then separately
+select a controlled immediate-versus-jittered hold-retry comparison. General
+hold admission/retry control and movie live push remain unbuilt.
+
 At5 screens x200 seats x4 shows/day, fixture inventory is4000 show-seats across20
 shows. At100 screens x500 seats x4 shows, it is200000 show-seats. These are capacity
 arithmetic, not measured limits. Seed distinct future, non-overlapping shows and
@@ -35,6 +41,11 @@ HAProxy maxconn256 and20-payment batches/200ms are lab choices. Shared scheduler
 and DB work reduce actual drain rate. They may bottleneck before1000 users.
 One host/one PostgreSQL remains; no production HA/SLO/throughput claim exists.
 
-Choose the generator host/tool and resource budget before implementation. Ankita's
-earlier sole-load-origin rule applies to URL shortener; no movie generator host is
-selected. Do not auto-start this workload. See [future work](FUTURE_WORK.md).
+User-selected topology: **Abhishek runs actual services; Ankita sends business load
+over Tailscale**. This replaces the earlier unresolved movie generator-host note.
+Choose the tool and finite resource/request budgets before implementation. Movie
+ports currently bind loopback; select a scoped private gateway ingress later and
+verify peer reachability/connection type. Do not expose the database or replica
+fault controls. Record end-to-end timing on Ankita, backend timing/resources on
+Abhishek and generator saturation. No network configuration was changed or tested
+for this delivery. Do not auto-start this workload. See [future work](FUTURE_WORK.md).

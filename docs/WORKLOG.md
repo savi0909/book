@@ -48,3 +48,30 @@ Validation for this documentation update: project artifact/link validator and Gi
 whitespace checks; application tests were not rerun because executable behavior
 is unchanged. Local documentation changes are committed with actual timestamps.
 Push remains pending the fresh origin URL; no publication is claimed.
+
+## 2026-10-05: hot-show availability and retry analysis only
+
+User asked about100K visitors for33-500 seats, then live availability and expiry.
+The subsequent explicit instruction **do not implement yet** supersedes the
+implementation request. Application files were not changed; no tests/load/network
+configuration or service operations were run for this documentation task.
+
+Added [hot-show availability/retry plan](HOT_SHOW_AVAILABILITY_AND_RETRY_PLAN.md)
+and linked README/context/AGENTS/future-work/simulation handoff. Source inspection
+confirmed existing DB-time logical expiry, owner-checked cleanup, and the missing
+live feed/general hold-traffic controls. Distinguished inherited generic scenario2
+backoff/budget/breaker/slots/backlog protections from V5's separate movie mock.
+
+Saved the requested sequence: study scenario2 first, later a controlled generic-hold
+immediate-versus-jittered retry comparison. Movie snapshot/SSE fan-out and admission
+remain proposals. Saved machine roles: Abhishek hosts actual services; Ankita sends
+business load over Tailscale. Loopback ingress/reachability/tool/resource budgets
+are unresolved; no connection or100K capacity claim.33 seats is a conceptual case;
+current screen constraints remain200-500.
+
+Validation: artifact/local-link validator and Git whitespace checks for documentation.
+Artifact check passed:77 required files,169 named requests,177 script blocks,
+34 Markdown files,365 local links and0 broken links. Whitespace check passed.
+Shared canonical context/progress/decisions updated locally; that reference tree
+has no Git metadata. Standalone task documents committed with actual timestamps;
+publishing remains pending a fresh origin URL.

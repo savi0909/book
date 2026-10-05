@@ -11,7 +11,13 @@ a fresh key creates a fresh attempt. Read [tutorial](MOVIE_BOOKING_TUTORIAL.md),
 [verification](MOVIE_VERIFICATION.md).
 
 The selected later work is [thousands-user same-day simulation](MOVIE_LOAD_SIMULATION_PLAN.md).
-No sustained workload or generator host has been selected for this delivery.
+Latest override: **do not implement yet**. Read the
+[hot-show availability and retry-storm plan](HOT_SHOW_AVAILABILITY_AND_RETRY_PLAN.md).
+First study existing generic scenario2 protections; separately select the controlled
+generic-hold retry comparison before building availability streaming/admission.
+Existing logical expiry is implemented; live client updates are not.
+Future roles are selected: Abhishek hosts services; Ankita generates load over
+Tailscale. Tool/budgets/private ingress remain to be chosen. No sustained load run.
 
 Other proposals remain separate:
 

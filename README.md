@@ -12,6 +12,12 @@ group reservations and durable mock payment retries. Start with the
 [later simulation plan](docs/MOVIE_LOAD_SIMULATION_PLAN.md).
 The inherited generic single-seat studies below remain separately available.
 
+[100K hot-show, live availability and retry-storm plan](docs/HOT_SHOW_AVAILABILITY_AND_RETRY_PLAN.md):
+study existing provider protections first, then separately compare bounded immediate
+and jittered hold retries. Availability streaming/admission remain proposals.
+Future experiments: Abhishek hosts services; Ankita sends load over Tailscale.
+Latest direction: documentation only; do not implement or run load yet.
+
 Standalone Java ticket-booking study project at `D:/sd-book-my-show`. Start with
 [standalone setup](docs/STANDALONE_SETUP.md) and the
 [three-week sprint plan](docs/THREE_WEEK_SPRINT_PLAN.md).
