@@ -5,7 +5,7 @@
     "description": "One API for the IntelliJ walkthrough: POST /api/demo/events. Import this file, open Create demo event, and click Send when replica A is running. baseUrl is included; no environment import is required. Each send creates a new retained event and three seats. Local fixture only; no payment occurs. Study docs/API_01_CREATE_EVENT_WALKTHROUGH.md."
   },
   "variable": [
-    { "key": "baseUrl", "value": "http://localhost:8105", "type": "string" },
+    { "key": "baseUrl", "value": "http://localhost:8130", "type": "string" },
     { "key": "eventId", "value": "", "type": "string" }
   ],
   "item": [

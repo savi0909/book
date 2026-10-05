@@ -1,5 +1,22 @@
 # Ticket booking learning lab
 
+## Standalone repository override - 2026-10-05
+
+This repository is D:/sd-book-my-show, independently initialized at user request.
+Read docs/STANDALONE_SETUP.md, docs/THREE_WEEK_SPRINT_PLAN.md and
+TIMELINE_PROVENANCE.md. Earlier sections below are inherited source context.
+They do not require access to the original workspace to build or test this copy.
+No workspace modules are required. Provider stub/config/scripts/docs are included.
+Maven artifact is sd-book-my-show; package com.example.booking is preserved.
+Compose project sd-book-my-show uses separate retained volumes and host ports
+A8130/B8131/gateway8132/provider8133/PostgreSQL5553; APIs listen8105 in containers.
+Do not operate on original ticket-booking-java containers or their retained data.
+The first14 commits use disclosed reconstructed sprint dates; verification dates
+are real source evidence and must not be rewritten as earlier execution dates.
+Future commits use actual dates. Origin awaits the user's new repository URL.
+Never delete files/directories or run Maven clean without explicit permission.
+
+
 ## Current API study preference - 2026-10-05
 
 User advanced to API 3: GET /api/events/{id}. Read

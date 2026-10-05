@@ -5,16 +5,16 @@ import { promisify } from 'node:util';
 import { randomUUID } from 'node:crypto';
 
 if (process.argv.length > 2) {
-  console.log('Run from ticket-booking-lab: node scripts/learn-failover.mjs (no arguments).');
+  console.log('Run from sd-book-my-show: node scripts/learn-failover.mjs (no arguments).');
   process.exit(process.argv.length === 3 && process.argv[2] === '--help' ? 0 : 1);
 }
 if (!fs.existsSync('compose.yml') || !fs.existsSync('compose.failover.yml')) {
-  console.error('Run from the ticket-booking-lab directory; no experiment was started.');
+  console.error('Run from the sd-book-my-show directory; no experiment was started.');
   process.exit(1);
 }
 
 const exec = promisify(execFile);
-const A = 'http://localhost:8105', B = 'http://localhost:8106', G = 'http://localhost:8107';
+const A = 'http://localhost:8130', B = 'http://localhost:8131', G = 'http://localhost:8132';
 const run = randomUUID();
 const evidence = { run, startedAt: new Date().toISOString(), checks: [], scenarios: [], restored: false, passed: false };
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));

@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {execFileSync} from 'node:child_process';
-if(!fs.existsSync('compose.outbox.yml') || process.argv.length!==2)throw new Error('Run from ticket-booking-lab without arguments');
-const A='http://localhost:8105',B='http://localhost:8106',G='http://localhost:8107';
+if(!fs.existsSync('compose.outbox.yml') || process.argv.length!==2)throw new Error('Run from sd-book-my-show without arguments');
+const A='http://localhost:8130',B='http://localhost:8131',G='http://localhost:8132';
 const compose=['compose','-f','compose.yml','-f','compose.failover.yml','-f','compose.outbox.yml'];
 const evidence={startedAt:new Date().toISOString(),checks:[],fixtures:[],observations:[]};
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));

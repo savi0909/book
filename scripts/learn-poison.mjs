@@ -1,8 +1,8 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {execFileSync} from 'node:child_process';
-if (!fs.existsSync('compose.poison.yml') || process.argv.length!==2) throw new Error('Run from ticket-booking-lab, without arguments');
-const A='http://localhost:8105',B='http://localhost:8106';
+if (!fs.existsSync('compose.poison.yml') || process.argv.length!==2) throw new Error('Run from sd-book-my-show, without arguments');
+const A='http://localhost:8130',B='http://localhost:8131';
 const compose=['compose','-f','compose.yml','-f','compose.failover.yml','-f','compose.poison.yml'];
 const evidence={startedAt:new Date().toISOString(),checks:[],fixtures:[],observations:[]};
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
@@ -25,7 +25,7 @@ async function quarantine(id){for(let i=0;i<3;i++){await tick();if(i<2)await sle
 let paused=false;
 try {
  check('manual recovery topology',!(await ok(A,'/api/demo/recovery/controls')).maintenanceEnabled&&!(await ok(B,'/api/demo/recovery/controls')).maintenanceEnabled);
- check('default provider avoids occupied8123',!(await ok(A,'/api/provider/status')).boundary.enabled);
+ check('default simulator needs no provider service',!(await ok(A,'/api/provider/status')).boundary.enabled);
  const e=await ok(A,'/api/demo/events',{name:'poison-'+crypto.randomUUID(),seatCount:6});evidence.fixtures.push(e.id);
  const bad=await intent(e,1);await fixture(bad.payment.id,true);
  const healthy=[];for(let i=2;i<=5;i++)healthy.push(await intent(e,i));
@@ -66,7 +66,7 @@ try {
  const outage=await call(B,'/api/demo/recovery/tick',{});check('shared DB outage returns503',outage.status===503);
  execFileSync('docker',[...compose,'unpause','postgres'],{stdio:'pipe'});paused=false;
  check('DB outage created no false quarantine',Number((await ok(B,'/api/recovery/status')).quarantined)===0);
- check('gateway business read works',(await call('http://localhost:8107',`/api/bookings/${bad.id}`)).status===200);
+ check('gateway business read works',(await call('http://localhost:8132',`/api/bookings/${bad.id}`)).status===200);
  evidence.restored=true;
 } finally {
  if(paused)execFileSync('docker',[...compose,'unpause','postgres'],{stdio:'pipe'});

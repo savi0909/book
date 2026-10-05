@@ -4,7 +4,7 @@ services:
     build:
       context: .
       dockerfile: infra/Dockerfile.provider
-    ports: ["127.0.0.1:8123:8121"]
+    ports: ["127.0.0.1:8133:8121"]
     volumes: ["provider-data:/data"]
     healthcheck:
       test: ["CMD-SHELL", "wget -q -O - http://localhost:8121/health >/dev/null"]

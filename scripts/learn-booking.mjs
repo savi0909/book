@@ -3,8 +3,8 @@ import fs from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { randomUUID } from 'node:crypto';
 
-const A = process.env.API_A ?? 'http://localhost:8105';
-const B = process.env.API_B ?? 'http://localhost:8106';
+const A = process.env.API_A ?? 'http://localhost:8130';
+const B = process.env.API_B ?? 'http://localhost:8131';
 const run = randomUUID();
 let checks = 0;
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));

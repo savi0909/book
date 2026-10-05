@@ -5,7 +5,7 @@
     "description": "One API for docs/API_02_LIST_EVENTS_WALKTHROUGH.md. Import, select No environment, open List events and click Send when replica A is running. Reads retained events; creates no fixtures. No API 1 event ID or separate environment is required."
   },
   "variable": [
-    { "key": "baseUrl", "value": "http://localhost:8105", "type": "string" }
+    { "key": "baseUrl", "value": "http://localhost:8130", "type": "string" }
   ],
   "item": [
     {

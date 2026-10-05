@@ -5,7 +5,7 @@
     "description": "One API for docs/API_03_GET_EVENT_WALKTHROUGH.md. Select No environment and paste an existing event UUID into this collection's eventId variable. Get the ID from API 1's response or API 2's list. Variables from another collection do not transfer automatically. This collection has no setup requests and creates no fixtures."
   },
   "variable": [
-    { "key": "baseUrl", "value": "http://localhost:8105", "type": "string" },
+    { "key": "baseUrl", "value": "http://localhost:8130", "type": "string" },
     { "key": "eventId", "value": "", "type": "string" }
   ],
   "item": [

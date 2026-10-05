@@ -2,8 +2,8 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import {execFileSync} from 'node:child_process';
 if(!fs.existsSync('compose.provider.yml') || !fs.existsSync('src/main/java/com/example/booking/ProviderBoundary.java') || process.argv.length!==2)
-  throw new Error('Run node scripts/learn-provider.mjs from ticket-booking-lab; no arguments supported');
-const A='http://localhost:8105',B='http://localhost:8106',P='http://localhost:8123';
+  throw new Error('Run node scripts/learn-provider.mjs from sd-book-my-show; no arguments supported');
+const A='http://localhost:8130',B='http://localhost:8131',P='http://localhost:8133';
 const evidence={startedAt:new Date().toISOString(),checks:[],fixtures:[],observations:[]};
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 function check(name,condition){assert.ok(condition,name);evidence.checks.push(name);console.log('PASS '+name);}

@@ -10,9 +10,9 @@ spring:
   lifecycle:
     timeout-per-shutdown-phase: 15s
   application:
-    name: ticket-booking-lab
+    name: sd-book-my-show
   datasource:
-    url: ${DB_URL:jdbc:postgresql://localhost:5547/booking?connectTimeout=3&socketTimeout=5}
+    url: ${DB_URL:jdbc:postgresql://localhost:5553/booking?connectTimeout=3&socketTimeout=5}
     username: ${DB_USER:booking_demo}
     password: ${DB_PASSWORD:booking_demo}
     hikari:

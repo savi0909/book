@@ -1,4 +1,15 @@
-# Ticket booking interview lab
+# SD Book My Show
+
+Standalone Java ticket-booking study project at `D:/sd-book-my-show`. Start with
+[standalone setup](docs/STANDALONE_SETUP.md) and the
+[three-week sprint plan](docs/THREE_WEEK_SPRINT_PLAN.md).
+Its reconstructed September 15-October 5 history is explained in
+[timeline provenance](TIMELINE_PROVENANCE.md); original verification dates are retained.
+
+The copied tutorials describe the original lab's addresses. This repository uses
+API A8130, API B8131, gateway8132, provider8133 and PostgreSQL5553. Its scripts and
+Postman environments use these standalone addresses. Original evidence and tutorial
+experiment dates describe the source lab; see standalone verification for this copy.
 
 Two Spring Boot replicas compete for numbered seats in PostgreSQL. Temporary
 holds, durable request keys, expiry, checkout outcomes and late-payment refunds
@@ -11,7 +22,7 @@ controls are unauthenticated local fixtures. The provider is simulated; no money
 is charged and no card data is accepted.
 
 ```powershell
-Set-Location D:/java-projects/ticket-booking-lab
+Set-Location D:/sd-book-my-show
 java -version
 mvn -version
 mvn -B -ntp verify
@@ -30,12 +41,12 @@ fixtures. Stop without deleting data: `docker compose stop`. Resume:
 
 | Local service | Address |
 | --- | --- |
-| Replica A | http://localhost:8105 |
-| Replica B | http://localhost:8106 |
-| PostgreSQL | localhost:5547, database booking; public demo login booking_demo/booking_demo |
+| Replica A | http://localhost:8130 |
+| Replica B | http://localhost:8131 |
+| PostgreSQL | localhost:5553, database booking; public demo login booking_demo/booking_demo |
 
 For a host-only API, start just PostgreSQL with `docker compose up -d --wait postgres`,
-then `mvn spring-boot:run`. Default JDBC configuration uses port 5547. Do not also
+then set `$env:PORT="8130"` and run `mvn spring-boot:run`. Default JDBC configuration uses port 5553. Do not also
 run Compose API A on the same host port. No Maven wrapper is included.
 
 Start with [the user guide](docs/USER_GUIDE.md). Read [the system specification](docs/SYSTEM_SPEC.md)
@@ -83,9 +94,8 @@ Import [the API 1 learning collection](postman/api-01-create-event.postman_colle
 
 ## Optional provider-isolation study
 
-Historical provider host8123 currently conflicts with URL-shortener API C. Check
-port ownership before starting that overlay; scenario3 uses the default simulator
-and requires no new port. See [the poison tutorial](docs/POISON_JOB_TUTORIAL.md)
+The standalone provider uses host8133, separate from the original lab and URL
+shortener. Scenario3 uses the default simulator and requires no new port. See [the poison tutorial](docs/POISON_JOB_TUTORIAL.md)
 for base+failover+poison commands and manual maintenance ticks.
 
 Use all three files to retain failover controls and enable the independent stub:
@@ -98,7 +108,7 @@ node scripts/learn-provider.mjs
 npx --yes newman@6.2.2 run postman/provider.postman_collection.json -e postman/provider.postman_environment.json --delay-request 500
 ```
 
-Provider: loopback8123 (container8121), retained provider-data journal. Public local
+Provider: loopback8133 (container8121), retained provider-data journal. Public local
 fault controls; no real payments. Two provider-call slots per API, two actual
 processing slots at the stub, 400ms HTTP deadline, four automatic dispatches or
 10s dispatch budget; exhausted UNKNOWN needs explicit reconciliation. New checkout

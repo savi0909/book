@@ -4,7 +4,6 @@ import { execFileSync } from 'node:child_process';
 import assert from 'node:assert/strict';
 
 const project = process.cwd();
-const reference = 'D:/AA-SYSTEM-DESIGN-ARCHITECTURE/sep-30-2026/sdir-p-main';
 const required = ['pom.xml', 'README.md', 'AGENTS.md', 'CLAUDE.md', 'PARITY.md',
   'docs/SYSTEM_SPEC.md', 'docs/USER_GUIDE.md', 'docs/API_REFERENCE.md',
   'docs/INTERVIEW_GUIDE.md', 'docs/VERIFICATION.md', 'Dockerfile', 'compose.yml',
@@ -50,7 +49,7 @@ assert.equal(apiOneCollection.info.schema, collection.info.schema);
 assert.equal(apiOneCollection.item.length, 1, 'API 1 collection stays focused on one request');
 assert.equal(apiOneCollection.item[0].request.method, 'POST');
 assert.equal(apiOneCollection.item[0].request.url, '{{baseUrl}}/api/demo/events');
-assert.ok(apiOneCollection.variable.some(v => v.key === 'baseUrl' && v.value === 'http://localhost:8105'));
+assert.ok(apiOneCollection.variable.some(v => v.key === 'baseUrl' && v.value === 'http://localhost:8130'));
 assert.deepEqual(JSON.parse(apiOneCollection.item[0].request.body.raw), { name: 'My first concert', seatCount: 3 });
 inspect(apiOneCollection);
 const apiTwoCollection = JSON.parse(fs.readFileSync('postman/api-02-list-events.postman_collection.json', 'utf8'));
@@ -58,14 +57,14 @@ assert.equal(apiTwoCollection.info.schema, collection.info.schema);
 assert.equal(apiTwoCollection.item.length, 1, 'API 2 collection stays focused on one request');
 assert.equal(apiTwoCollection.item[0].request.method, 'GET');
 assert.equal(apiTwoCollection.item[0].request.url.raw, '{{baseUrl}}/api/events?limit=3&offset=0');
-assert.ok(apiTwoCollection.variable.some(v => v.key === 'baseUrl' && v.value === 'http://localhost:8105'));
+assert.ok(apiTwoCollection.variable.some(v => v.key === 'baseUrl' && v.value === 'http://localhost:8130'));
 inspect(apiTwoCollection);
 const apiThreeCollection = JSON.parse(fs.readFileSync('postman/api-03-get-event.postman_collection.json', 'utf8'));
 assert.equal(apiThreeCollection.info.schema, collection.info.schema);
 assert.equal(apiThreeCollection.item.length, 1, 'API 3 collection stays focused on one request');
 assert.equal(apiThreeCollection.item[0].request.method, 'GET');
 assert.equal(apiThreeCollection.item[0].request.url, '{{baseUrl}}/api/events/{{eventId}}');
-assert.ok(apiThreeCollection.variable.some(v => v.key === 'baseUrl' && v.value === 'http://localhost:8105'));
+assert.ok(apiThreeCollection.variable.some(v => v.key === 'baseUrl' && v.value === 'http://localhost:8130'));
 assert.ok(apiThreeCollection.variable.some(v => v.key === 'eventId' && v.value === ''));
 inspect(apiThreeCollection);
 const failoverCollection = JSON.parse(fs.readFileSync('postman/failover.postman_collection.json', 'utf8'));
@@ -90,20 +89,21 @@ for(const name of ['baseUrl','apiB','gatewayUrl']) assert.ok(outboxEnvironment.v
 inspect(outboxCollection);
 assert.ok(requests.every(r => r.name && r.event.some(e => e.listen === 'test')), 'named requests have assertions');
 const projectMarkdown = execFileSync('rg', ['--files', project, '-g', '*.md'], { encoding: 'utf8' }).trim().split(/\r?\n/);
-const shared = ['AGENTS.md', 'memory/PROJECT_CONTEXT.md', 'memory/PROGRESS.md', 'memory/DECISIONS.md',
-  'docs/learning/README.md', 'docs/learning/PROJECT_STATUS.md', 'docs/learning/CASE_STUDY_INDEX.md',
-  'docs/learning/INTERVIEW_PRACTICE_PLAN.md', 'docs/learning/cases/Ticket_Booking.md',
-  ...['01_CHAT_SYSTEM', '02_URL_SHORTENER', '03_NEWS_FEED', '04_NOTIFICATION_SYSTEM',
-    '05_TICKET_BOOKING', 'RESUME_ONE_PROJECT', 'INTERVIEW_PRACTICE_ONLY'].map(n => `docs/learning/handovers/${n}.md`)
-].map(n => path.join(reference, n));
-const markdown = [...projectMarkdown, ...shared, 'D:/java-projects/AGENTS.md'];
+const markdown = projectMarkdown;
 let links = 0;
+let externalReferenceLinks = 0;
 const broken = [];
 for (const file of markdown) {
   let content = fs.readFileSync(file, 'utf8').replace(/```[\s\S]*?```/g, '');
   for (const match of content.matchAll(/\[[^\]]*\]\(([^)]+)\)/g)) {
     const target = match[1].replace(/^<|>$/g, '').split('#')[0];
     if (!target || /^(https?:|mailto:|app:)/.test(target)) continue;
+    // Inherited tutorials cite the original workspace as historical reference material.
+    // A standalone checkout must validate its own files without requiring that workspace.
+    if (/^[A-Za-z]:[\\/]/.test(target) && !path.resolve(target).startsWith(project + path.sep)) {
+      externalReferenceLinks++;
+      continue;
+    }
     links++;
     const resolved = path.resolve(path.dirname(file), decodeURIComponent(target));
     if (!fs.existsSync(resolved)) broken.push({ file, target });
@@ -111,6 +111,7 @@ for (const file of markdown) {
 }
 assert.deepEqual(broken, [], 'local Markdown link targets');
 const evidence = { requiredFiles: required.length, namedRequests: requests.length, scriptBlocks,
-  markdownFiles: markdown.length, localLinks: links, brokenLinks: broken.length };
+  markdownFiles: markdown.length, localLinks: links, brokenLinks: broken.length, externalReferenceLinks };
+fs.mkdirSync('target', { recursive: true });
 fs.writeFileSync('target/artifact-evidence.json', JSON.stringify(evidence, null, 2));
 console.log(JSON.stringify(evidence, null, 2));

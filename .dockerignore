@@ -1,4 +1,4 @@
 .git
 .idea
 target/*
-!target/ticket-booking-lab-1.0.0.jar
+!target/sd-book-my-show-1.0.0.jar

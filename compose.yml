@@ -1,4 +1,4 @@
-name: ticket-booking-java
+name: sd-book-my-show
 services:
   postgres:
     image: postgres:16-alpine
@@ -6,7 +6,7 @@ services:
       POSTGRES_DB: booking
       POSTGRES_USER: booking_demo
       POSTGRES_PASSWORD: booking_demo
-    ports: ["127.0.0.1:5547:5432"]
+    ports: ["127.0.0.1:5553:5432"]
     volumes: ["booking-data:/var/lib/postgresql/data"]
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U booking_demo -d booking"]
@@ -21,7 +21,7 @@ services:
       DB_USER: booking_demo
       DB_PASSWORD: booking_demo
       INSTANCE_ID: api-a
-    ports: ["127.0.0.1:8105:8105"]
+    ports: ["127.0.0.1:8130:8105"]
     depends_on:
       postgres:
         condition: service_healthy
@@ -36,7 +36,7 @@ services:
     environment:
       <<: *api-env
       INSTANCE_ID: api-b
-    ports: ["127.0.0.1:8106:8105"]
+    ports: ["127.0.0.1:8131:8105"]
     depends_on:
       postgres:
         condition: service_healthy

@@ -49,6 +49,6 @@ fs.writeFileSync('postman/failover.postman_collection.json', JSON.stringify({ in
   description: 'Optional failover overlay required. Retains fixtures and toggles A drain. Run separately from learn-failover.mjs. Docker crash/shutdown assertions live in that script.',
   schema: 'https://schema.getpostman.com/json/collection/v2.1.0/collection.json' }, item }, null, 2) + '\n');
 fs.writeFileSync('postman/failover.postman_environment.json', JSON.stringify({ name: 'Ticket booking failover local',
-  values: [{ key: 'baseUrl', value: 'http://localhost:8107', enabled: true },
-    { key: 'apiA', value: 'http://localhost:8105', enabled: true },
-    { key: 'apiB', value: 'http://localhost:8106', enabled: true }], _postman_variable_scope: 'environment' }, null, 2) + '\n');
+  values: [{ key: 'baseUrl', value: 'http://localhost:8132', enabled: true },
+    { key: 'apiA', value: 'http://localhost:8130', enabled: true },
+    { key: 'apiB', value: 'http://localhost:8131', enabled: true }], _postman_variable_scope: 'environment' }, null, 2) + '\n');

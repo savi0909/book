@@ -99,7 +99,7 @@ fs.writeFileSync('postman/ticket-booking-lab.postman_collection.json', JSON.stri
   event: [event('prerequest', 'setTimeout(()=>{},250); // Bound polling pace in Postman/Newman.')], item: folders
 }, null, 2) + '\n');
 fs.writeFileSync('postman/local.postman_environment.json', JSON.stringify({ name: 'Ticket booking local', values: [
-  { key: 'baseUrl', value: 'http://localhost:8105', enabled: true },
-  { key: 'peerUrl', value: 'http://localhost:8106', enabled: true }
+  { key: 'baseUrl', value: 'http://localhost:8130', enabled: true },
+  { key: 'peerUrl', value: 'http://localhost:8131', enabled: true }
 ], _postman_variable_scope: 'environment' }, null, 2) + '\n');
 console.log('Generated', folders.reduce((n, f) => n + f.item.length, 0), 'named requests.');
