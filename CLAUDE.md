@@ -1,5 +1,10 @@
 @AGENTS.md
 
+Current delivery: [movie group booking](docs/MOVIE_BOOKING_TUTORIAL.md),
+[movie verification](docs/MOVIE_VERIFICATION.md) and [future work](docs/FUTURE_WORK.md).
+User selected atomic groups and retaining the original hold after payment failure.
+Movie/V5 domain is separate from the historical generic studies below.
+
 Latest continuation: [transactional outbox scenario4](docs/TRANSACTIONAL_OUTBOX_TUTORIAL.md).
 Read current AGENTS/evidence. Atomic snapshot source + separate atomic inbox/effect
 and leased ack, monotonic versions, retained history, no sends/external exactly-once.

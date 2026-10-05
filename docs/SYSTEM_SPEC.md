@@ -1,5 +1,10 @@
 # System specification
 
+Current movie specification: [movie tutorial](MOVIE_BOOKING_TUTORIAL.md) and
+[ADR](ADR_001_MOVIE_GROUP_BOOKING.md). The document below covers the preserved
+generic single-seat domain; its provider/outbox guarantees do not automatically
+apply to movie tables.
+
 ## Scenario4 extension — transactional outbox and local inbox
 
 V4 adds delivery_version to bookings and retained booking_outbox, notification_inbox,

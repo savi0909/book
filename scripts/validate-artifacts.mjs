@@ -31,6 +31,16 @@ const required = ['pom.xml', 'README.md', 'AGENTS.md', 'CLAUDE.md', 'PARITY.md',
   'src/main/java/com/example/booking/OutboxDispatcher.java', 'src/main/java/com/example/booking/OutboxWorker.java',
   'src/main/java/com/example/booking/LocalNotificationSink.java', 'src/main/java/com/example/booking/DeliveryController.java',
   'src/main/java/com/example/booking/OutboxController.java'];
+required.push('compose.movie.yml', 'docs/MOVIE_BOOKING_TUTORIAL.md', 'docs/MOVIE_API_REFERENCE.md',
+  'docs/MOVIE_VERIFICATION.md', 'docs/MOVIE_LOAD_SIMULATION_PLAN.md', 'docs/FUTURE_WORK.md',
+  'docs/ADR_001_MOVIE_GROUP_BOOKING.md', 'src/main/resources/db/migration/V5__movie_booking.sql',
+  'src/main/java/com/example/booking/MovieModels.java', 'src/main/java/com/example/booking/MovieCatalog.java',
+  'src/main/java/com/example/booking/MovieStore.java', 'src/main/java/com/example/booking/MovieBookingService.java',
+  'src/main/java/com/example/booking/MoviePaymentMock.java', 'src/main/java/com/example/booking/MoviePaymentService.java',
+  'src/main/java/com/example/booking/MovieController.java', 'src/test/java/com/example/booking/MovieBookingIntegrationTest.java',
+  'src/test/java/com/example/booking/MoviePaymentMockTest.java', 'scripts/learn-movie.mjs',
+  'postman/movie-booking.postman_collection.json', 'postman/movie-booking.postman_environment.json',
+  'scripts/check-movie-scheduled.mjs');
 for (const name of required) assert.ok(fs.existsSync(path.join(project, name)), name);
 const collection = JSON.parse(fs.readFileSync(required[12], 'utf8'));
 const environment = JSON.parse(fs.readFileSync(required[13], 'utf8'));
@@ -87,6 +97,12 @@ const outboxEnvironment = JSON.parse(fs.readFileSync('postman/outbox.postman_env
 assert.equal(outboxCollection.info.schema, collection.info.schema);
 for(const name of ['baseUrl','apiB','gatewayUrl']) assert.ok(outboxEnvironment.values.some(v=>v.key===name&&v.enabled));
 inspect(outboxCollection);
+const movieCollection = JSON.parse(fs.readFileSync('postman/movie-booking.postman_collection.json', 'utf8'));
+const movieEnvironment = JSON.parse(fs.readFileSync('postman/movie-booking.postman_environment.json', 'utf8'));
+assert.equal(movieCollection.info.schema, collection.info.schema);
+assert.equal(movieCollection.item.length, 30);
+assert.ok(movieEnvironment.values.some(v => v.key === 'baseUrl' && v.value === 'http://localhost:8130'));
+inspect(movieCollection);
 assert.ok(requests.every(r => r.name && r.event.some(e => e.listen === 'test')), 'named requests have assertions');
 const projectMarkdown = execFileSync('rg', ['--files', project, '-g', '*.md'], { encoding: 'utf8' }).trim().split(/\r?\n/);
 const markdown = projectMarkdown;

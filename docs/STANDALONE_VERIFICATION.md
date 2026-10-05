@@ -1,5 +1,9 @@
 # Standalone extraction verification - 2026-10-05
 
+Subsequent movie expansion and standalone stack startup are recorded in
+[movie verification](MOVIE_VERIFICATION.md). The extraction-phase record below
+precedes that new work and preserves its original scope.
+
 This document records checks for the independently initialized repository at
 `D:/sd-book-my-show`. Original runtime evidence remains in
 [VERIFICATION.md](VERIFICATION.md) and `docs/evidence/` with its real dates.

@@ -1,5 +1,11 @@
 # Verification evidence
 
+## Standalone movie expansion - 2026-10-05
+
+Read [movie verification](MOVIE_VERIFICATION.md) for V5,68 tests,23 A/B runtime
+checks,30 movie Postman requests/60 assertions and75 generic regression requests/
+110 assertions. Original dates/evidence below are preserved source-lab history.
+
 ## API 3 get-event study - verified2026-10-05
 
 Added [the focused walkthrough](API_03_GET_EVENT_WALKTHROUGH.md) and

@@ -1,0 +1,178 @@
+{
+  "verifiedOn": "2026-10-05",
+  "project": "D:/sd-book-my-show",
+  "tests": {
+    "tests": 68,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "runtime": {
+    "startedAt": "2026-10-05T14:14:19.665Z",
+    "run": "ea9571ab-ad34-4eb6-a91e-1f8c314d992e",
+    "checks": [
+      "Five screens and 200/500 capacity bounds",
+      "Default category counts 20/40/140",
+      "Same screen rejects overlapping show",
+      "Both shows found on the same local day",
+      "A/B group race has one complete winner",
+      "Canonical group and server-priced total",
+      "Partial group conflict rejected",
+      "Uncontended members rolled back",
+      "Same seat numbers independently held in another show",
+      "First unsuccessful call schedules one retry",
+      "Second unsuccessful call keeps group HELD",
+      "Failure preserves original expiry",
+      "Failed group still excludes another buyer",
+      "Same failed key does not dispatch again",
+      "User fresh payment has a new ID and number",
+      "Retry-success confirms the whole group",
+      "Fresh payment does not extend the hold",
+      "Failed and successful attempts retained",
+      "95 percent path confirms on first provider call",
+      "Cancellation flags simulated refund",
+      "All cancelled members released",
+      "Gateway excludes manual controls",
+      "Shared diagnostics have no conflicting ownership"
+    ],
+    "fixtures": [
+      {
+        "multiplexId": "3a532a2c-9dc4-4088-b453-4f3b867c32d0"
+      },
+      {
+        "showId": "d56a5510-c7a4-45b8-bac6-03068714069e"
+      },
+      {
+        "showId": "882554ae-b8f3-4d85-a212-65fddb072b79"
+      },
+      {
+        "bookingId": "ef96306f-2584-4551-9a7a-02ece1778257"
+      }
+    ],
+    "stats": {
+      "bookings": [
+        {
+          "state": "CANCELLED",
+          "count": 1
+        },
+        {
+          "state": "CONFIRMED",
+          "count": 1
+        }
+      ],
+      "seatConflicts": 0,
+      "payments": [
+        {
+          "state": "FAILED",
+          "count": 1
+        },
+        {
+          "state": "SUCCEEDED",
+          "count": 2
+        }
+      ],
+      "paymentPaths": {
+        "firstCallSuccess": 1,
+        "retrySuccess": 1,
+        "failed": 1,
+        "refundRequired": 1,
+        "pending": 0
+      }
+    },
+    "finishedAt": "2026-10-05T14:14:20.494Z"
+  },
+  "scheduled": {
+    "checkedAt": "2026-10-05T14:17:10.146Z",
+    "bookingId": "3bb4112d-8501-48b0-86ba-10d808f503e4",
+    "paymentId": "096e937d-b387-44ca-ae94-3110665bca74",
+    "checks": [
+      "New scheduled-mode group admitted",
+      "Deterministic fixture input disabled",
+      "Ordinary random-plan checkout accepted",
+      "Manual movie reconcile disabled",
+      "Scheduled worker resolves ordinary payment",
+      "Default outcome matches group transition"
+    ],
+    "result": {
+      "id": "3bb4112d-8501-48b0-86ba-10d808f503e4",
+      "showId": "d56a5510-c7a4-45b8-bac6-03068714069e",
+      "buyerId": "scheduled-40acae98-9f29-44f8-b3ae-75e53d5aef23",
+      "state": "CONFIRMED",
+      "expiresAt": "2026-10-05T14:32:09.875037Z",
+      "seats": [
+        {
+          "seatNumber": 4,
+          "category": "A",
+          "priceMinor": 50000
+        },
+        {
+          "seatNumber": 5,
+          "category": "A",
+          "priceMinor": 50000
+        }
+      ],
+      "amountMinor": 100000,
+      "currency": "INR",
+      "payment": {
+        "id": "096e937d-b387-44ca-ae94-3110665bca74",
+        "bookingId": "3bb4112d-8501-48b0-86ba-10d808f503e4",
+        "paymentNumber": 1,
+        "state": "SUCCEEDED",
+        "providerStep": 1,
+        "dispatches": 1,
+        "amountMinor": 100000,
+        "refundRequired": false
+      },
+      "replayed": false
+    }
+  },
+  "movieNewman": {
+    "requests": {
+      "total": 30,
+      "pending": 0,
+      "failed": 0
+    },
+    "assertions": {
+      "total": 60,
+      "pending": 0,
+      "failed": 0
+    }
+  },
+  "legacyNewman": {
+    "requests": {
+      "total": 75,
+      "pending": 0,
+      "failed": 0
+    },
+    "assertions": {
+      "total": 110,
+      "pending": 0,
+      "failed": 0
+    }
+  },
+  "finalTopology": {
+    "apiA": 8130,
+    "apiB": 8131,
+    "gateway": 8132,
+    "postgres": 5553,
+    "movieControls": false,
+    "scheduledWorkers": true
+  },
+  "databaseChecks": {
+    "flywayVersions": [
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "pendingMoviePayments": 0,
+    "confirmedMemberOwnershipMismatches": 0
+  },
+  "limits": [
+    "Finite correctness checks, no thousands-user/sustained-load result",
+    "Local mock shares PostgreSQL availability",
+    "No real payment/refund/auth/HA/movie outbox guarantee",
+    "Fresh origin URL not supplied; no push claimed"
+  ]
+}

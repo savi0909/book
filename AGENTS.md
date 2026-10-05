@@ -1,5 +1,18 @@
 # Ticket booking learning lab
 
+## Current movie expansion - 2026-10-05
+
+User explicitly selected movie booking in this standalone repository, overriding
+earlier teaching-only/stop-at-API3 scope for this delivery. Read movie tutorial,
+API/ADR/verification/FUTURE_WORK. V5:5-100 screens,200-500 seats,2-3 categories,
+atomic1-10-seat groups, separate show inventory.95/4.5/0.5 mock plans; one logical
+retry per payment; failed payment retains original hold until expiry, fresh key
+admits a new payment. Movie tables do not inherit generic outbox/poison semantics.
+Optional compose.movie.yml enables fixtures/manual ticks, disables both legacy
+and movie loops; base+failover restores scheduling and disables movie controls.
+Thousands-user simulation is selected later, with saved plan; do not run it now.
+Keep new feature commit timestamps real. Fresh origin URL still awaits the user.
+
 ## Standalone repository override - 2026-10-05
 
 This repository is D:/sd-book-my-show, independently initialized at user request.

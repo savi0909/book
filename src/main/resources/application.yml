@@ -41,3 +41,7 @@ lab:
   failure-controls-enabled: ${FAILURE_CONTROLS_ENABLED:false}
   instance: ${INSTANCE_ID:local}
   maintenance-enabled: ${MAINTENANCE_ENABLED:true}
+movie:
+  payment-controls-enabled: ${MOVIE_PAYMENT_CONTROLS_ENABLED:false}
+  payment-worker-enabled: ${MOVIE_PAYMENT_WORKER_ENABLED:true}
+  payment-tick-ms: ${MOVIE_PAYMENT_TICK_MS:200}

@@ -1,5 +1,24 @@
 # Ticket booking interview practice
 
+## Current movie-domain interview track
+
+Read [movie walkthrough](MOVIE_BOOKING_TUTORIAL.md) and [load plan](MOVIE_LOAD_SIMULATION_PLAN.md).
+The inherited interview track below remains for generic single-seat studies.
+
+1. Senior: trace sorted locks for a three-category group; prove a409 leaves no
+   partial hold and expired cleanup cannot release replacement ownership.
+2. Senior: distinguish same-key discovery, same-payment automatic retry and a
+   fresh user payment. Explain the unchanged deadline and late-success refund.
+3. Staff: model20 shows/4000 show-seats versus one hot show. A10000-payment run
+   expects10500 logical calls before infrastructure replay; it does not imply
+  10500 simultaneous calls or a measured worker drain rate.
+4. Staff: diagnose lock contention, JDBC/servlet/gateway limits, polling and a
+   growing payment backlog. Define expected409 separately from availability errors.
+5. Principal: assign inventory/payment/reconciliation ownership; plan movie
+   outbox/refund/auth rollout and show partitioning only after evidence. Old API
+   versions lack movie routes: migrate schema first, route movie traffic to new
+   replicas, and keep generic traffic compatible during the transition.
+
 Scenario4: [transactional outbox tutorial](TRANSACTIONAL_OUTBOX_TUTORIAL.md) gives
 five points/spoken answer plus3–5 points for atomic source work, recoverable delivery,
 inbox/ordering and operations/rollout. Trace the source/consumer/ack commits, explain

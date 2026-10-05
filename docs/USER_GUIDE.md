@@ -1,5 +1,9 @@
 # User guide
 
+Start with [the movie walkthrough](MOVIE_BOOKING_TUTORIAL.md) for group reservations,
+movie mock retries, standalone ports and a fresh payment after failure. The studies
+below remain for the generic single-seat domain.
+
 ## Transactional outbox study
 
 Use [scenario4 tutorial](TRANSACTIONAL_OUTBOX_TUTORIAL.md) for base+failover+outbox

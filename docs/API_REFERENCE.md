@@ -1,5 +1,8 @@
 # API reference
 
+Current expanded domain: [movie API reference](MOVIE_API_REFERENCE.md).
+The routes below remain the separate inherited generic ticketing contract.
+
 ## Scenario4 delivery diagnostics and optional controls
 
 | Method/path | Input | Behavior |

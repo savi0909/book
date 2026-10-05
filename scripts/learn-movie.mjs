@@ -1,0 +1,68 @@
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+
+const A='http://localhost:8130',B='http://localhost:8131',G='http://localhost:8132';
+const run=crypto.randomUUID();
+const evidence={startedAt:new Date().toISOString(),run,checks:[],fixtures:[]};
+function check(name,condition) {assert.ok(condition,name);evidence.checks.push(name);console.log('PASS '+name);}
+async function call(base,path,body,key) {
+  const response=await fetch(base+path,{method:body===undefined?'GET':'POST',headers:{'Content-Type':'application/json',...(key?{'Idempotency-Key':key}:{})},body:body===undefined?undefined:JSON.stringify(body),signal:AbortSignal.timeout(15000)});
+  const text=await response.text();let data;try{data=JSON.parse(text);}catch{data=text;}return {status:response.status,data};
+}
+async function ok(base,path,body,key) {const r=await call(base,path,body,key);assert.ok(r.status>=200&&r.status<300,JSON.stringify(r));return r.data;}
+const multiplex=await ok(A,'/api/demo/movie/multiplexes',{name:'Runtime '+run,zoneId:'Asia/Kolkata',screens:Array.from({length:5},(_,i)=>({name:'Screen '+(i+1),seatCount:i===4?500:200}))});
+evidence.fixtures.push({multiplexId:multiplex.id});
+check('Five screens and 200/500 capacity bounds',multiplex.screens.length===5 && multiplex.screens.some(s=>s.seatCount===500));
+const screen=multiplex.screens.find(s=>s.seatCount===200);
+check('Default category counts 20/40/140',screen.categorySeats.A===20&&screen.categorySeats.B===40&&screen.categorySeats.C===140);
+const movie=await ok(A,'/api/demo/movie/movies',{title:'Movie '+run,language:'Hindi',durationMinutes:120});
+const start=new Date();start.setUTCDate(start.getUTCDate()+2);start.setUTCHours(3,30,0,0);
+const showRequest={movieId:movie.id,screenId:screen.id,startsAt:start.toISOString(),turnaroundMinutes:15,pricesMinor:{A:50000,B:30000,C:15000}};
+const first=await ok(A,'/api/demo/movie/shows',showRequest);
+const second=await ok(B,'/api/demo/movie/shows',{...showRequest,startsAt:new Date(start.getTime()+3*3600000).toISOString()});
+evidence.fixtures.push({showId:first.id},{showId:second.id});
+check('Same screen rejects overlapping show',(await call(B,'/api/demo/movie/shows',showRequest)).status===409);
+const day=new Date(start.getTime()+19800000).toISOString().slice(0,10);
+const shows=await ok(B,`/api/movie/shows?multiplexId=${multiplex.id}&date=${day}&limit=100`);
+check('Both shows found on the same local day',shows.some(s=>s.id===first.id)&&shows.some(s=>s.id===second.id));
+const races=await Promise.all(Array.from({length:32},(_,i)=>call(i%2?A:B,'/api/movie/holds',{showId:first.id,seatNumbers:i%2?[1,21,61]:[61,21,1],buyerId:'race-'+run+'-'+i,ttlSeconds:900},'race-'+run+'-'+i)));
+check('A/B group race has one complete winner',races.filter(r=>r.status===201).length===1 && races.filter(r=>r.status===409).length===31);
+const booking=races.find(r=>r.status===201).data;evidence.fixtures.push({bookingId:booking.id});
+check('Canonical group and server-priced total',booking.seats.map(s=>s.seatNumber).join(',')==='1,21,61' && booking.amountMinor===95000);
+const conflict=await call(A,'/api/movie/holds',{showId:first.id,seatNumbers:[2,21,62],buyerId:'partial-'+run,ttlSeconds:900},'partial-'+run);
+check('Partial group conflict rejected',conflict.status===409);
+const seats=await ok(B,`/api/movie/shows/${first.id}/seats`);
+check('Uncontended members rolled back',seats[1].availability==='AVAILABLE'&&seats[61].availability==='AVAILABLE');
+const other=await ok(B,'/api/movie/holds',{showId:second.id,seatNumbers:[1,21,61],buyerId:'other-show-'+run,ttlSeconds:900},'other-show-'+run);
+check('Same seat numbers independently held in another show',other.state==='HELD');
+let checkout=await ok(A,`/api/movie/bookings/${booking.id}/checkout`,{testBucket:9950},'failed-'+run);
+const failedId=checkout.payment.id;
+let result=await ok(B,`/api/demo/movie/payments/${failedId}/reconcile`,{});
+check('First unsuccessful call schedules one retry',result.payment.state==='RETRY_PENDING'&&result.state==='PAYMENT_PENDING');
+result=await ok(A,`/api/demo/movie/payments/${failedId}/reconcile`,{});
+check('Second unsuccessful call keeps group HELD',result.payment.state==='FAILED'&&result.state==='HELD');
+check('Failure preserves original expiry',result.expiresAt===booking.expiresAt);
+check('Failed group still excludes another buyer',(await call(B,'/api/movie/holds',{showId:first.id,seatNumbers:[1],buyerId:'blocked-'+run,ttlSeconds:900},'blocked-'+run)).status===409);
+const replay=await ok(B,`/api/movie/bookings/${booking.id}/checkout`,{testBucket:9950},'failed-'+run);
+check('Same failed key does not dispatch again',replay.replayed&&replay.payment.id===failedId&&replay.payment.dispatches===2);
+checkout=await ok(B,`/api/movie/bookings/${booking.id}/checkout`,{testBucket:9500},'fresh-'+run);
+check('User fresh payment has a new ID and number',checkout.payment.id!==failedId&&checkout.payment.paymentNumber===2);
+await ok(A,`/api/demo/movie/payments/${checkout.payment.id}/reconcile`,{});
+result=await ok(B,`/api/demo/movie/payments/${checkout.payment.id}/reconcile`,{});
+check('Retry-success confirms the whole group',result.state==='CONFIRMED'&&result.payment.dispatches===2&&result.seats.length===3);
+check('Fresh payment does not extend the hold',result.expiresAt===booking.expiresAt);
+const history=await ok(A,`/api/movie/bookings/${booking.id}/payments`);
+check('Failed and successful attempts retained',history.map(p=>p.state).join(',')==='FAILED,SUCCEEDED');
+const paid=await ok(A,`/api/movie/bookings/${other.id}/checkout`,{testBucket:0},'first-'+run);
+result=await ok(B,`/api/demo/movie/payments/${paid.payment.id}/reconcile`,{});
+check('95 percent path confirms on first provider call',result.state==='CONFIRMED'&&result.payment.dispatches===1);
+const cancelled=await ok(B,`/api/movie/bookings/${booking.id}/cancel`,{});
+check('Cancellation flags simulated refund',cancelled.state==='CANCELLED'&&cancelled.payment.refundRequired);
+const released=await ok(A,`/api/movie/shows/${first.id}/seats`);
+check('All cancelled members released',[0,20,60].every(n=>released[n].availability==='AVAILABLE'));
+check('Gateway excludes manual controls',(await call(G,`/api/demo/movie/payments/${paid.payment.id}/reconcile`,{})).status===404);
+const stats=await ok(B,'/api/movie/stats');
+check('Shared diagnostics have no conflicting ownership',stats.seatConflicts===0);
+evidence.stats=stats;evidence.finishedAt=new Date().toISOString();
+fs.mkdirSync('target',{recursive:true});fs.writeFileSync('target/movie-runtime-evidence.json',JSON.stringify(evidence,null,2)+'\n');
+console.log(JSON.stringify({checks:evidence.checks.length,retainedFixtures:evidence.fixtures.length}));

@@ -1,5 +1,10 @@
 # Source relationship and intentional differences
 
+The movie expansion is a new user-defined contract, with no JavaScript/Python
+movie-app parity claim. See [movie walkthrough](docs/MOVIE_BOOKING_TUTORIAL.md)
+and [ADR](docs/ADR_001_MOVIE_GROUP_BOOKING.md). Existing V1-V4 generic contracts
+remain separate; V5 does not change their single-seat/payment behavior.
+
 ## Scenario4 outbox extension — 2026-10-05
 
 Inspected original global-payment-system/services/processor/server.js: PostgreSQL

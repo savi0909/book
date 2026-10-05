@@ -1,0 +1,997 @@
+{
+  "info": {
+    "name": "SD Book My Show - atomic groups and payment retries",
+    "description": "Run with base+failover+movie manual overlay. Creates retained fixtures. No real payments. Do not run during scheduled-worker mode.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "01 Create retained multiplex with five screens",
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.environment.set('runId',pm.variables.replaceIn('{{$guid}}'));['multiplexId','screenId','movieId','showId','bookingId','paymentId','failedPaymentId','secondBookingId'].forEach(k=>pm.environment.unset(k));const start=new Date(Date.now()+86400000);pm.environment.set('showStart',start.toISOString());pm.environment.set('showDate',new Date(start.getTime()+19800000).toISOString().slice(0,10));"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 201',()=>pm.response.to.have.status(201));",
+              "const movieResult=pm.response.json();",
+              "pm.environment.set('multiplexId',movieResult.id);pm.environment.set('screenId',movieResult.screens[0].id);pm.test('Five screens and 10/20/70 layout',()=>{pm.expect(movieResult.screens).to.have.lengthOf(5);pm.expect(movieResult.screens[0].categorySeats).to.eql({A:20,B:40,C:140});});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/demo/movie/multiplexes",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Movie study {{runId}}\",\n  \"zoneId\": \"Asia/Kolkata\",\n  \"screens\": [\n    {\n      \"name\": \"Screen 1\",\n      \"seatCount\": 200\n    },\n    {\n      \"name\": \"Screen 2\",\n      \"seatCount\": 200\n    },\n    {\n      \"name\": \"Screen 3\",\n      \"seatCount\": 200\n    },\n    {\n      \"name\": \"Screen 4\",\n      \"seatCount\": 200\n    },\n    {\n      \"name\": \"Screen 5\",\n      \"seatCount\": 200\n    }\n  ]\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "02 Read multiplex",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200',()=>pm.response.to.have.status(200));",
+              "const movieResult=pm.response.json();",
+              "pm.test('Matching multiplex',()=>pm.expect(movieResult.id).to.eql(pm.environment.get('multiplexId')));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/movie/multiplexes/{{multiplexId}}"
+      }
+    },
+    {
+      "name": "03 Create retained movie",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 201',()=>pm.response.to.have.status(201));",
+              "const movieResult=pm.response.json();",
+              "pm.environment.set('movieId',movieResult.id);pm.test('Runtime',()=>pm.expect(movieResult.durationMinutes).to.eql(120));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/demo/movie/movies",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"title\": \"Learning movie {{runId}}\",\n  \"language\": \"Hindi\",\n  \"durationMinutes\": 120\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "04 Schedule show and freeze category prices",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 201',()=>pm.response.to.have.status(201));",
+              "const movieResult=pm.response.json();",
+              "pm.environment.set('showId',movieResult.id);pm.test('Capacity and zone',()=>{pm.expect(movieResult.seatCount).to.eql(200);pm.expect(movieResult.zoneId).to.eql('Asia/Kolkata');});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/demo/movie/shows",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"movieId\": \"{{movieId}}\",\n  \"screenId\": \"{{screenId}}\",\n  \"startsAt\": \"{{showStart}}\",\n  \"turnaroundMinutes\": 15,\n  \"pricesMinor\": {\n    \"A\": 50000,\n    \"B\": 30000,\n    \"C\": 15000\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "05 Read show",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200',()=>pm.response.to.have.status(200));",
+              "const movieResult=pm.response.json();",
+              "pm.test('Matching show',()=>pm.expect(movieResult.id).to.eql(pm.environment.get('showId')));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/movie/shows/{{showId}}"
+      }
+    },
+    {
+      "name": "06 Reject overlapping screen schedule",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 409',()=>pm.response.to.have.status(409));",
+              "pm.test('Overlap conflict',()=>pm.expect(pm.response.json().code).to.eql('SCREEN_SCHEDULE_OVERLAP'));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/demo/movie/shows",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"movieId\": \"{{movieId}}\",\n  \"screenId\": \"{{screenId}}\",\n  \"startsAt\": \"{{showStart}}\",\n  \"turnaroundMinutes\": 15,\n  \"pricesMinor\": {\n    \"A\": 50000,\n    \"B\": 30000,\n    \"C\": 15000\n  }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "07 Browse date in multiplex time zone",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200',()=>pm.response.to.have.status(200));",
+              "const movieResult=pm.response.json();",
+              "pm.test('Scheduled show is listed',()=>pm.expect(movieResult.map(s=>s.id)).to.include(pm.environment.get('showId')));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/movie/shows?multiplexId={{multiplexId}}&date={{showDate}}&limit=100&offset=0"
+      }
+    },
+    {
+      "name": "08 Read category seat map",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200',()=>pm.response.to.have.status(200));",
+              "const movieResult=pm.response.json();",
+              "pm.test('200 priced seats',()=>{pm.expect(movieResult).to.have.lengthOf(200);pm.expect(movieResult[0]).to.include({category:'A',priceMinor:50000});pm.expect(movieResult[20].category).to.eql('B');pm.expect(movieResult[60].category).to.eql('C');});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/movie/shows/{{showId}}/seats"
+      }
+    },
+    {
+      "name": "09 Atomically hold seats across all categories",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 201',()=>pm.response.to.have.status(201));",
+              "const movieResult=pm.response.json();",
+              "pm.environment.set('bookingId',movieResult.id);pm.environment.set('expiresAt',movieResult.expiresAt);pm.test('Whole group and server-priced total',()=>{pm.expect(movieResult.seats.map(s=>s.seatNumber)).to.eql([1,21,61]);pm.expect(movieResult.amountMinor).to.eql(95000);});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "movie-hold-{{runId}}"
+          }
+        ],
+        "url": "{{baseUrl}}/api/movie/holds",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"showId\": \"{{showId}}\",\n  \"seatNumbers\": [\n    61,\n    1,\n    21\n  ],\n  \"buyerId\": \"buyer-{{runId}}\",\n  \"ttlSeconds\": 900\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "10 Reject partially unavailable group",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 409',()=>pm.response.to.have.status(409));",
+              "pm.test('No partial hold',()=>pm.expect(pm.response.json().code).to.eql('SEAT_UNAVAILABLE'));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "conflict-{{runId}}"
+          }
+        ],
+        "url": "{{baseUrl}}/api/movie/holds",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"showId\": \"{{showId}}\",\n  \"seatNumbers\": [\n    2,\n    21,\n    62\n  ],\n  \"buyerId\": \"other-{{runId}}\",\n  \"ttlSeconds\": 900\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "11 Confirm rollback leaves other seats free",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200',()=>pm.response.to.have.status(200));",
+              "const movieResult=pm.response.json();",
+              "pm.test('Seats 2 and 62 stayed free',()=>{pm.expect(movieResult[1].availability).to.eql('AVAILABLE');pm.expect(movieResult[61].availability).to.eql('AVAILABLE');});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/movie/shows/{{showId}}/seats"
+      }
+    },
+    {
+      "name": "12 Read booking",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200',()=>pm.response.to.have.status(200));",
+              "const movieResult=pm.response.json();",
+              "pm.test('HELD',()=>pm.expect(movieResult.state).to.eql('HELD'));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/movie/bookings/{{bookingId}}"
+      }
+    },
+    {
+      "name": "13 Start deterministic failed-payment study",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 202',()=>pm.response.to.have.status(202));",
+              "const movieResult=pm.response.json();",
+              "pm.environment.set('failedPaymentId',movieResult.payment.id);pm.test('First payment',()=>pm.expect(movieResult.payment.paymentNumber).to.eql(1));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "movie-failed-{{runId}}"
+          }
+        ],
+        "url": "{{baseUrl}}/api/movie/bookings/{{bookingId}}/checkout",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"testBucket\": 9950\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "14 First provider call needs retry",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200',()=>pm.response.to.have.status(200));",
+              "const movieResult=pm.response.json();",
+              "pm.test('Retry remains same payment',()=>{pm.expect(movieResult.state).to.eql('PAYMENT_PENDING');pm.expect(movieResult.payment.state).to.eql('RETRY_PENDING');});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/demo/movie/payments/{{failedPaymentId}}/reconcile",
+        "body": {
+          "mode": "raw",
+          "raw": "{}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "15 Second call fails but whole hold remains",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200',()=>pm.response.to.have.status(200));",
+              "const movieResult=pm.response.json();",
+              "pm.test('Failed payment keeps original hold deadline',()=>{pm.expect(movieResult.state).to.eql('HELD');pm.expect(movieResult.payment.state).to.eql('FAILED');pm.expect(movieResult.expiresAt).to.eql(pm.environment.get('expiresAt'));});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/demo/movie/payments/{{failedPaymentId}}/reconcile",
+        "body": {
+          "mode": "raw",
+          "raw": "{}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "16 Same failed key discovers old attempt",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200',()=>pm.response.to.have.status(200));",
+              "const movieResult=pm.response.json();",
+              "pm.test('Replay cannot start another payment',()=>{pm.expect(movieResult.replayed).to.eql(true);pm.expect(movieResult.payment.id).to.eql(pm.environment.get('failedPaymentId'));pm.expect(movieResult.payment.dispatches).to.eql(2);});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "movie-failed-{{runId}}"
+          }
+        ],
+        "url": "{{baseUrl}}/api/movie/bookings/{{bookingId}}/checkout",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"testBucket\": 9950\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "17 Changed input under old key conflicts",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 409',()=>pm.response.to.have.status(409));",
+              "pm.test('Key binds input',()=>pm.expect(pm.response.json().code).to.eql('IDEMPOTENCY_CONFLICT'));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "movie-failed-{{runId}}"
+          }
+        ],
+        "url": "{{baseUrl}}/api/movie/bookings/{{bookingId}}/checkout",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"testBucket\": 0\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "18 User starts fresh payment with new key",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 202',()=>pm.response.to.have.status(202));",
+              "const movieResult=pm.response.json();",
+              "pm.environment.set('paymentId',movieResult.payment.id);pm.test('New attempt, same booking',()=>{pm.expect(movieResult.payment.paymentNumber).to.eql(2);pm.expect(movieResult.payment.id).not.to.eql(pm.environment.get('failedPaymentId'));});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "movie-fresh-{{runId}}"
+          }
+        ],
+        "url": "{{baseUrl}}/api/movie/bookings/{{bookingId}}/checkout",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"testBucket\": 9500\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "19 Retry-success path first call",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200',()=>pm.response.to.have.status(200));",
+              "const movieResult=pm.response.json();",
+              "pm.test('Waiting for one retry',()=>pm.expect(movieResult.payment.state).to.eql('RETRY_PENDING'));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/demo/movie/payments/{{paymentId}}/reconcile",
+        "body": {
+          "mode": "raw",
+          "raw": "{}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "20 Retry-success path second call confirms group",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200',()=>pm.response.to.have.status(200));",
+              "const movieResult=pm.response.json();",
+              "pm.test('Confirmed without deadline extension',()=>{pm.expect(movieResult.state).to.eql('CONFIRMED');pm.expect(movieResult.expiresAt).to.eql(pm.environment.get('expiresAt'));pm.expect(movieResult.payment.dispatches).to.eql(2);});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/demo/movie/payments/{{paymentId}}/reconcile",
+        "body": {
+          "mode": "raw",
+          "raw": "{}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "21 Read successful payment",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200',()=>pm.response.to.have.status(200));",
+              "const movieResult=pm.response.json();",
+              "pm.test('SUCCEEDED',()=>pm.expect(movieResult.state).to.eql('SUCCEEDED'));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/movie/payments/{{paymentId}}"
+      }
+    },
+    {
+      "name": "22 Read retained payment history",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200',()=>pm.response.to.have.status(200));",
+              "const movieResult=pm.response.json();",
+              "pm.test('Failure then fresh success',()=>pm.expect(movieResult.map(p=>p.state)).to.eql(['FAILED','SUCCEEDED']));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/movie/bookings/{{bookingId}}/payments"
+      }
+    },
+    {
+      "name": "23 Read audit",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200',()=>pm.response.to.have.status(200));",
+              "const movieResult=pm.response.json();",
+              "pm.test('One confirmation',()=>pm.expect(movieResult.filter(e=>e.action==='CONFIRMED')).to.have.lengthOf(1));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/movie/bookings/{{bookingId}}/audit"
+      }
+    },
+    {
+      "name": "24 Cancel confirmed group and flag refund",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200',()=>pm.response.to.have.status(200));",
+              "const movieResult=pm.response.json();",
+              "pm.test('Cancelled, refund required',()=>{pm.expect(movieResult.state).to.eql('CANCELLED');pm.expect(movieResult.payment.refundRequired).to.eql(true);});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/movie/bookings/{{bookingId}}/cancel",
+        "body": {
+          "mode": "raw",
+          "raw": "{}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "25 Read released group seats",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200',()=>pm.response.to.have.status(200));",
+              "const movieResult=pm.response.json();",
+              "pm.test('All group seats released',()=>[0,20,60].forEach(n=>pm.expect(movieResult[n].availability).to.eql('AVAILABLE')));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/movie/shows/{{showId}}/seats"
+      }
+    },
+    {
+      "name": "26 Hold next group for first-call success",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 201',()=>pm.response.to.have.status(201));",
+              "const movieResult=pm.response.json();",
+              "pm.environment.set('secondBookingId',movieResult.id);pm.test('Two seats',()=>pm.expect(movieResult.seats).to.have.lengthOf(2));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "next-hold-{{runId}}"
+          }
+        ],
+        "url": "{{baseUrl}}/api/movie/holds",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"showId\": \"{{showId}}\",\n  \"seatNumbers\": [\n    2,\n    3\n  ],\n  \"buyerId\": \"next-{{runId}}\",\n  \"ttlSeconds\": 900\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "27 Start first-call-success payment",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 202',()=>pm.response.to.have.status(202));",
+              "const movieResult=pm.response.json();",
+              "pm.environment.set('firstPaymentId',movieResult.payment.id);"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Idempotency-Key",
+            "value": "first-call-{{runId}}"
+          }
+        ],
+        "url": "{{baseUrl}}/api/movie/bookings/{{secondBookingId}}/checkout",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"testBucket\": 0\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "28 Confirm in one provider call",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200',()=>pm.response.to.have.status(200));",
+              "const movieResult=pm.response.json();",
+              "pm.test('One dispatch',()=>{pm.expect(movieResult.state).to.eql('CONFIRMED');pm.expect(movieResult.payment.dispatches).to.eql(1);});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/demo/movie/payments/{{firstPaymentId}}/reconcile",
+        "body": {
+          "mode": "raw",
+          "raw": "{}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "29 Read shared movie diagnostics",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200',()=>pm.response.to.have.status(200));",
+              "const movieResult=pm.response.json();",
+              "pm.test('No conflicting valid ownership',()=>pm.expect(movieResult.seatConflicts).to.eql(0));pm.test('All mock paths observed',()=>{pm.expect(movieResult.paymentPaths.firstCallSuccess).to.be.at.least(1);pm.expect(movieResult.paymentPaths.retrySuccess).to.be.at.least(1);pm.expect(movieResult.paymentPaths.failed).to.be.at.least(1);});"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{baseUrl}}/api/movie/stats"
+      }
+    },
+    {
+      "name": "30 Gateway excludes manual movie payment controls",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 404',()=>pm.response.to.have.status(404));",
+              "pm.test('Replica-only control',()=>pm.expect(pm.response.code).to.eql(404));"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{gatewayUrl}}/api/demo/movie/payments/{{firstPaymentId}}/reconcile",
+        "body": {
+          "mode": "raw",
+          "raw": "{}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      }
+    }
+  ]
+}

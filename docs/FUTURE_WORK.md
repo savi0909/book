@@ -1,0 +1,38 @@
+# Future work and next-session handoff
+
+Current movie domain:5-100 screens/multiplex,200-500 seats/screen, two or three
+categories (default10/20/70), independent shows, atomic1-10-seat groups and
+95/4.5/0.5 mock payment paths. Failed payment retains the original deadline/group;
+a fresh key creates a fresh attempt. Read [tutorial](MOVIE_BOOKING_TUTORIAL.md),
+[API](MOVIE_API_REFERENCE.md), [ADR](ADR_001_MOVIE_GROUP_BOOKING.md) and
+[verification](MOVIE_VERIFICATION.md).
+
+The selected later work is [thousands-user same-day simulation](MOVIE_LOAD_SIMULATION_PLAN.md).
+No sustained workload or generator host has been selected for this delivery.
+
+Other proposals remain separate:
+
+- Frontend, browse/search filters, visual/adjacent seat maps and groups over10.
+- Movie transition outbox/notifications; inherited generic outbox does not publish movie changes.
+- Independent mock process, bounded movie admission and poison policy; current mock shares DB availability.
+- Actual refund workflow, buyer authentication, callback verification and retention/idempotency policy.
+- Catalog/layout/schedule edits with a defined policy for existing bookings.
+- Show partitioning, waiting rooms, read caching and DB HA driven by measured needs.
+- Original generic scenarios5-6, optimistic seats and general retry-storm harness are still proposals.
+
+Repository is `D:/sd-book-my-show`, main branch, Maven artifact `sd-book-my-show`.
+Earlier14 source snapshots use disclosed September15-October5 reconstructed
+dates. Setup/movie work uses actual timestamps. Do not rewrite real evidence dates.
+Publishing awaits a fresh empty GitHub repository URL. Do not reuse the original
+Java workspace origin. Push without force and verify the remote SHA matches HEAD.
+
+Addresses: A8130/B8131/gateway8132/PostgreSQL5553; optional generic provider8133.
+Movie needs no provider container. Preserve original repositories/IntelliJ edits/
+services and all data. No file/directory deletion or Maven clean/prune/reset without
+explicit user permission. Check verification for final scheduled/manual stack state.
+
+At this delivery's handoff the standalone base+failover stack is running, both
+legacy/movie workers enabled, movie controls off.68 tests,23 A/B runtime checks,
+30 movie requests/60 assertions and75 generic requests/110 assertions passed.
+Pending movie payments and confirmed ownership mismatches are both0. Resume
+with the tutorial; implement sustained simulation only when the user selects it.

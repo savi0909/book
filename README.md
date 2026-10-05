@@ -1,5 +1,14 @@
 # SD Book My Show
 
+Movie-booking backend with multiplexes, dated shows, category prices, atomic
+group reservations and durable mock payment retries. Start with the
+[movie walkthrough](docs/MOVIE_BOOKING_TUTORIAL.md),
+[movie API reference](docs/MOVIE_API_REFERENCE.md),
+[verification](docs/MOVIE_VERIFICATION.md),
+[future-work handoff](docs/FUTURE_WORK.md) and
+[later simulation plan](docs/MOVIE_LOAD_SIMULATION_PLAN.md).
+The inherited generic single-seat studies below remain separately available.
+
 Standalone Java ticket-booking study project at `D:/sd-book-my-show`. Start with
 [standalone setup](docs/STANDALONE_SETUP.md) and the
 [three-week sprint plan](docs/THREE_WEEK_SPRINT_PLAN.md).
