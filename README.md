@@ -1,5 +1,8 @@
 # SD Book My Show
 
+Resume entry: [project context](PROJECT_CONTEXT.md), [worklog](docs/WORKLOG.md)
+and [agent instructions](AGENTS.md).
+
 Movie-booking backend with multiplexes, dated shows, category prices, atomic
 group reservations and durable mock payment retries. Start with the
 [movie walkthrough](docs/MOVIE_BOOKING_TUTORIAL.md),

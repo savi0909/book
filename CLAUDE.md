@@ -1,5 +1,8 @@
 @AGENTS.md
 
+Resume with [project context](PROJECT_CONTEXT.md) and [worklog](docs/WORKLOG.md).
+They record the standalone movie contract, verified delivery and pending origin.
+
 Current delivery: [movie group booking](docs/MOVIE_BOOKING_TUTORIAL.md),
 [movie verification](docs/MOVIE_VERIFICATION.md) and [future work](docs/FUTURE_WORK.md).
 User selected atomic groups and retaining the original hold after payment failure.

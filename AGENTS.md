@@ -1,4 +1,15 @@
-# Ticket booking learning lab
+# SD Book My Show agent instructions
+
+## Resume entry and durable records
+
+Read [PROJECT_CONTEXT.md](PROJECT_CONTEXT.md) first for current requirements,
+domain boundaries, operation and verified results. Then read
+[worklog](docs/WORKLOG.md), [movie tutorial](docs/MOVIE_BOOKING_TUTORIAL.md),
+[movie verification](docs/MOVIE_VERIFICATION.md) and [future work](docs/FUTURE_WORK.md).
+Update context/worklog when requested or when a delivered change affects the handoff.
+Date observations accurately; check current service/remote state before repeating
+historical claims. Sections below preserve inherited study context; the current
+movie/standalone sections take precedence for this repository.
 
 ## Current movie expansion - 2026-10-05
 
