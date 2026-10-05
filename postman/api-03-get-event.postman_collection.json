@@ -1,0 +1,60 @@
+{
+  "info": {
+    "name": "Ticket booking - API 3 - Get one event",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "One API for docs/API_03_GET_EVENT_WALKTHROUGH.md. Select No environment and paste an existing event UUID into this collection's eventId variable. Get the ID from API 1's response or API 2's list. Variables from another collection do not transfer automatically. This collection has no setup requests and creates no fixtures."
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8105", "type": "string" },
+    { "key": "eventId", "value": "", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "Get one event",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{baseUrl}}/api/events/{{eventId}}",
+        "description": "Reads one existing event. Set eventId in this collection's Variables tab first. Success checks expect HTTP 200 for an existing UUID."
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "const id = pm.variables.get('eventId');",
+              "if (typeof id !== 'string' || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)) {",
+              "  throw new Error('Set this collection eventId variable to an existing UUID copied from API 1 or API 2.');",
+              "}"
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('HTTP 200', function () { pm.response.to.have.status(200); });",
+              "pm.test('Response is JSON', function () { pm.response.to.be.json; });",
+              "if (pm.response.code === 200) {",
+              "  const event = pm.response.json();",
+              "  pm.test('Response is one event object', function () { pm.expect(event).to.be.an('object'); pm.expect(Array.isArray(event)).to.eql(false); });",
+              "  pm.test('Returned ID matches the requested UUID', function () { pm.expect(event.id).to.eql(pm.variables.get('eventId').toLowerCase()); });",
+              "  pm.test('Event metadata has the expected fields', function () {",
+              "    pm.expect(event.name).to.be.a('string');",
+              "    pm.expect(event.seatCount).to.be.a('number').and.within(1, 200);",
+              "    pm.expect(event.priceMinor).to.be.a('number').and.above(0);",
+              "    pm.expect(event.currency).to.be.a('string').and.have.lengthOf(3);",
+              "    pm.expect(event.createdAt).to.be.a('string');",
+              "    pm.expect(Number.isNaN(Date.parse(event.createdAt))).to.eql(false);",
+              "  });",
+              "}"
+            ]
+          }
+        }
+      ],
+      "response": []
+    }
+  ]
+}

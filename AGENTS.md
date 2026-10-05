@@ -2,8 +2,8 @@
 
 ## Current API study preference - 2026-10-05
 
-User advanced to API 2: GET /api/events. Read
-[API 2 walkthrough](docs/API_02_LIST_EVENTS_WALKTHROUGH.md) and its single-request
+User advanced to API 3: GET /api/events/{id}. Read
+[API 3 walkthrough](docs/API_03_GET_EVENT_WALKTHROUGH.md) and its single-request
 Postman collection. Stop after this lesson until the learner requests the next.
 
 User requests one API at a time, with manageable IntelliJ code walkthroughs.

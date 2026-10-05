@@ -55,6 +55,8 @@ the application does not manufacture availability from an in-memory seat cache.
 
 ## Code study
 
+[API 3 — get one event](docs/API_03_GET_EVENT_WALKTHROUGH.md): path UUID, the row-mapper lambda and the missing-event path. Import [its single-request Postman collection](postman/api-03-get-event.postman_collection.json) and paste an existing event ID.
+
 [API 1 lambda execution walkthrough](docs/API_01_LAMBDA_EXECUTION_WALKTHROUGH.md): who calls each lambda, what `work.get()` does, return flow and IntelliJ breakpoints.
 
 [API 2 — list events](docs/API_02_LIST_EVENTS_WALKTHROUGH.md): query parameters, SQL ordering, pagination and row mapping. Import [its single-request Postman collection](postman/api-02-list-events.postman_collection.json).

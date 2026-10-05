@@ -1,5 +1,17 @@
 # Verification evidence
 
+## API 3 get-event study - verified2026-10-05
+
+Added [the focused walkthrough](API_03_GET_EVENT_WALKTHROUGH.md) and
+[single-request collection](../postman/api-03-get-event.postman_collection.json).
+Read one retained event ID through GET /api/events?limit=1&offset=0, then ran
+`npx --yes newman@6.2.2 run postman/api-03-get-event.postman_collection.json --env-var "eventId=<existing UUID>"`:
+one collection request, HTTP200, five assertions, zero failures. Checks cover
+JSON, object shape, matching UUID and metadata. Missing/malformed-ID behavior
+in the tutorial was traced through source, not separately exercised in this run.
+Artifact checks cover collection shape, scripts and local links. Application
+code, original collections, runtime stack and retained data preserved; no writes.
+
 ## API 2 list-events study - verified2026-10-05
 
 Added [the focused walkthrough](API_02_LIST_EVENTS_WALKTHROUGH.md) and
