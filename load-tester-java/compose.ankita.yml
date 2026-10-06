@@ -1,0 +1,21 @@
+name: sd-book-my-show-java-load-test
+services:
+  load-tester:
+    image: sd-book-my-show-java-load-test:local
+    build: .
+    hostname: ankita-loader
+    environment:
+      BOOKING_GATEWAY: ${BOOKING_GATEWAY:?Set the verified private Tailscale gateway URL}
+      LOADER_BIND_ADDRESS: 0.0.0.0
+      LOADER_RESULTS_DIR: /results
+      LOADER_ALLOW_LOCAL: "false"
+    ports:
+      - "127.0.0.1:8135:8135"
+    volumes:
+      - ./results:/results
+    mem_limit: 384m
+    cpus: 0.5
+    pids_limit: 128
+    init: true
+    restart: "no"
+    stop_grace_period: 12s

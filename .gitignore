@@ -2,4 +2,5 @@ target/
 .idea/
 *.iml
 load-test/results/
+load-tester-java/results/
 *.started

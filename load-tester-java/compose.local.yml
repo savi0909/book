@@ -1,0 +1,28 @@
+name: sd-book-my-show-java-load-test
+services:
+  load-tester:
+    image: sd-book-my-show-java-load-test:local
+    build: .
+    hostname: booking-loader-local
+    environment:
+      BOOKING_GATEWAY: http://gateway:8080
+      LOADER_BIND_ADDRESS: 0.0.0.0
+      LOADER_RESULTS_DIR: /results/java
+      LOADER_ALLOW_LOCAL: "true"
+      LOADER_OBSERVER_STOP_FILE: ${JAVA_LOADER_OBSERVER_STOP_FILE:?Start a fresh observer first; container path under /results}
+    ports:
+      - "127.0.0.1:8135:8135"
+    volumes:
+      - ../load-test/results:/results
+    networks:
+      - booking
+    mem_limit: 384m
+    cpus: 0.5
+    pids_limit: 128
+    init: true
+    restart: "no"
+    stop_grace_period: 12s
+networks:
+  booking:
+    external: true
+    name: sd-book-my-show_default

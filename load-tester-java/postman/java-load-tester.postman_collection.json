@@ -1,0 +1,191 @@
+{
+  "info": {
+    "name": "Book My Show Java load tester (one-hold verification)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Run in order with 1200ms delay. Requires Java loader and live local observer. Retains one event/hold. Local control listener only."
+  },
+  "item": [
+    {
+      "name": "Start one finite hold",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{loaderUrl}}/load/runs",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"mode\": \"HOLD\",\n  \"rate\": 1,\n  \"seconds\": 1,\n  \"seats\": 1,\n  \"policy\": \"NONE\",\n  \"maxAttempts\": 1\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"admitted\", () => pm.response.to.have.status(202));",
+              "if (pm.response.code === 202) pm.environment.set(\"runId\", pm.response.json().runId);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Inspect completed hold",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{loaderUrl}}/load/runs/{{runId}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"status\", () => pm.response.to.have.status(200));",
+              "pm.test(\"one successful virtual-thread hold\", () => { const r=pm.response.json(); pm.expect(r.state).to.equal(\"COMPLETED\"); pm.expect(r.report.outcomes.HELD).to.equal(1); pm.expect(r.report.virtualThreadAttempts).to.equal(1); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "List histories",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{loaderUrl}}/load/runs"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"list includes run\", () => { pm.response.to.have.status(200); pm.expect(pm.response.json().some(x => x.startsWith(pm.environment.get(\"runId\")))).to.equal(true); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admit empty discovery once",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": "{{loaderUrl}}/load/runs/{{runId}}/discover"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"discovery admitted\", () => pm.response.to.have.status(202));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Inspect discovery report",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "{{loaderUrl}}/load/runs/{{runId}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"discovery separate\", () => { pm.response.to.have.status(200); const r=pm.response.json(); pm.expect(r.state).to.equal(\"COMPLETED\"); pm.expect(r.report.attempts).to.equal(1); pm.expect(r.report.discoveryAttempts).to.equal(0); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Cannot reset discovery budget",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": "{{loaderUrl}}/load/runs/{{runId}}/discover"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"second discovery rejected\", () => pm.response.to.have.status(409));"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Stop finished run safely",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "url": "{{loaderUrl}}/load/runs/{{runId}}/stop"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"no additional workload\", () => { pm.response.to.have.status(200); pm.expect(pm.response.json().report.attempts).to.equal(1); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Reject invalid rate before setup",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": "{{loaderUrl}}/load/runs",
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"rate\": 101,\n  \"seconds\": 1\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        }
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test(\"invalid workload\", () => pm.response.to.have.status(400));"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

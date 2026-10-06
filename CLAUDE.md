@@ -1,5 +1,10 @@
 @AGENTS.md
 
+Latest selected loader: [Java virtual-thread module](load-tester-java/README.md)
+and [tutorial](docs/JAVA_LOAD_TESTER_TUTORIAL.md), own Docker group/control8135.
+14 Java tests,8 Postman requests/9 assertions,100/100 actual10 RPS holds passed;
+SQL violations0. Node retained; final Ankita run pending; Redis phase3 deferred.
+
 Latest: [separate Docker10 RPS smoke](docs/DOCKER_LOAD_TEST_TUTORIAL.md) passed
 100 holds/zero violations. PostgreSQL1 GiB applied; Redis500 MiB availability
 phase3 deferred. Own load Compose group, exited; fixtures/metadata preserved.

@@ -1,0 +1,618 @@
+{
+  "date": "2026-10-06",
+  "reference": "D:/java-projects/url-shortener-load-test",
+  "module": "load-tester-java",
+  "contract": "generic /api/holds and /api/events/{id}/seats",
+  "javaTests": {
+    "command": "mvn -B -ntp -f load-tester-java/pom.xml verify",
+    "tests": 14,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "initialSmoke": {
+    "result": {
+      "runId": "a8c2da79661a4163",
+      "state": "COMPLETED",
+      "request": {
+        "mode": "HOLD",
+        "rate": 10,
+        "seconds": 10,
+        "seats": 100,
+        "holdPercent": 20,
+        "policy": "NONE",
+        "maxAttempts": 1,
+        "concurrency": 8,
+        "timeoutMs": 3500,
+        "deadlineMs": 10000,
+        "ttlSeconds": 120,
+        "seed": 20261006
+      },
+      "startedAt": "2026-10-06T12:06:47.013630020Z",
+      "inFlight": 0,
+      "attemptsSoFar": 100,
+      "offeredSoFar": 100,
+      "eventId": "5923d0a1-41b5-42ae-b80f-0d9225a0d6a2",
+      "report": {
+        "scheduled": 100,
+        "initialArrivalRate": 10,
+        "offered": 100,
+        "attempts": 100,
+        "discoveryAttempts": 0,
+        "maxInFlight": 2,
+        "virtualThreadAttempts": 100,
+        "measurementWallMs": 9914.917551,
+        "outcomes": {
+          "HELD": 100
+        },
+        "status": {
+          "201": 100
+        },
+        "httpLatencyMs": {
+          "p99": 18.374889,
+          "p50": 8.817941,
+          "p95": 14.098394,
+          "avg": 9.469103109999999,
+          "max": 22.333252
+        },
+        "logicalLatencyMs": {
+          "p99": 18.619182,
+          "p50": 9.016797,
+          "p95": 14.296497,
+          "avg": 9.67193426,
+          "max": 22.639762
+        },
+        "perSecond": {
+          "0": {
+            "attempts": 10,
+            "status": {
+              "201": 10
+            },
+            "latencyMs": {
+              "p99": 22.333252,
+              "p50": 10.484906,
+              "p95": 22.333252,
+              "avg": 13.158777700000002,
+              "max": 22.333252
+            }
+          },
+          "1": {
+            "attempts": 10,
+            "status": {
+              "201": 10
+            },
+            "latencyMs": {
+              "p99": 16.151933,
+              "p50": 9.787314,
+              "p95": 16.151933,
+              "avg": 10.847404000000001,
+              "max": 16.151933
+            }
+          },
+          "2": {
+            "attempts": 10,
+            "status": {
+              "201": 10
+            },
+            "latencyMs": {
+              "p99": 10.9023,
+              "p50": 8.485514,
+              "p95": 10.9023,
+              "avg": 8.6456626,
+              "max": 10.9023
+            }
+          },
+          "3": {
+            "attempts": 10,
+            "status": {
+              "201": 10
+            },
+            "latencyMs": {
+              "p99": 13.312596,
+              "p50": 9.370889,
+              "p95": 13.312596,
+              "avg": 9.9067909,
+              "max": 13.312596
+            }
+          },
+          "4": {
+            "attempts": 10,
+            "status": {
+              "201": 10
+            },
+            "latencyMs": {
+              "p99": 11.36823,
+              "p50": 8.557999,
+              "p95": 11.36823,
+              "avg": 8.6790989,
+              "max": 11.36823
+            }
+          },
+          "5": {
+            "attempts": 10,
+            "status": {
+              "201": 10
+            },
+            "latencyMs": {
+              "p99": 10.164983,
+              "p50": 8.496255,
+              "p95": 10.164983,
+              "avg": 8.6297509,
+              "max": 10.164983
+            }
+          },
+          "6": {
+            "attempts": 10,
+            "status": {
+              "201": 10
+            },
+            "latencyMs": {
+              "p99": 11.323945,
+              "p50": 7.734397,
+              "p95": 11.323945,
+              "avg": 8.459982,
+              "max": 11.323945
+            }
+          },
+          "7": {
+            "attempts": 10,
+            "status": {
+              "201": 10
+            },
+            "latencyMs": {
+              "p99": 9.254017,
+              "p50": 7.783313,
+              "p95": 9.254017,
+              "avg": 8.01332,
+              "max": 9.254017
+            }
+          },
+          "8": {
+            "attempts": 10,
+            "status": {
+              "201": 10
+            },
+            "latencyMs": {
+              "p99": 11.954172,
+              "p50": 8.935182,
+              "p95": 11.954172,
+              "avg": 9.1294618,
+              "max": 11.954172
+            }
+          },
+          "9": {
+            "attempts": 10,
+            "status": {
+              "201": 10
+            },
+            "latencyMs": {
+              "p99": 14.620345,
+              "p50": 8.184085,
+              "p95": 14.620345,
+              "avg": 9.2207823,
+              "max": 14.620345
+            }
+          }
+        },
+        "kinds": {
+          "HOLD": {
+            "attempts": 100,
+            "status": {
+              "201": 100
+            },
+            "latencyMs": {
+              "p99": 18.374889,
+              "p50": 8.817941,
+              "p95": 14.098394,
+              "avg": 9.469103109999999,
+              "max": 22.333252
+            }
+          }
+        }
+      }
+    },
+    "audit": {
+      "violations": {
+        "generic_valid_owner_duplicates": 0,
+        "run_duplicate_keys": 0,
+        "run_deadline_extension": 0,
+        "run_multiple_hold_audits": 0,
+        "movie_valid_member_ownership": 0,
+        "movie_confirmed_member_count": 0
+      },
+      "rawAggregateOutput": "BEGIN\r\nSET\r\n           invariant            | violations \r\n--------------------------------+------------\r\n generic_valid_owner_duplicates |          0\r\n(1 row)\r\n\r\n     invariant      | violations \r\n--------------------+------------\r\n run_duplicate_keys |          0\r\n(1 row)\r\n\r\n       invariant        | violations \r\n------------------------+------------\r\n run_deadline_extension |          0\r\n(1 row)\r\n\r\n        invariant         | violations \r\n--------------------------+------------\r\n run_multiple_hold_audits |          0\r\n(1 row)\r\n\r\n          invariant           | violations \r\n------------------------------+------------\r\n movie_valid_member_ownership |          0\r\n(1 row)\r\n\r\n          invariant           | violations \r\n------------------------------+------------\r\n movie_confirmed_member_count |          0\r\n(1 row)\r\n\r\n    observation     |  state  | count \r\n--------------------+---------+-------\r\n run_booking_counts | EXPIRED |   100\r\n(1 row)\r\n\r\nCOMMIT"
+    },
+    "observer": {
+      "summary": {
+        "seconds": 60,
+        "elapsedMs": 60530.365999999995,
+        "stopReason": null,
+        "requestedCadenceMs": 1000,
+        "actualCadence": "recorded per sample; docker stats may take longer"
+      },
+      "sampleCount": 30,
+      "thresholdSamples": 0,
+      "errors": 0,
+      "maxDbConnections": 16,
+      "maxLockWaits": 0,
+      "metadataOnly": true
+    }
+  },
+  "finalPackageSmoke": {
+    "result": {
+      "runId": "ae2d849d95414eb1",
+      "state": "COMPLETED",
+      "request": {
+        "mode": "HOLD",
+        "rate": 10,
+        "seconds": 10,
+        "seats": 100,
+        "holdPercent": 20,
+        "policy": "NONE",
+        "maxAttempts": 1,
+        "concurrency": 8,
+        "timeoutMs": 3500,
+        "deadlineMs": 10000,
+        "ttlSeconds": 120,
+        "seed": 20261006
+      },
+      "startedAt": "2026-10-06T12:13:46.555172086Z",
+      "inFlight": 0,
+      "attemptsSoFar": 100,
+      "openHttpTasks": 0,
+      "offeredSoFar": 100,
+      "eventId": "2c138434-e52b-4cd4-bfaf-515e46ef2bca",
+      "report": {
+        "scheduled": 100,
+        "initialArrivalRate": 10,
+        "offered": 100,
+        "attempts": 100,
+        "discoveryAttempts": 0,
+        "maxInFlight": 2,
+        "virtualThreadAttempts": 100,
+        "measurementWallMs": 9916.042949,
+        "outcomes": {
+          "HELD": 100
+        },
+        "status": {
+          "201": 100
+        },
+        "httpLatencyMs": {
+          "avg": 14.11422798,
+          "max": 145.316309,
+          "p99": 119.471123,
+          "p50": 8.649743,
+          "p95": 35.562195
+        },
+        "logicalLatencyMs": {
+          "avg": 14.340904909999999,
+          "max": 145.599882,
+          "p99": 119.821723,
+          "p50": 8.853262,
+          "p95": 35.806775
+        },
+        "perSecond": {
+          "0": {
+            "status": {
+              "201": 10
+            },
+            "latencyMs": {
+              "avg": 20.3083045,
+              "max": 38.689589,
+              "p99": 38.689589,
+              "p50": 11.727996,
+              "p95": 38.689589
+            },
+            "attempts": 10
+          },
+          "1": {
+            "status": {
+              "201": 10
+            },
+            "latencyMs": {
+              "avg": 12.9504128,
+              "max": 35.574516,
+              "p99": 35.574516,
+              "p50": 9.568534,
+              "p95": 35.574516
+            },
+            "attempts": 10
+          },
+          "2": {
+            "status": {
+              "201": 10
+            },
+            "latencyMs": {
+              "avg": 45.6168885,
+              "max": 145.316309,
+              "p99": 145.316309,
+              "p50": 19.546868,
+              "p95": 145.316309
+            },
+            "attempts": 10
+          },
+          "3": {
+            "status": {
+              "201": 10
+            },
+            "latencyMs": {
+              "avg": 12.2727063,
+              "max": 21.194101,
+              "p99": 21.194101,
+              "p50": 10.289591,
+              "p95": 21.194101
+            },
+            "attempts": 10
+          },
+          "4": {
+            "status": {
+              "201": 10
+            },
+            "latencyMs": {
+              "avg": 9.388217899999999,
+              "max": 12.590087,
+              "p99": 12.590087,
+              "p50": 8.466476,
+              "p95": 12.590087
+            },
+            "attempts": 10
+          },
+          "5": {
+            "status": {
+              "201": 10
+            },
+            "latencyMs": {
+              "avg": 7.977876499999999,
+              "max": 11.165007,
+              "p99": 11.165007,
+              "p50": 7.675679,
+              "p95": 11.165007
+            },
+            "attempts": 10
+          },
+          "6": {
+            "status": {
+              "201": 10
+            },
+            "latencyMs": {
+              "avg": 8.1080872,
+              "max": 10.491059,
+              "p99": 10.491059,
+              "p50": 7.287057,
+              "p95": 10.491059
+            },
+            "attempts": 10
+          },
+          "7": {
+            "status": {
+              "201": 10
+            },
+            "latencyMs": {
+              "avg": 8.5172347,
+              "max": 12.939628,
+              "p99": 12.939628,
+              "p50": 7.298413,
+              "p95": 12.939628
+            },
+            "attempts": 10
+          },
+          "8": {
+            "status": {
+              "201": 10
+            },
+            "latencyMs": {
+              "avg": 7.9257516,
+              "max": 10.182001,
+              "p99": 10.182001,
+              "p50": 7.544495,
+              "p95": 10.182001
+            },
+            "attempts": 10
+          },
+          "9": {
+            "status": {
+              "201": 10
+            },
+            "latencyMs": {
+              "avg": 8.0767998,
+              "max": 11.566146,
+              "p99": 11.566146,
+              "p50": 7.73526,
+              "p95": 11.566146
+            },
+            "attempts": 10
+          }
+        },
+        "kinds": {
+          "HOLD": {
+            "status": {
+              "201": 100
+            },
+            "latencyMs": {
+              "avg": 14.11422798,
+              "max": 145.316309,
+              "p99": 119.471123,
+              "p50": 8.649743,
+              "p95": 35.562195
+            },
+            "attempts": 100
+          }
+        }
+      }
+    },
+    "audit": {
+      "violations": {
+        "generic_valid_owner_duplicates": 0,
+        "run_duplicate_keys": 0,
+        "run_deadline_extension": 0,
+        "run_multiple_hold_audits": 0,
+        "movie_valid_member_ownership": 0,
+        "movie_confirmed_member_count": 0
+      },
+      "rawAggregateOutput": "BEGIN\r\nSET\r\n           invariant            | violations \r\n--------------------------------+------------\r\n generic_valid_owner_duplicates |          0\r\n(1 row)\r\n\r\n     invariant      | violations \r\n--------------------+------------\r\n run_duplicate_keys |          0\r\n(1 row)\r\n\r\n       invariant        | violations \r\n------------------------+------------\r\n run_deadline_extension |          0\r\n(1 row)\r\n\r\n        invariant         | violations \r\n--------------------------+------------\r\n run_multiple_hold_audits |          0\r\n(1 row)\r\n\r\n          invariant           | violations \r\n------------------------------+------------\r\n movie_valid_member_ownership |          0\r\n(1 row)\r\n\r\n          invariant           | violations \r\n------------------------------+------------\r\n movie_confirmed_member_count |          0\r\n(1 row)\r\n\r\n    observation     | state | count \r\n--------------------+-------+-------\r\n run_booking_counts | HELD  |   100\r\n(1 row)\r\n\r\nCOMMIT"
+    },
+    "observer": {
+      "summary": {
+        "seconds": 90,
+        "elapsedMs": 90237.7003,
+        "stopReason": null,
+        "requestedCadenceMs": 1000,
+        "actualCadence": "recorded per sample; docker stats may take longer"
+      },
+      "sampleCount": 45,
+      "thresholdSamples": 0,
+      "errors": 0,
+      "maxDbConnections": 16,
+      "maxLockWaits": 0,
+      "metadataOnly": true
+    }
+  },
+  "postman": {
+    "version": "6.2.2",
+    "requests": {
+      "total": 8,
+      "pending": 0,
+      "failed": 0
+    },
+    "assertions": {
+      "total": 9,
+      "pending": 0,
+      "failed": 0
+    },
+    "failureCount": 0,
+    "result": {
+      "runId": "4280e600e6b44bc1",
+      "state": "COMPLETED",
+      "request": {
+        "mode": "HOLD",
+        "rate": 1,
+        "seconds": 1,
+        "seats": 1,
+        "holdPercent": 20,
+        "policy": "NONE",
+        "maxAttempts": 1,
+        "concurrency": 8,
+        "timeoutMs": 3500,
+        "deadlineMs": 10000,
+        "ttlSeconds": 120,
+        "seed": 20261006
+      },
+      "startedAt": "2026-10-06T12:14:06.674727807Z",
+      "inFlight": 0,
+      "attemptsSoFar": 1,
+      "openHttpTasks": 0,
+      "offeredSoFar": 1,
+      "eventId": "8a1d9a2a-47b5-45cc-b7ae-042fe22b090d",
+      "report": {
+        "scheduled": 1,
+        "initialArrivalRate": 1,
+        "offered": 1,
+        "attempts": 1,
+        "discoveryAttempts": 0,
+        "maxInFlight": 1,
+        "virtualThreadAttempts": 1,
+        "measurementWallMs": 12.191138,
+        "outcomes": {
+          "HELD": 1
+        },
+        "status": {
+          "201": 1
+        },
+        "httpLatencyMs": {
+          "avg": 8.103805,
+          "max": 8.103805,
+          "p99": 8.103805,
+          "p50": 8.103805,
+          "p95": 8.103805
+        },
+        "logicalLatencyMs": {
+          "avg": 8.308797,
+          "max": 8.308797,
+          "p99": 8.308797,
+          "p50": 8.308797,
+          "p95": 8.308797
+        },
+        "perSecond": {
+          "0": {
+            "status": {
+              "201": 1
+            },
+            "latencyMs": {
+              "avg": 8.103805,
+              "max": 8.103805,
+              "p99": 8.103805,
+              "p50": 8.103805,
+              "p95": 8.103805
+            },
+            "attempts": 1
+          }
+        },
+        "kinds": {
+          "HOLD": {
+            "status": {
+              "201": 1
+            },
+            "latencyMs": {
+              "avg": 8.103805,
+              "max": 8.103805,
+              "p99": 8.103805,
+              "p50": 8.103805,
+              "p95": 8.103805
+            },
+            "attempts": 1
+          }
+        }
+      }
+    },
+    "audit": {
+      "violations": {
+        "generic_valid_owner_duplicates": 0,
+        "run_duplicate_keys": 0,
+        "run_deadline_extension": 0,
+        "run_multiple_hold_audits": 0,
+        "movie_valid_member_ownership": 0,
+        "movie_confirmed_member_count": 0
+      },
+      "rawAggregateOutput": "BEGIN\r\nSET\r\n           invariant            | violations \r\n--------------------------------+------------\r\n generic_valid_owner_duplicates |          0\r\n(1 row)\r\n\r\n     invariant      | violations \r\n--------------------+------------\r\n run_duplicate_keys |          0\r\n(1 row)\r\n\r\n       invariant        | violations \r\n------------------------+------------\r\n run_deadline_extension |          0\r\n(1 row)\r\n\r\n        invariant         | violations \r\n--------------------------+------------\r\n run_multiple_hold_audits |          0\r\n(1 row)\r\n\r\n          invariant           | violations \r\n------------------------------+------------\r\n movie_valid_member_ownership |          0\r\n(1 row)\r\n\r\n          invariant           | violations \r\n------------------------------+------------\r\n movie_confirmed_member_count |          0\r\n(1 row)\r\n\r\n    observation     | state | count \r\n--------------------+-------+-------\r\n run_booking_counts | HELD  |     1\r\n(1 row)\r\n\r\nCOMMIT"
+    }
+  },
+  "resources": {
+    "project": "sd-book-my-show-java-load-test",
+    "memoryBytes": 402653184,
+    "cpus": 0.5,
+    "heapMiB": 192,
+    "management": "127.0.0.1:8135",
+    "postgresMemoryBytes": 1073741824,
+    "postgresContainer": "74a8b5863b01b2e006a68e884030005ed38f2f0e9a4d8c44d67a3d6e5dd6f472",
+    "postgresVolume": "sd-book-my-show_booking-data",
+    "retained": true,
+    "redis": "deferred phase3"
+  },
+  "endState": {
+    "loadContainers": "stopped and retained",
+    "finalContainer": "sd-book-my-show-java-load-test-load-tester-run-ce8442f9ba94",
+    "exitCode": 143,
+    "shutdown": "SIGTERM; Tomcat graceful shutdown complete",
+    "services": "normal four-service stack running, APIs/PostgreSQL healthy",
+    "retainedEvents": 3,
+    "retainedBookings": 201,
+    "originConfigured": false,
+    "remoteRun": "pending",
+    "backendChanged": false,
+    "backend69Tests": "historical, not rerun"
+  },
+  "limitations": [
+    "No Java automatic crash/restart discovery",
+    "No Node manifest compatibility or live fault ingress in this module",
+    "No movie V5 group/payment/SSE load",
+    "No shared server hold admission",
+    "No capacity or Java-versus-Node performance claim",
+    "No private gateway/Tailscale configuration changed"
+  ],
+  "postSmokeFinalization": {
+    "change": "Atomic publication of terminal state, persisted report and active-run slot release",
+    "verification": "14-test Java suite rerun: zero failures/errors/skips",
+    "dockerImageRebuilt": true,
+    "dockerImageManifest": "sha256:2d404cfb8b67e44b801bd8416242a2a5d4b1516ea5ab37319315c31ee328a62b"
+  }
+}

@@ -1,0 +1,23 @@
+server:
+  address: ${LOADER_BIND_ADDRESS:127.0.0.1}
+  port: ${LOADER_PORT:8135}
+spring:
+  application:
+    name: book-my-show-load-tester
+  threads:
+    virtual:
+      enabled: true
+  jackson:
+    deserialization:
+      fail-on-unknown-properties: true
+loadtest:
+  target: ${BOOKING_GATEWAY:http://100.103.238.2:8132}
+  results-dir: ${LOADER_RESULTS_DIR:results}
+  allow-local: ${LOADER_ALLOW_LOCAL:false}
+  observer-stop-file: ${LOADER_OBSERVER_STOP_FILE:}
+  ingress-token: ${HOLD_LAB_TOKEN:}
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health

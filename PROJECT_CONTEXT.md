@@ -7,6 +7,19 @@ Updated2026-10-06. Start here when resuming this repository, then read
 
 ## Latest follow-up: local Docker10 RPS — 2026-10-06
 
+Superseding generator selection: user requested Java/Spring Boot like the actual
+`D:/java-projects/url-shortener-load-test`. Delivered [Java module](load-tester-java/README.md)
+and [tutorial](docs/JAVA_LOAD_TESTER_TUTORIAL.md): independent Java21/Boot3.5.16
+POM, virtual-thread RestClient, fixed arrivals, finite hold/read/mixed workloads,
+bounded retries/unknown discovery and metadata-only reports. Own Docker project
+sd-book-my-show-java-load-test,384 MiB/0.5 CPU, management8135 loopback.
+14 tests and Newman8 requests/9 assertions passed. Final real10 RPS100-call smoke
+100201, all SQL violations0, avg14.11ms/p9535.56ms/p99119.47ms. Earlier Java smoke
+100201 plus Postman1 hold also retained: three events/201 bookings total here.
+Java containers stopped/retained, ordinary backend healthy, no PostgreSQL/Redis
+change. Node implementation preserved. Final Ankita reachability/load pending.
+Java restart recovery and movie group/payment load are not implemented.
+
 User corrected run origin to this machine, selected a separate Docker load group
 and PostgreSQL1 GiB. Delivered [runbook/result](docs/DOCKER_LOAD_TEST_TUTORIAL.md):
 project sd-book-my-show-load-test,256 MiB/0.5 CPU,100 holds at10/s,one attempt,

@@ -1,0 +1,4 @@
+*
+!target/
+target/*
+!target/book-my-show-load-tester-1.0.0.jar

@@ -166,3 +166,34 @@ Follow-up final validation:100 required artifacts,169 requests,177 script blocks
 40 Markdown files,449 local links,0 broken; both Compose configs/whitespace passed.
 No application code changed; Docker unit tests28/28 and actual100-request smoke
 supply task validation. Canonical records updated locally; origin still absent.
+
+## 2026-10-06: Spring Boot virtual-thread Book My Show load tester
+
+User selected the existing URL-shortener Java generator model. Inspected actual
+D:/java-projects/url-shortener-load-test LoadRunService/ClientConfig/LoadController,
+then delivered standalone load-tester-java inside D:/sd-book-my-show. Java21,
+Boot3.5.16, virtual-thread blocking RestClient, fixed initial arrivals, finite
+HOLD/AVAILABILITY/MIXED, stable buyer/key/payload retries, terminal409 conflicts,
+whole-exchange timeout/task closure, seeded jitter/Retry-After, separate capped
+unknown discovery, observer/heap/concurrency guards and metadata-only artifacts.
+Own Compose project sd-book-my-show-java-load-test, control8135 loopback,
+384 MiB/0.5 CPU/192 MiB heap. Node implementation and history retained.
+Full tutorial/spec/API/guide/parity/Postman/local agent entries included:
+[D:/sd-book-my-show/docs/JAVA_LOAD_TESTER_TUTORIAL.md](D:/sd-book-my-show/docs/JAVA_LOAD_TESTER_TUTORIAL.md).
+
+Actual validation:14 Java tests,0 failures/errors/skips. Newman8 requests/
+9 assertions,0 failures. Initial real Docker smoke a8c2da79661a4163 and final
+package ae2d849d95414eb1 each100201 at10/s, ten buckets of10,100 virtual-thread
+attempts,zero retries/errors/conflicts/unknowns; SQL six violation aggregates0.
+Final HTTP avg14.11ms/p508.65ms/p9535.56ms/p99119.47ms, wall9916ms; local tail
+variation recorded, no Java-versus-Node/capacity claim. Observers60/90s completed
+without stops. Postman separate4280e600e6b44bc1 retained1 hold/empty discovery.
+Three events/201 bookings retained; generator containers stopped/retained,
+SIGTERM143/graceful shutdown. Normal four-service group healthy, PostgreSQL
+same container/volume/1 GiB; Redis phase3 deferred, no other service changes.
+Java backend unchanged (prior69-test evidence not rerun). Artifact checks:
+124 files,177 requests,185 scripts,49 Markdown files,496 links,0 broken.
+Both Java Compose configs and whitespace checks passed. Final Ankita private
+reachability/run pending; no Tailscale changes. Java restart discovery/Node
+manifest compatibility/movie group load/live faults/shared hold admission
+remain separate work. Canonical records updated locally, origin absent.

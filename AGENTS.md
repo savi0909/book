@@ -1,5 +1,21 @@
 # SD Book My Show agent instructions
 
+## Java virtual-thread generator delivery — 2026-10-06
+
+User selected the earlier URL-shortener Spring Boot generator approach. Read
+[Java module](load-tester-java/README.md) and [tutorial](docs/JAVA_LOAD_TESTER_TUTORIAL.md).
+Standalone Java21/Boot3.5.16 RestClient with virtual threads, own Maven POM and
+Docker project sd-book-my-show-java-load-test (384 MiB/0.5 CPU, control8135 loopback).
+Finite HOLD/AVAILABILITY/MIXED generic workloads, stable retry identities,
+terminal409s, seeded jitter, deadlines/concurrency/observer guards, separate
+bounded discovery.14 Java tests and Newman8 requests/9 assertions passed.
+Final local100-request10 RPS smoke passed100201/all SQL violations0; earlier
+Java smoke100201 and collection1 hold retained too. Both Java containers stopped
+and retained, services/data untouched. Node module remains retained. Final load
+on Ankita remains pending; private gateway forwarding not configured here.
+Java restart recovery/Node manifest compatibility/movie workflows remain unbuilt.
+PostgreSQL1 GiB unchanged; Redis advisory availability deferred to phase3.
+
 ## Local Docker smoke / resource continuation — 2026-10-06
 
 User explicitly selected this machine for10 RPS and a separate Docker group.

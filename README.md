@@ -1,5 +1,9 @@
 # SD Book My Show
 
+[Java virtual-thread load tester](load-tester-java/README.md): Spring Boot/RestClient,
+own Docker group, finite HOLD/read/mixed workloads and bounded retries/discovery.
+[Tutorial and Ankita/local commands](docs/JAVA_LOAD_TESTER_TUTORIAL.md).
+
 [Separate Docker load-test group and10 RPS result](docs/DOCKER_LOAD_TEST_TUTORIAL.md):
 100/100 successful holds; PostgreSQL1 GiB. Redis availability is reserved for phase3.
 

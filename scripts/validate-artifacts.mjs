@@ -50,6 +50,22 @@ required.push('load-test/package.json', 'load-test/config.small.json', 'load-tes
   'docs/HOLD_LOAD_TEST_VERIFICATION.md', 'src/test/java/com/example/booking/HoldLoadClientIntegrationTest.java');
 required.push('load-test/Dockerfile', 'load-test/compose.yml', 'load-test/docker-smoke.mjs',
   'docs/DOCKER_LOAD_TEST_TUTORIAL.md', 'docs/evidence/DOCKER_10RPS_2026-10-06.json');
+required.push('load-tester-java/pom.xml', 'load-tester-java/README.md', 'load-tester-java/AGENTS.md',
+  'load-tester-java/CLAUDE.md', 'load-tester-java/PARITY.md', 'load-tester-java/Dockerfile',
+  'load-tester-java/compose.local.yml', 'load-tester-java/compose.ankita.yml',
+  'load-tester-java/docs/SYSTEM_SPEC.md', 'load-tester-java/docs/USER_GUIDE.md',
+  'load-tester-java/docs/API_REFERENCE.md', 'load-tester-java/docs/VERIFICATION.md',
+  'load-tester-java/postman/java-load-tester.postman_collection.json',
+  'load-tester-java/postman/local.postman_environment.json',
+  'load-tester-java/src/main/java/com/example/bookingload/LoadTestApplication.java',
+  'load-tester-java/src/main/java/com/example/bookingload/LoadRunService.java',
+  'load-tester-java/src/main/java/com/example/bookingload/BookingClient.java',
+  'load-tester-java/src/main/java/com/example/bookingload/LoaderSettings.java',
+  'load-tester-java/src/main/java/com/example/bookingload/RunSpec.java',
+  'load-tester-java/src/main/java/com/example/bookingload/LoadController.java',
+  'load-tester-java/src/main/resources/application.yml',
+  'load-tester-java/src/test/java/com/example/bookingload/LoadTesterTest.java',
+  'docs/JAVA_LOAD_TESTER_TUTORIAL.md', 'docs/evidence/JAVA_LOAD_TESTER_2026-10-06.json');
 for (const name of required) assert.ok(fs.existsSync(path.join(project, name)), name);
 const { configCheck } = await import('../load-test/lib.mjs');
 configCheck(JSON.parse(fs.readFileSync('load-test/config.small.json', 'utf8')));
@@ -116,6 +132,12 @@ assert.equal(movieCollection.info.schema, collection.info.schema);
 assert.equal(movieCollection.item.length, 30);
 assert.ok(movieEnvironment.values.some(v => v.key === 'baseUrl' && v.value === 'http://localhost:8130'));
 inspect(movieCollection);
+const javaLoaderCollection = JSON.parse(fs.readFileSync('load-tester-java/postman/java-load-tester.postman_collection.json', 'utf8'));
+const javaLoaderEnvironment = JSON.parse(fs.readFileSync('load-tester-java/postman/local.postman_environment.json', 'utf8'));
+assert.equal(javaLoaderCollection.info.schema, collection.info.schema);
+assert.equal(javaLoaderCollection.item.length, 8);
+assert.ok(javaLoaderEnvironment.values.some(v => v.key === 'loaderUrl' && v.value === 'http://127.0.0.1:8135'));
+inspect(javaLoaderCollection);
 assert.ok(requests.every(r => r.name && r.event.some(e => e.listen === 'test')), 'named requests have assertions');
 const projectMarkdown = execFileSync('rg', ['--files', project, '-g', '*.md'], { encoding: 'utf8' }).trim().split(/\r?\n/);
 const markdown = projectMarkdown;

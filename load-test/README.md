@@ -1,5 +1,9 @@
 # Hold retry load-test module
 
+Latest user-selected implementation: [Java Spring Boot virtual-thread tester](../load-tester-java/README.md),
+adapted from the URL-shortener generator. This Node module and its evidence remain
+retained for the existing scoped-fault/two-arm/crash-discovery study.
+
 Latest: [separate Docker group/single-arm10 RPS smoke](../docs/DOCKER_LOAD_TEST_TUTORIAL.md).
 Run completed locally at user request. This fixed smoke is independent of the
 two-arm retry comparison; final remote measurements still belong on Ankita.
