@@ -1,5 +1,12 @@
 # Verification evidence
 
+2026-10-06 [client-module verification](HOLD_LOAD_TEST_VERIFICATION.md):69 Maven
+tests/28 Node tests passed, including actual client with isolated PostgreSQL
+committed-loss discovery and preserved movie tests. Observer/audit smoke passed.
+User-authorized small local comparison and exhaustion/discovery checks passed
+with zero SQL violations. Remote Ankita workload pending. Historical evidence
+retains its original dates.
+
 ## Standalone movie expansion - 2026-10-05
 
 Read [movie verification](MOVIE_VERIFICATION.md) for V5,68 tests,23 A/B runtime

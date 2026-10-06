@@ -41,7 +41,18 @@ required.push('compose.movie.yml', 'docs/MOVIE_BOOKING_TUTORIAL.md', 'docs/MOVIE
   'src/test/java/com/example/booking/MoviePaymentMockTest.java', 'scripts/learn-movie.mjs',
   'postman/movie-booking.postman_collection.json', 'postman/movie-booking.postman_environment.json',
   'scripts/check-movie-scheduled.mjs');
+required.push('load-test/package.json', 'load-test/config.small.json', 'load-test/lib.mjs',
+  'load-test/runner.mjs', 'load-test/cli.mjs', 'load-test/ingress.mjs', 'load-test/observe.mjs',
+  'load-test/resources.mjs', 'load-test/audit.sql', 'load-test/README.md',
+  'load-test/test/policy.test.mjs', 'load-test/test/transport.test.mjs',
+  'load-test/test/observer.test.mjs', 'load-test/test/compare.test.mjs',
+  'load-test/test/postgres-contract.mjs', 'docs/HOLD_LOAD_TEST_TUTORIAL.md',
+  'docs/HOLD_LOAD_TEST_VERIFICATION.md', 'src/test/java/com/example/booking/HoldLoadClientIntegrationTest.java');
 for (const name of required) assert.ok(fs.existsSync(path.join(project, name)), name);
+const { configCheck } = await import('../load-test/lib.mjs');
+configCheck(JSON.parse(fs.readFileSync('load-test/config.small.json', 'utf8')));
+for (const file of required.filter(name => name.startsWith('load-test/') && name.endsWith('.mjs')))
+  execFileSync('node', ['--check', file], { stdio: 'pipe' });
 const collection = JSON.parse(fs.readFileSync(required[12], 'utf8'));
 const environment = JSON.parse(fs.readFileSync(required[13], 'utf8'));
 assert.equal(collection.info.schema, 'https://schema.getpostman.com/json/collection/v2.1.0/collection.json');

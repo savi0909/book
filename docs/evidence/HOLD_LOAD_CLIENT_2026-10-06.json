@@ -1,0 +1,570 @@
+{
+  "recordedAt": "2026-10-06T09:44:57.398Z",
+  "scope": "User-authorized finite loopback functionality validation; final Ankita comparison pending",
+  "checks": {
+    "nodeTests": 28,
+    "mavenTests": 69,
+    "failures": 0,
+    "skips": 0,
+    "postgresClientContractRerun": 1
+  },
+  "localPair": {
+    "runId": "aba6f1c662b4ab96",
+    "execution": "local-bounded-validation",
+    "valid": true,
+    "events": {
+      "immediate": "6ede34bc-3c35-4016-a94a-d3ed8b914ca9",
+      "jitter": "e1c06499-3a9a-4953-9a61-0348109efdd4"
+    },
+    "config": {
+      "generatorHost": "ankita",
+      "fixtureBaseUrl": "http://127.0.0.1:8130",
+      "targetBaseUrl": "http://127.0.0.1:8134",
+      "seed": 20261006,
+      "logicalOperations": 20,
+      "seatCount": 10,
+      "arrivalIntervalMs": 100,
+      "ttlSeconds": 120,
+      "maxAttempts": 4,
+      "deadlineMs": 10000,
+      "requestTimeoutMs": 3500,
+      "minimumAttemptMs": 100,
+      "jitterBaseMs": 500,
+      "jitterCapMs": 2000,
+      "maxConcurrentLogical": 8,
+      "maxRunMs": 30000,
+      "cooldownMs": 2000,
+      "maxRssMiB": 256,
+      "maxCpuPercent": 90,
+      "maxHostCpuPercent": 90,
+      "maxHostMemoryPercent": 90,
+      "maxEventLoopLagMs": 250,
+      "maxConsecutiveTransient": 20,
+      "discoveryAttempts": 2,
+      "busyEvery": 3,
+      "busyAttempts": 1,
+      "busyRetryAfterSeconds": 1,
+      "lossEvery": 7
+    },
+    "reports": [
+      {
+        "arm": "immediate",
+        "startedAt": "2026-10-06T09:40:39.211Z",
+        "elapsedMs": 2840.9247,
+        "stopReason": null,
+        "comparisonValid": true,
+        "summary": {
+          "logicalOperations": 20,
+          "startedOperations": 20,
+          "transmissions": 28,
+          "amplification": 1.4,
+          "replays": 1,
+          "outcomes": {
+            "TERMINAL": 10,
+            "RESOLVED": 10
+          },
+          "statusCounts": {
+            "503/LAB_BUSY": 7,
+            "409/SEAT_UNAVAILABLE": 10,
+            "201/OK": 9,
+            "0/TRANSPORT_ERROR": 1,
+            "200/OK": 1
+          },
+          "attemptsPerOperation": {
+            "1": 12,
+            "2": 8
+          },
+          "perSecondHoldStatusRates": {
+            "0": {
+              "503/LAB_BUSY": 4,
+              "201/OK": 5,
+              "0/TRANSPORT_ERROR": 1,
+              "200/OK": 1
+            },
+            "1": {
+              "409/SEAT_UNAVAILABLE": 7,
+              "201/OK": 4,
+              "503/LAB_BUSY": 3
+            },
+            "2": {
+              "409/SEAT_UNAVAILABLE": 3
+            }
+          },
+          "allHttpLatencyMs": {
+            "count": 28,
+            "average": 22.907292857142856,
+            "p50": 13.63880000000006,
+            "p95": 75.40570000000002,
+            "p99": 199.31719999999999
+          },
+          "successfulWriteLatencyMs": {
+            "count": 9,
+            "average": 45.78849999999997,
+            "p50": 16.985399999999913,
+            "p95": 199.31719999999999,
+            "p99": 199.31719999999999
+          },
+          "discoveredReplayLatencyMs": {
+            "count": 1,
+            "average": 13.63880000000006,
+            "p50": 13.63880000000006,
+            "p95": 13.63880000000006,
+            "p99": 13.63880000000006
+          },
+          "resolvedLogicalLatencyMs": {
+            "count": 10,
+            "average": 257.21204,
+            "p50": 47.69979999999998,
+            "p95": 1030.6860000000001,
+            "p99": 1030.6860000000001
+          }
+        }
+      },
+      {
+        "arm": "jitter",
+        "startedAt": "2026-10-06T09:40:44.068Z",
+        "elapsedMs": 2837.8990000000003,
+        "stopReason": null,
+        "comparisonValid": true,
+        "summary": {
+          "logicalOperations": 20,
+          "startedOperations": 20,
+          "transmissions": 28,
+          "amplification": 1.4,
+          "replays": 1,
+          "outcomes": {
+            "TERMINAL": 10,
+            "RESOLVED": 10
+          },
+          "statusCounts": {
+            "503/LAB_BUSY": 7,
+            "409/SEAT_UNAVAILABLE": 10,
+            "201/OK": 9,
+            "0/TRANSPORT_ERROR": 1,
+            "200/OK": 1
+          },
+          "attemptsPerOperation": {
+            "1": 12,
+            "2": 8
+          },
+          "perSecondHoldStatusRates": {
+            "0": {
+              "503/LAB_BUSY": 4,
+              "201/OK": 5,
+              "0/TRANSPORT_ERROR": 1
+            },
+            "1": {
+              "409/SEAT_UNAVAILABLE": 7,
+              "200/OK": 1,
+              "201/OK": 4,
+              "503/LAB_BUSY": 3
+            },
+            "2": {
+              "409/SEAT_UNAVAILABLE": 3
+            }
+          },
+          "allHttpLatencyMs": {
+            "count": 28,
+            "average": 8.347842857142982,
+            "p50": 9.60739999999987,
+            "p95": 14.166000000000167,
+            "p99": 14.54700000000048
+          },
+          "successfulWriteLatencyMs": {
+            "count": 9,
+            "average": 11.483277777777808,
+            "p50": 10.90729999999985,
+            "p95": 14.54700000000048,
+            "p99": 14.54700000000048
+          },
+          "discoveredReplayLatencyMs": {
+            "count": 1,
+            "average": 13.716800000000148,
+            "p50": 13.716800000000148,
+            "p95": 13.716800000000148,
+            "p99": 13.716800000000148
+          },
+          "resolvedLogicalLatencyMs": {
+            "count": 10,
+            "average": 61.82273000000005,
+            "p50": 20.579900000000634,
+            "p95": 424.4484000000002,
+            "p99": 424.4484000000002
+          }
+        }
+      }
+    ],
+    "observer": {
+      "seconds": 40,
+      "elapsedMs": 40255.0837,
+      "stopReason": null,
+      "requestedCadenceMs": 1000,
+      "actualCadence": "recorded per sample; docker stats may take longer"
+    },
+    "ingress": {
+      "received": 56,
+      "forwarded": 42,
+      "busy": 14,
+      "lost": 2,
+      "active": 0,
+      "rejected": 0
+    }
+  },
+  "exhaustionDiscovery": {
+    "runId": "527340783f6cb6e2",
+    "config": {
+      "generatorHost": "ankita",
+      "fixtureBaseUrl": "http://127.0.0.1:8130",
+      "targetBaseUrl": "http://127.0.0.1:8134",
+      "seed": 20261006,
+      "logicalOperations": 2,
+      "seatCount": 2,
+      "arrivalIntervalMs": 100,
+      "ttlSeconds": 120,
+      "maxAttempts": 1,
+      "deadlineMs": 10000,
+      "requestTimeoutMs": 3500,
+      "minimumAttemptMs": 100,
+      "jitterBaseMs": 500,
+      "jitterCapMs": 2000,
+      "maxConcurrentLogical": 8,
+      "maxRunMs": 30000,
+      "cooldownMs": 2000,
+      "maxRssMiB": 256,
+      "maxCpuPercent": 90,
+      "maxHostCpuPercent": 90,
+      "maxHostMemoryPercent": 90,
+      "maxEventLoopLagMs": 250,
+      "maxConsecutiveTransient": 20,
+      "discoveryAttempts": 2,
+      "busyEvery": 0,
+      "busyAttempts": 1,
+      "busyRetryAfterSeconds": 1,
+      "lossEvery": 1
+    },
+    "events": {
+      "immediate": "a5c572a3-3c63-454b-a4f8-2ef80ee69eaa",
+      "jitter": "bdf613f6-e31c-456c-8744-fe785f0e68e6"
+    },
+    "primary": [
+      {
+        "arm": "immediate",
+        "startedAt": "2026-10-06T09:42:14.850Z",
+        "elapsedMs": 120.39859999999999,
+        "stopReason": null,
+        "comparisonValid": true,
+        "summary": {
+          "logicalOperations": 2,
+          "startedOperations": 2,
+          "transmissions": 2,
+          "amplification": 1,
+          "replays": 0,
+          "outcomes": {
+            "UNRESOLVED": 2
+          },
+          "statusCounts": {
+            "0/TRANSPORT_ERROR": 2
+          },
+          "attemptsPerOperation": {
+            "1": 2
+          },
+          "perSecondHoldStatusRates": {
+            "0": {
+              "0/TRANSPORT_ERROR": 2
+            }
+          },
+          "allHttpLatencyMs": {
+            "count": 2,
+            "average": 25.567299999999996,
+            "p50": 11.806399999999996,
+            "p95": 39.328199999999995,
+            "p99": 39.328199999999995
+          },
+          "successfulWriteLatencyMs": {
+            "count": 0,
+            "average": null,
+            "p50": null,
+            "p95": null,
+            "p99": null
+          },
+          "discoveredReplayLatencyMs": {
+            "count": 0,
+            "average": null,
+            "p50": null,
+            "p95": null,
+            "p99": null
+          },
+          "resolvedLogicalLatencyMs": {
+            "count": 0,
+            "average": null,
+            "p50": null,
+            "p95": null,
+            "p99": null
+          }
+        }
+      },
+      {
+        "arm": "jitter",
+        "startedAt": "2026-10-06T09:42:16.978Z",
+        "elapsedMs": 131.56410000000005,
+        "stopReason": null,
+        "comparisonValid": true,
+        "summary": {
+          "logicalOperations": 2,
+          "startedOperations": 2,
+          "transmissions": 2,
+          "amplification": 1,
+          "replays": 0,
+          "outcomes": {
+            "UNRESOLVED": 2
+          },
+          "statusCounts": {
+            "0/TRANSPORT_ERROR": 2
+          },
+          "attemptsPerOperation": {
+            "1": 2
+          },
+          "perSecondHoldStatusRates": {
+            "0": {
+              "0/TRANSPORT_ERROR": 2
+            }
+          },
+          "allHttpLatencyMs": {
+            "count": 2,
+            "average": 12.354100000000017,
+            "p50": 12.025000000000091,
+            "p95": 12.683199999999943,
+            "p99": 12.683199999999943
+          },
+          "successfulWriteLatencyMs": {
+            "count": 0,
+            "average": null,
+            "p50": null,
+            "p95": null,
+            "p99": null
+          },
+          "discoveredReplayLatencyMs": {
+            "count": 0,
+            "average": null,
+            "p50": null,
+            "p95": null,
+            "p99": null
+          },
+          "resolvedLogicalLatencyMs": {
+            "count": 0,
+            "average": null,
+            "p50": null,
+            "p95": null,
+            "p99": null
+          }
+        }
+      }
+    ],
+    "recovery": [
+      {
+        "arm": "immediate",
+        "summary": {
+          "logicalOperations": 2,
+          "startedOperations": 2,
+          "transmissions": 2,
+          "amplification": 1,
+          "replays": 2,
+          "outcomes": {
+            "RESOLVED": 2
+          },
+          "statusCounts": {
+            "200/OK": 2
+          },
+          "attemptsPerOperation": {
+            "1": 2
+          },
+          "perSecondHoldStatusRates": {
+            "0": {
+              "200/OK": 2
+            }
+          },
+          "allHttpLatencyMs": {
+            "count": 2,
+            "average": 13.022650000000002,
+            "p50": 9.307400000000001,
+            "p95": 16.737900000000003,
+            "p99": 16.737900000000003
+          },
+          "successfulWriteLatencyMs": {
+            "count": 0,
+            "average": null,
+            "p50": null,
+            "p95": null,
+            "p99": null
+          },
+          "discoveredReplayLatencyMs": {
+            "count": 2,
+            "average": 13.022650000000002,
+            "p50": 9.307400000000001,
+            "p95": 16.737900000000003,
+            "p99": 16.737900000000003
+          },
+          "resolvedLogicalLatencyMs": {
+            "count": 2,
+            "average": 19.97825000000001,
+            "p50": 15.46120000000002,
+            "p95": 24.4953,
+            "p99": 24.4953
+          }
+        },
+        "bookings": [
+          {
+            "index": 0,
+            "bookingId": "03f9eb36-291a-42d3-a5f4-299c117cb806",
+            "createdAt": "2026-10-06T09:42:14.920717Z",
+            "expiresAt": "2026-10-06T09:44:14.920717Z",
+            "replayed": true
+          },
+          {
+            "index": 1,
+            "bookingId": "472df714-79ca-4af4-8726-1c70686f99f6",
+            "createdAt": "2026-10-06T09:42:14.969037Z",
+            "expiresAt": "2026-10-06T09:44:14.969036Z",
+            "replayed": true
+          }
+        ]
+      },
+      {
+        "arm": "jitter",
+        "summary": {
+          "logicalOperations": 2,
+          "startedOperations": 2,
+          "transmissions": 2,
+          "amplification": 1,
+          "replays": 2,
+          "outcomes": {
+            "RESOLVED": 2
+          },
+          "statusCounts": {
+            "200/OK": 2
+          },
+          "attemptsPerOperation": {
+            "1": 2
+          },
+          "perSecondHoldStatusRates": {
+            "0": {
+              "200/OK": 2
+            }
+          },
+          "allHttpLatencyMs": {
+            "count": 2,
+            "average": 11.206750000000028,
+            "p50": 10.339400000000012,
+            "p95": 12.074100000000044,
+            "p99": 12.074100000000044
+          },
+          "successfulWriteLatencyMs": {
+            "count": 0,
+            "average": null,
+            "p50": null,
+            "p95": null,
+            "p99": null
+          },
+          "discoveredReplayLatencyMs": {
+            "count": 2,
+            "average": 11.206750000000028,
+            "p50": 10.339400000000012,
+            "p95": 12.074100000000044,
+            "p99": 12.074100000000044
+          },
+          "resolvedLogicalLatencyMs": {
+            "count": 2,
+            "average": 17.03524999999999,
+            "p50": 12.115800000000007,
+            "p95": 21.954699999999974,
+            "p99": 21.954699999999974
+          }
+        },
+        "bookings": [
+          {
+            "index": 0,
+            "bookingId": "c84acdbb-fe7f-47d9-ba95-4c2ad04df9a6",
+            "createdAt": "2026-10-06T09:42:16.992424Z",
+            "expiresAt": "2026-10-06T09:44:16.992423Z",
+            "replayed": true
+          },
+          {
+            "index": 1,
+            "bookingId": "19e87d71-605e-4f8e-bc13-fe54e512a5f2",
+            "createdAt": "2026-10-06T09:42:17.108167Z",
+            "expiresAt": "2026-10-06T09:44:17.108166Z",
+            "replayed": true
+          }
+        ]
+      }
+    ],
+    "observer": {
+      "seconds": 40,
+      "elapsedMs": 41781.111,
+      "stopReason": null,
+      "requestedCadenceMs": 1000,
+      "actualCadence": "recorded per sample; docker stats may take longer"
+    },
+    "ingress": {
+      "received": 8,
+      "forwarded": 8,
+      "busy": 0,
+      "lost": 4,
+      "active": 0,
+      "rejected": 0
+    }
+  },
+  "consistentSqlAudits": [
+    {
+      "runId": "aba6f1c662b4ab96",
+      "violations": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "heldAtAudit": 20
+    },
+    {
+      "runId": "527340783f6cb6e2",
+      "violations": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "heldAtAudit": 4
+    }
+  ],
+  "retained": {
+    "events": 4,
+    "bookings": 24,
+    "bodiesCaptured": false,
+    "composeChanged": false,
+    "tailnetIngressExposed": false
+  },
+  "unverified": [
+    "Ankita execution",
+    "Tailscale reachability/direct-vs-DERP",
+    "shared server admission",
+    "movie load",
+    "capacity or jitter latency improvement"
+  ],
+  "phaseMarkers": {
+    "repeatedPolicyRejectedBeforeHttp": true,
+    "repeatedDiscoveryRejectedBeforeHttp": true
+  },
+  "artifactValidation": {
+    "requiredFiles": 95,
+    "namedRequests": 169,
+    "scriptBlocks": 177,
+    "markdownFiles": 39,
+    "localLinks": 434,
+    "brokenLinks": 0,
+    "externalReferenceLinks": 34
+  }
+}

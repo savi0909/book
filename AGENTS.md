@@ -1,5 +1,24 @@
 # SD Book My Show agent instructions
 
+## Current load-test module delivery — 2026-10-06
+
+User authorized the load-test module here and will check it out/run it on Ankita.
+Read [runbook](docs/HOLD_LOAD_TEST_TUTORIAL.md) and [verification](docs/HOLD_LOAD_TEST_VERIFICATION.md).
+Dependency-free Node >=22 generic comparison is implemented; Maven also requires
+Node for one real PostgreSQL client test. Backend/movie behavior stays preserved.
+Abhishek hosts actual services/fixtures/scoped ingress/metadata observer; Ankita
+alone runs final/sustained business comparison/discovery. User additionally
+authorized bounded local loader validation: --local-validation permits loopback
+only, <=20 operations/arm, <=8 concurrent and <=30s/arm. Two small local checks
+passed with retained fixtures; temporary loopback8134 ingress closed afterward.
+No remote/sustained run, tailnet exposure or Compose change. Default-off finite
+busy/committed-loss ingress is fixture/token scoped and heartbeat/STOP bounded.
+Retain fixtures/journals/markers; do not reset them to hide ambiguous outcomes.
+Shared A/B server admission remains unbuilt; client/ingress caps do not establish it.
+Movie workflows/SSE/waiting room/100K remain later. This narrow selection supersedes
+older teaching-only notes for the client files; it does not select the entire
+broader handover. Origin absent; bundle transfer available, no push claimed.
+
 ## Resume entry and durable records
 
 Fresh-session build prompt: [hold retry/admission handover](docs/HANDOVER_HOLD_RETRY_BUILD.md).

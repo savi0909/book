@@ -114,3 +114,29 @@ Documentation validation: artifact/local-link and Git whitespace checks. Updated
 canonical resume records locally. Standalone origin absent; publication pending.
 Artifact check passed:36 Markdown files,393 local links and0 broken links;
 77 required files,169 requests and177 script blocks validated. Whitespace passed.
+
+
+## 2026-10-06: checkoutable client plus authorized local validation
+
+User selected building the load-test module at D:/sd-book-my-show and will run
+the final business comparison on Ankita. User additionally authorized bounded
+local loader functionality checks on Abhishek. Implemented dependency-free
+Node >=22 immediate/seeded-jitter generic holds, equivalent arrivals/distinct
+fixtures, four total attempts/ten-second deadline, bounded discovery/crash
+journals/markers, default-off scoped token ingress and metadata observer/SQL audit.
+Runbook: [hold client tutorial](D:/sd-book-my-show/docs/HOLD_LOAD_TEST_TUTORIAL.md);
+[evidence](D:/sd-book-my-show/docs/HOLD_LOAD_TEST_VERIFICATION.md).
+28 Node tests/69 Maven tests passed, including actual Node with isolated
+Spring Boot/PostgreSQL committed-loss discovery; movie regressions preserved.
+Local pair:20 operations/arm,28 attempts/arm,10 holds/10 seat conflicts/one replay
+per arm. Tiny exhaustion run:4 unresolved committed holds,4 discovery200s. Both
+SQL audits zero violations; repeat phase markers reject before HTTP. Four events/
+24 bookings retained; temporary loopback ingresses closed, Compose unchanged.
+No tailnet exposure/remote execution/capacity claim. Final sustained runs remain
+Ankita-origin; shared server admission/movie load/SSE/100K unbuilt. Origin absent;
+local verified commit and Git bundle transfer, no push claim. Canonical tree has
+no Git metadata; these records are updated locally.
+
+Final artifact check:95 required files,169 requests,177 script blocks,39 Markdown
+files,434 local links,0 broken. Git whitespace checks passed. No Maven clean,
+file/data deletion, original lab operation or remote generator installation.

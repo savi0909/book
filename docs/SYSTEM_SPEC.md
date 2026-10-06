@@ -1,5 +1,10 @@
 # System specification
 
+Client-study extension2026-10-06: [hold-load module](HOLD_LOAD_TEST_TUTORIAL.md)
+uses unchanged generic holds with bounded retry/discovery/distinct fixtures.
+Process/ingress caps do not implement shared admission or movie protection.
+[Local evidence / remote boundary](HOLD_LOAD_TEST_VERIFICATION.md).
+
 Current movie specification: [movie tutorial](MOVIE_BOOKING_TUTORIAL.md) and
 [ADR](ADR_001_MOVIE_GROUP_BOOKING.md). The document below covers the preserved
 generic single-seat domain; its provider/outbox guarantees do not automatically

@@ -1,5 +1,12 @@
 # Future work and next-session handoff
 
+Latest2026-10-06: [checkoutable generic client module](HOLD_LOAD_TEST_TUTORIAL.md)
+implemented/[tested locally](HOLD_LOAD_TEST_VERIFICATION.md); final business run
+belongs on Ankita and remains pending. Scoped ingress/observer delivered but not
+deployed on the tailnet. User-authorized bounded loopback checks passed; their
+ingresses closed and fixtures remain. Shared admission/movie load/live feed unbuilt. Earlier
+teaching/planning notes below describe their historical session boundaries.
+
 Resume with [project context](../PROJECT_CONTEXT.md) and [worklog](WORKLOG.md);
 read [agent instructions](../AGENTS.md) before changing this repository.
 

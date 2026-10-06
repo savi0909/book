@@ -1,5 +1,9 @@
 # User guide
 
+Follow [the Abhishek/Ankita load-test runbook](HOLD_LOAD_TEST_TUTORIAL.md) for the
+separately selected client module: fixtures, ingress, observer, run, discovery,
+audit and checkout. Business load belongs on Ankita; movie flows stay separate.
+
 Start with [the movie walkthrough](MOVIE_BOOKING_TUTORIAL.md) for group reservations,
 movie mock retries, standalone ports and a fresh payment after failure. The studies
 below remain for the generic single-seat domain.

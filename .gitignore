@@ -1,3 +1,5 @@
 target/
 .idea/
 *.iml
+load-test/results/
+*.started

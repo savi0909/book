@@ -1,5 +1,10 @@
 # API reference
 
+[Hold-load client](HOLD_LOAD_TEST_TUTORIAL.md) uses unchanged generic POST /api/holds.
+Optional scoped ingress accepts only manifest holds with X-Hold-Lab-Token and
+default-off LAB_BUSY503/committed response loss. These fixture behaviors are not
+normal backend responses or shared admission; management remains local.
+
 Current expanded domain: [movie API reference](MOVIE_API_REFERENCE.md).
 The routes below remain the separate inherited generic ticketing contract.
 

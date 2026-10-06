@@ -5,6 +5,27 @@ Updated2026-10-06. Start here when resuming this repository, then read
 [movie tutorial](docs/MOVIE_BOOKING_TUTORIAL.md) and
 [movie verification](docs/MOVIE_VERIFICATION.md).
 
+## Latest selection: checkoutable load-test module — 2026-10-06
+
+User selected building the module here and will run it on Ankita. Implemented
+Node >=22 generic `/api/holds` immediate/seeded-jitter comparison: matched arrivals,
+distinct fixtures, four total attempts/ten-second deadline, bounded discovery,
+crash journals. Optional scoped/token ingress has default-off busy/committed-loss
+faults, finite lifetime and observer heartbeat/STOP closure. Metadata observer and
+read-only SQL audit included. [Tutorial](docs/HOLD_LOAD_TEST_TUTORIAL.md),
+[verification](docs/HOLD_LOAD_TEST_VERIFICATION.md).
+28 Node tests/69 Maven tests passed, including actual Node/Spring/PostgreSQL
+contract, rerun after client changes. Metadata observer/audit smoke passed.
+User then authorized local loader checks: one20-operation/arm pair (28 attempts,
+10 holds/10 conflicts per arm) and one2-operation/arm exhaustion/discovery check
+(4 uncertain commits discovered with4 replay calls) passed against this stack.
+Both SQL audits had zero violations. Four events/24 bookings retained. Temporary
+loopback8134 ingress closed; no remote/sustained run, tailnet/Compose change.
+Observed Abhishek100.103.238.2/Ankita100.84.247.65 (offline); recheck.
+Remote reachability/comparison pending. Shared admission/movie load/SSE/100K
+unbuilt. This narrow selection supersedes older teaching-only client notes below.
+No origin/push; a Git bundle supports manual checkout.
+
 ## Repository and learning purpose
 
 Independent Java movie-booking backend at `D:/sd-book-my-show`, initialized with

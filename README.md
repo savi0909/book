@@ -1,5 +1,10 @@
 # SD Book My Show
 
+[Hold load-test module](load-test/README.md): finite immediate/jittered generic
+hold comparison, scoped default-off faults, metadata observer and discovery.
+[Ankita runbook/tutorial](docs/HOLD_LOAD_TEST_TUTORIAL.md) and
+[local verification / pending remote runs](docs/HOLD_LOAD_TEST_VERIFICATION.md).
+
 Resume entry: [project context](PROJECT_CONTEXT.md), [worklog](docs/WORKLOG.md)
 and [agent instructions](AGENTS.md).
 

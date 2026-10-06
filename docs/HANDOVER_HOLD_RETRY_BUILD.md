@@ -1,5 +1,11 @@
 # Next-session prompt: controlled hold retries and admission
 
+Continuation2026-10-06: user separately selected the checkoutable load-test
+module. Resume [implemented client/runbook](HOLD_LOAD_TEST_TUTORIAL.md) and
+[verification](HOLD_LOAD_TEST_VERIFICATION.md). User will run final business
+comparison on Ankita; remote evidence pending. Shared server admission unbuilt.
+The full copyable prompt below preserves its broader subsequent scope.
+
 Created2026-10-06. This file prepares a later implementation session; creating it
 does not start that work now. Copy the prompt below into a fresh session, or send:
 

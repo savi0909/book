@@ -1,5 +1,10 @@
 @AGENTS.md
 
+Current module: [hold comparison runbook](docs/HOLD_LOAD_TEST_TUTORIAL.md) and
+[verification](docs/HOLD_LOAD_TEST_VERIFICATION.md). Built/tested locally; final
+business run belongs on Ankita. Generic-only; shared admission/movie load unbuilt.
+Preserve journals/fixtures/services and evidence boundaries.
+
 Resume with [project context](PROJECT_CONTEXT.md) and [worklog](docs/WORKLOG.md).
 They record the standalone movie contract, verified delivery and pending origin.
 
