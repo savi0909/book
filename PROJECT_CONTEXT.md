@@ -1,6 +1,6 @@
 # SD Book My Show project context
 
-Updated2026-10-05. Start here when resuming this repository, then read
+Updated2026-10-06. Start here when resuming this repository, then read
 [AGENTS.md](AGENTS.md), [worklog](docs/WORKLOG.md),
 [movie tutorial](docs/MOVIE_BOOKING_TUTORIAL.md) and
 [movie verification](docs/MOVIE_VERIFICATION.md).
@@ -99,6 +99,12 @@ Restore normal mode by omitting that overlay. Read
 [standalone setup](docs/STANDALONE_SETUP.md) before starting/stopping services.
 
 ## Next work and publishing
+
+User selected the scenario2 study on2026-10-06. Delivered
+[source-reading lesson](docs/SCENARIO_02_PROTECTION_STUDY.md) with request trace,
+protection boundaries, evidence pointers and prediction exercises. This records
+an explanation, not learner mastery or a new runtime verification. General hold
+retry comparison is still unbuilt and needs a separate implementation selection.
 
 Latest direction on2026-10-05: **do not implement yet**. Current study is the
 [100K hot-show, live availability and retry-storm plan](docs/HOT_SHOW_AVAILABILITY_AND_RETRY_PLAN.md).

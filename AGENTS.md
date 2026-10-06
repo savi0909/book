@@ -13,6 +13,12 @@ movie/standalone sections take precedence for this repository.
 
 ## Current movie expansion - 2026-10-05
 
+User-selected2026-10-06: study scenario2 protections before the hold-retry comparison.
+Start with [protection study](docs/SCENARIO_02_PROTECTION_STUDY.md) and the detailed
+provider tutorial. This is a documentation/source-reading session, not permission
+to run fault/load experiments, switch provider topology or implement the harness.
+Record explained/delivered separately from learner mastery or newly executed tests.
+
 Latest user override: **do not implement yet**. Read
 [hot-show/availability/retry plan](docs/HOT_SHOW_AVAILABILITY_AND_RETRY_PLAN.md).
 Study existing generic scenario2 protections first; the general hold retry-storm

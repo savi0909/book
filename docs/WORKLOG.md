@@ -75,3 +75,25 @@ Artifact check passed:77 required files,169 named requests,177 script blocks,
 Shared canonical context/progress/decisions updated locally; that reference tree
 has no Git metadata. Standalone task documents committed with actual timestamps;
 publishing remains pending a fresh origin URL.
+
+## 2026-10-06: scenario2 protection study
+
+User selected study of existing scenario2 before building the controlled hold-retry
+comparison. Added [reading lesson](SCENARIO_02_PROTECTION_STUDY.md), linked from
+README/detailed tutorial, and updated local context/agent handoff. Traced generic
+checkout admission/replay, durable claim, provider slots/deadlines, jittered next_at,
+automatic dispatch budget, breaker/probes/generations, receipt application and
+late-success refunds. Distinguished generic protections from V5 movie behavior.
+
+Inspected implementation, migration, integration-test assertions, standalone stub,
+overlay and historical verification. No application behavior/configuration changed;
+no tests, load or fault experiments executed. Historical test evidence stays dated
+2026-10-04. Study completion means explanation delivered, not mastery established.
+The hold harness/availability stream/admission remain proposed. Abhishek-services/
+Ankita-load-over-Tailscale roles preserved; no networking operation performed.
+
+Validation: artifact/local-link validator and staged Git whitespace checks.
+Artifact check passed:77 required files,169 requests,177 script blocks,35 Markdown
+files,381 local links and0 broken links. Whitespace checks passed.
+Shared canonical learning records updated locally. Local commit uses actual time;
+fresh standalone origin is still absent, so publication remains pending.
