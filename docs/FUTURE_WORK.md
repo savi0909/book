@@ -1,5 +1,12 @@
 # Future work and next-session handoff
 
+Latest2026-10-06: [local separate Docker10 RPS smoke](DOCKER_LOAD_TEST_TUTORIAL.md)
+passed100/100 fresh holds after PostgreSQL was raised to1 GiB. User deferred
+Redis to **phase3**, for high-throughput/quick availability updates, with a future
+500 MiB budget. No Redis service/cache/push added; database ownership remains
+authoritative. Phase3 requires separate implementation selection; shared hold
+admission and movie publishing/streaming remain unbuilt.
+
 Latest2026-10-06: [checkoutable generic client module](HOLD_LOAD_TEST_TUTORIAL.md)
 implemented/[tested locally](HOLD_LOAD_TEST_VERIFICATION.md); final business run
 belongs on Ankita and remains pending. Scoped ingress/observer delivered but not

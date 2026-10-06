@@ -5,6 +5,19 @@ Updated2026-10-06. Start here when resuming this repository, then read
 [movie tutorial](docs/MOVIE_BOOKING_TUTORIAL.md) and
 [movie verification](docs/MOVIE_VERIFICATION.md).
 
+## Latest follow-up: local Docker10 RPS — 2026-10-06
+
+User corrected run origin to this machine, selected a separate Docker load group
+and PostgreSQL1 GiB. Delivered [runbook/result](docs/DOCKER_LOAD_TEST_TUTORIAL.md):
+project sd-book-my-show-load-test,256 MiB/0.5 CPU,100 holds at10/s,one attempt,
+no faults.100201 successes,zero errors/conflicts/unresolved; all SQL violations0.
+Avg7.95ms/p9511.63ms/p9921.47ms local Docker HTTP timings, not Ankita/capacity.
+Loader exited0; server group remains healthy, PostgreSQL same container/volume
+with verified1 GiB limit. Persistent compose memory1g/combined memory+swap2g.
+Redis deferred explicitly to phase3 for quick availability/high-throughput study;
+500 MiB future budget. No Redis/movie push/cache deployed.28 Node tests passed
+in Docker; Java unchanged, prior69 Maven tests not rerun for this follow-up.
+
 ## Latest selection: checkoutable load-test module — 2026-10-06
 
 User selected building the module here and will run it on Ankita. Implemented

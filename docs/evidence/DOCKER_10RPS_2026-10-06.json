@@ -1,0 +1,1150 @@
+{
+  "recordedAt": "2026-10-06T11:51:44.745Z",
+  "run": {
+    "version": 1,
+    "runId": "d95d073367e9dae0",
+    "config": {
+      "generatorHost": "book-my-show-loader",
+      "fixtureBaseUrl": "http://api-a:8105",
+      "targetBaseUrl": "http://gateway:8080",
+      "seed": 20261006,
+      "logicalOperations": 100,
+      "seatCount": 100,
+      "arrivalIntervalMs": 100,
+      "ttlSeconds": 120,
+      "maxAttempts": 1,
+      "deadlineMs": 10000,
+      "requestTimeoutMs": 3500,
+      "minimumAttemptMs": 100,
+      "jitterBaseMs": 500,
+      "jitterCapMs": 2000,
+      "maxConcurrentLogical": 8,
+      "maxRunMs": 30000,
+      "cooldownMs": 0,
+      "maxRssMiB": 256,
+      "maxCpuPercent": 90,
+      "maxHostCpuPercent": 90,
+      "maxHostMemoryPercent": 90,
+      "maxEventLoopLagMs": 250,
+      "maxConsecutiveTransient": 20,
+      "discoveryAttempts": 2,
+      "busyEvery": 0,
+      "busyAttempts": 0,
+      "busyRetryAfterSeconds": 1,
+      "lossEvery": 0
+    },
+    "createdAt": "2026-10-06T11:47:09.576Z",
+    "generatorHost": "book-my-show-loader",
+    "nodeVersion": "v24.21.0",
+    "execution": "user-authorized-local-docker-smoke",
+    "timing": "Docker client to gateway over booking bridge; metadata only",
+    "phase": "single-arm-smoke",
+    "offeredRequestsPerSecond": 10,
+    "offeredWindowSeconds": 10,
+    "requestCap": 100,
+    "setupRequests": 2
+  },
+  "fixtureIds": {
+    "immediate": "43c91c4f-9b9f-4825-b3c5-0af45afffea1",
+    "jitter": "b4a61710-5291-4e9a-9c76-8761d3c9f315"
+  },
+  "report": {
+    "arm": "immediate",
+    "startedAt": "2026-10-06T11:47:09.578Z",
+    "elapsedMs": 9911.541231,
+    "stopReason": null,
+    "summary": {
+      "logicalOperations": 100,
+      "startedOperations": 100,
+      "transmissions": 100,
+      "amplification": 1,
+      "replays": 0,
+      "outcomes": {
+        "RESOLVED": 100
+      },
+      "statusCounts": {
+        "201/OK": 100
+      },
+      "attemptsPerOperation": {
+        "1": 100
+      },
+      "perSecondHoldStatusRates": {
+        "0": {
+          "201/OK": 10
+        },
+        "1": {
+          "201/OK": 10
+        },
+        "2": {
+          "201/OK": 10
+        },
+        "3": {
+          "201/OK": 10
+        },
+        "4": {
+          "201/OK": 10
+        },
+        "5": {
+          "201/OK": 10
+        },
+        "6": {
+          "201/OK": 10
+        },
+        "7": {
+          "201/OK": 10
+        },
+        "8": {
+          "201/OK": 10
+        },
+        "9": {
+          "201/OK": 10
+        }
+      },
+      "allHttpLatencyMs": {
+        "count": 100,
+        "average": 7.94864930999999,
+        "p50": 7.039098999999624,
+        "p95": 11.625818999999979,
+        "p99": 21.468726000000004
+      },
+      "successfulWriteLatencyMs": {
+        "count": 100,
+        "average": 7.94864930999999,
+        "p50": 7.039098999999624,
+        "p95": 11.625818999999979,
+        "p99": 21.468726000000004
+      },
+      "discoveredReplayLatencyMs": {
+        "count": 0,
+        "average": null,
+        "p50": null,
+        "p95": null,
+        "p99": null
+      },
+      "resolvedLogicalLatencyMs": {
+        "count": 100,
+        "average": 15.96556589999978,
+        "p50": 12.523219999999128,
+        "p95": 35.86569099999997,
+        "p99": 42.22303500000004
+      }
+    },
+    "resources": [
+      {
+        "second": 1,
+        "cpuPercent": 3.9933753250319772,
+        "rssMiB": 60.60546875,
+        "eventLoopLagMs": 0.9076720000000478,
+        "activeLogical": 0,
+        "hostCpuPercent": 2.2556390977443663,
+        "hostMemoryUsedPercent": 12.88844256627122
+      },
+      {
+        "second": 2,
+        "cpuPercent": 3.7692474200761703,
+        "rssMiB": 60.98046875,
+        "eventLoopLagMs": 6.513920999999982,
+        "activeLogical": 1,
+        "hostCpuPercent": 5.031446540880502,
+        "hostMemoryUsedPercent": 12.921800934927852
+      },
+      {
+        "second": 3,
+        "cpuPercent": 3.0762387063895056,
+        "rssMiB": 61.48046875,
+        "eventLoopLagMs": 0.605054999999993,
+        "activeLogical": 1,
+        "hostCpuPercent": 1.689612015018771,
+        "hostMemoryUsedPercent": 12.909986512695292
+      },
+      {
+        "second": 4,
+        "cpuPercent": 4.28261673372401,
+        "rssMiB": 62.23046875,
+        "eventLoopLagMs": 0.3696959999997489,
+        "activeLogical": 1,
+        "hostCpuPercent": 9.57514267596703,
+        "hostMemoryUsedPercent": 12.933143773079703
+      },
+      {
+        "second": 5,
+        "cpuPercent": 2.8242682812501454,
+        "rssMiB": 62.60546875,
+        "eventLoopLagMs": 0.47152700000060577,
+        "activeLogical": 1,
+        "hostCpuPercent": 1.8867924528301883,
+        "hostMemoryUsedPercent": 12.94006861300172
+      },
+      {
+        "second": 6,
+        "cpuPercent": 2.8935755601924646,
+        "rssMiB": 62.85546875,
+        "eventLoopLagMs": 0,
+        "activeLogical": 1,
+        "hostCpuPercent": 0.8827238335435084,
+        "hostMemoryUsedPercent": 12.921155609343716
+      },
+      {
+        "second": 7,
+        "cpuPercent": 2.6869554753489413,
+        "rssMiB": 62.85546875,
+        "eventLoopLagMs": 0.6492570000000342,
+        "activeLogical": 1,
+        "hostCpuPercent": 1.2476606363069243,
+        "hostMemoryUsedPercent": 12.924282956405275
+      },
+      {
+        "second": 8,
+        "cpuPercent": 4.106499601341159,
+        "rssMiB": 62.98046875,
+        "eventLoopLagMs": 0.07315200000084587,
+        "activeLogical": 1,
+        "hostCpuPercent": 3.539823008849563,
+        "hostMemoryUsedPercent": 12.977745699029086
+      },
+      {
+        "second": 9,
+        "cpuPercent": 3.354918405029475,
+        "rssMiB": 63.23046875,
+        "eventLoopLagMs": 0.02432099999896309,
+        "activeLogical": 1,
+        "hostCpuPercent": 4.534005037783373,
+        "hostMemoryUsedPercent": 12.993183872618685
+      }
+    ]
+  },
+  "observer": {
+    "summary": {
+      "seconds": 40,
+      "elapsedMs": 40152.0464,
+      "stopReason": null,
+      "requestedCadenceMs": 1000,
+      "actualCadence": "recorded per sample; docker stats may take longer"
+    },
+    "samples": [
+      {
+        "at": "2026-10-06T11:46:56.999Z",
+        "elapsedMs": 1820.2128,
+        "containers": [
+          {
+            "Name": "sd-book-my-show-api-a-1",
+            "CPUPerc": "0.50%",
+            "MemUsage": "210MiB / 320MiB",
+            "MemPerc": "65.62%",
+            "PIDs": "33"
+          },
+          {
+            "Name": "sd-book-my-show-api-b-1",
+            "CPUPerc": "0.46%",
+            "MemUsage": "202MiB / 320MiB",
+            "MemPerc": "63.11%",
+            "PIDs": "33"
+          },
+          {
+            "Name": "sd-book-my-show-gateway-1",
+            "CPUPerc": "0.09%",
+            "MemUsage": "15.39MiB / 96MiB",
+            "MemPerc": "16.03%",
+            "PIDs": "17"
+          },
+          {
+            "Name": "sd-book-my-show-postgres-1",
+            "CPUPerc": "2.99%",
+            "MemUsage": "63.34MiB / 1GiB",
+            "MemPerc": "6.19%",
+            "PIDs": "22"
+          }
+        ],
+        "database": {
+          "connections": 16,
+          "active": 0,
+          "lockWaits": 0
+        },
+        "poolWaitMetrics": "not exposed by current application",
+        "hostCpuPercent": 17.897435897435898,
+        "hostMemoryUsedPercent": 85.77441405705946,
+        "threshold": null
+      },
+      {
+        "at": "2026-10-06T11:46:59.012Z",
+        "elapsedMs": 3832.9837,
+        "containers": [
+          {
+            "Name": "sd-book-my-show-api-a-1",
+            "CPUPerc": "2.26%",
+            "MemUsage": "210.2MiB / 320MiB",
+            "MemPerc": "65.69%",
+            "PIDs": "33"
+          },
+          {
+            "Name": "sd-book-my-show-api-b-1",
+            "CPUPerc": "2.26%",
+            "MemUsage": "201.5MiB / 320MiB",
+            "MemPerc": "62.96%",
+            "PIDs": "33"
+          },
+          {
+            "Name": "sd-book-my-show-gateway-1",
+            "CPUPerc": "0.09%",
+            "MemUsage": "15.14MiB / 96MiB",
+            "MemPerc": "15.78%",
+            "PIDs": "17"
+          },
+          {
+            "Name": "sd-book-my-show-postgres-1",
+            "CPUPerc": "1.11%",
+            "MemUsage": "63.12MiB / 1GiB",
+            "MemPerc": "6.16%",
+            "PIDs": "22"
+          }
+        ],
+        "database": {
+          "connections": 16,
+          "active": 0,
+          "lockWaits": 0
+        },
+        "poolWaitMetrics": "not exposed by current application",
+        "hostCpuPercent": 13.983142424897343,
+        "hostMemoryUsedPercent": 85.82188972033201,
+        "threshold": null
+      },
+      {
+        "at": "2026-10-06T11:47:01.027Z",
+        "elapsedMs": 5848.2071,
+        "containers": [
+          {
+            "Name": "sd-book-my-show-api-a-1",
+            "CPUPerc": "0.53%",
+            "MemUsage": "210MiB / 320MiB",
+            "MemPerc": "65.62%",
+            "PIDs": "33"
+          },
+          {
+            "Name": "sd-book-my-show-api-b-1",
+            "CPUPerc": "0.49%",
+            "MemUsage": "201.5MiB / 320MiB",
+            "MemPerc": "62.96%",
+            "PIDs": "33"
+          },
+          {
+            "Name": "sd-book-my-show-gateway-1",
+            "CPUPerc": "0.11%",
+            "MemUsage": "15.39MiB / 96MiB",
+            "MemPerc": "16.03%",
+            "PIDs": "17"
+          },
+          {
+            "Name": "sd-book-my-show-postgres-1",
+            "CPUPerc": "1.15%",
+            "MemUsage": "63MiB / 1GiB",
+            "MemPerc": "6.15%",
+            "PIDs": "22"
+          }
+        ],
+        "database": {
+          "connections": 16,
+          "active": 0,
+          "lockWaits": 0
+        },
+        "poolWaitMetrics": "not exposed by current application",
+        "hostCpuPercent": 18.309641532756494,
+        "hostMemoryUsedPercent": 86.03991443722809,
+        "threshold": null
+      },
+      {
+        "at": "2026-10-06T11:47:03.038Z",
+        "elapsedMs": 7858.6296999999995,
+        "containers": [
+          {
+            "Name": "sd-book-my-show-api-a-1",
+            "CPUPerc": "0.45%",
+            "MemUsage": "209.8MiB / 320MiB",
+            "MemPerc": "65.55%",
+            "PIDs": "33"
+          },
+          {
+            "Name": "sd-book-my-show-api-b-1",
+            "CPUPerc": "0.48%",
+            "MemUsage": "201.5MiB / 320MiB",
+            "MemPerc": "62.96%",
+            "PIDs": "33"
+          },
+          {
+            "Name": "sd-book-my-show-gateway-1",
+            "CPUPerc": "0.09%",
+            "MemUsage": "15.14MiB / 96MiB",
+            "MemPerc": "15.78%",
+            "PIDs": "17"
+          },
+          {
+            "Name": "sd-book-my-show-postgres-1",
+            "CPUPerc": "2.84%",
+            "MemUsage": "63.4MiB / 1GiB",
+            "MemPerc": "6.19%",
+            "PIDs": "22"
+          }
+        ],
+        "database": {
+          "connections": 16,
+          "active": 0,
+          "lockWaits": 0
+        },
+        "poolWaitMetrics": "not exposed by current application",
+        "hostCpuPercent": 17.68161407393738,
+        "hostMemoryUsedPercent": 86.12451074027881,
+        "threshold": null
+      },
+      {
+        "at": "2026-10-06T11:47:05.056Z",
+        "elapsedMs": 9877.1494,
+        "containers": [
+          {
+            "Name": "sd-book-my-show-api-a-1",
+            "CPUPerc": "0.52%",
+            "MemUsage": "209.8MiB / 320MiB",
+            "MemPerc": "65.55%",
+            "PIDs": "33"
+          },
+          {
+            "Name": "sd-book-my-show-api-b-1",
+            "CPUPerc": "0.51%",
+            "MemUsage": "201.7MiB / 320MiB",
+            "MemPerc": "63.03%",
+            "PIDs": "33"
+          },
+          {
+            "Name": "sd-book-my-show-gateway-1",
+            "CPUPerc": "0.12%",
+            "MemUsage": "15.64MiB / 96MiB",
+            "MemPerc": "16.29%",
+            "PIDs": "17"
+          },
+          {
+            "Name": "sd-book-my-show-postgres-1",
+            "CPUPerc": "1.08%",
+            "MemUsage": "62.93MiB / 1GiB",
+            "MemPerc": "6.15%",
+            "PIDs": "22"
+          }
+        ],
+        "database": {
+          "connections": 16,
+          "active": 0,
+          "lockWaits": 0
+        },
+        "poolWaitMetrics": "not exposed by current application",
+        "hostCpuPercent": 14.938722456053476,
+        "hostMemoryUsedPercent": 85.44105496737137,
+        "threshold": null
+      },
+      {
+        "at": "2026-10-06T11:47:07.067Z",
+        "elapsedMs": 11887.7938,
+        "containers": [
+          {
+            "Name": "sd-book-my-show-api-a-1",
+            "CPUPerc": "0.53%",
+            "MemUsage": "209.8MiB / 320MiB",
+            "MemPerc": "65.55%",
+            "PIDs": "33"
+          },
+          {
+            "Name": "sd-book-my-show-api-b-1",
+            "CPUPerc": "0.53%",
+            "MemUsage": "201.7MiB / 320MiB",
+            "MemPerc": "63.03%",
+            "PIDs": "33"
+          },
+          {
+            "Name": "sd-book-my-show-gateway-1",
+            "CPUPerc": "0.11%",
+            "MemUsage": "15.63MiB / 96MiB",
+            "MemPerc": "16.28%",
+            "PIDs": "17"
+          },
+          {
+            "Name": "sd-book-my-show-postgres-1",
+            "CPUPerc": "1.20%",
+            "MemUsage": "63.12MiB / 1GiB",
+            "MemPerc": "6.16%",
+            "PIDs": "22"
+          }
+        ],
+        "database": {
+          "connections": 16,
+          "active": 0,
+          "lockWaits": 0
+        },
+        "poolWaitMetrics": "not exposed by current application",
+        "hostCpuPercent": 7.531562908141054,
+        "hostMemoryUsedPercent": 85.45930645322642,
+        "threshold": null
+      },
+      {
+        "at": "2026-10-06T11:47:09.085Z",
+        "elapsedMs": 13906.286,
+        "containers": [
+          {
+            "Name": "sd-book-my-show-api-a-1",
+            "CPUPerc": "2.16%",
+            "MemUsage": "209.8MiB / 320MiB",
+            "MemPerc": "65.55%",
+            "PIDs": "33"
+          },
+          {
+            "Name": "sd-book-my-show-api-b-1",
+            "CPUPerc": "2.18%",
+            "MemUsage": "201.5MiB / 320MiB",
+            "MemPerc": "62.96%",
+            "PIDs": "33"
+          },
+          {
+            "Name": "sd-book-my-show-gateway-1",
+            "CPUPerc": "0.10%",
+            "MemUsage": "15.14MiB / 96MiB",
+            "MemPerc": "15.78%",
+            "PIDs": "17"
+          },
+          {
+            "Name": "sd-book-my-show-postgres-1",
+            "CPUPerc": "3.26%",
+            "MemUsage": "62.91MiB / 1GiB",
+            "MemPerc": "6.14%",
+            "PIDs": "22"
+          }
+        ],
+        "database": {
+          "connections": 16,
+          "active": 0,
+          "lockWaits": 0
+        },
+        "poolWaitMetrics": "not exposed by current application",
+        "hostCpuPercent": 19.8256880733945,
+        "hostMemoryUsedPercent": 85.68750452653805,
+        "threshold": null
+      },
+      {
+        "at": "2026-10-06T11:47:11.098Z",
+        "elapsedMs": 15918.8671,
+        "containers": [
+          {
+            "Name": "sd-book-my-show-api-a-1",
+            "CPUPerc": "3.08%",
+            "MemUsage": "209.9MiB / 320MiB",
+            "MemPerc": "65.60%",
+            "PIDs": "34"
+          },
+          {
+            "Name": "sd-book-my-show-api-b-1",
+            "CPUPerc": "3.70%",
+            "MemUsage": "202.2MiB / 320MiB",
+            "MemPerc": "63.19%",
+            "PIDs": "34"
+          },
+          {
+            "Name": "sd-book-my-show-gateway-1",
+            "CPUPerc": "0.93%",
+            "MemUsage": "15.9MiB / 96MiB",
+            "MemPerc": "16.56%",
+            "PIDs": "17"
+          },
+          {
+            "Name": "sd-book-my-show-postgres-1",
+            "CPUPerc": "3.14%",
+            "MemUsage": "65.09MiB / 1GiB",
+            "MemPerc": "6.36%",
+            "PIDs": "22"
+          }
+        ],
+        "database": {
+          "connections": 16,
+          "active": 0,
+          "lockWaits": 0
+        },
+        "poolWaitMetrics": "not exposed by current application",
+        "hostCpuPercent": 18.893023255813958,
+        "hostMemoryUsedPercent": 85.77598850507614,
+        "threshold": null
+      },
+      {
+        "at": "2026-10-06T11:47:13.112Z",
+        "elapsedMs": 17933.3439,
+        "containers": [
+          {
+            "Name": "sd-book-my-show-api-a-1",
+            "CPUPerc": "4.83%",
+            "MemUsage": "210.4MiB / 320MiB",
+            "MemPerc": "65.73%",
+            "PIDs": "34"
+          },
+          {
+            "Name": "sd-book-my-show-api-b-1",
+            "CPUPerc": "3.25%",
+            "MemUsage": "201.8MiB / 320MiB",
+            "MemPerc": "63.08%",
+            "PIDs": "34"
+          },
+          {
+            "Name": "sd-book-my-show-gateway-1",
+            "CPUPerc": "0.89%",
+            "MemUsage": "15.67MiB / 96MiB",
+            "MemPerc": "16.32%",
+            "PIDs": "17"
+          },
+          {
+            "Name": "sd-book-my-show-postgres-1",
+            "CPUPerc": "2.38%",
+            "MemUsage": "65.46MiB / 1GiB",
+            "MemPerc": "6.39%",
+            "PIDs": "22"
+          }
+        ],
+        "database": {
+          "connections": 16,
+          "active": 0,
+          "lockWaits": 0
+        },
+        "poolWaitMetrics": "not exposed by current application",
+        "hostCpuPercent": 16.78289311281165,
+        "hostMemoryUsedPercent": 85.7984304448833,
+        "threshold": null
+      },
+      {
+        "at": "2026-10-06T11:47:15.126Z",
+        "elapsedMs": 19947.2308,
+        "containers": [
+          {
+            "Name": "sd-book-my-show-api-a-1",
+            "CPUPerc": "2.46%",
+            "MemUsage": "210.7MiB / 320MiB",
+            "MemPerc": "65.84%",
+            "PIDs": "34"
+          },
+          {
+            "Name": "sd-book-my-show-api-b-1",
+            "CPUPerc": "2.42%",
+            "MemUsage": "202.1MiB / 320MiB",
+            "MemPerc": "63.17%",
+            "PIDs": "34"
+          },
+          {
+            "Name": "sd-book-my-show-gateway-1",
+            "CPUPerc": "0.83%",
+            "MemUsage": "15.42MiB / 96MiB",
+            "MemPerc": "16.06%",
+            "PIDs": "17"
+          },
+          {
+            "Name": "sd-book-my-show-postgres-1",
+            "CPUPerc": "4.14%",
+            "MemUsage": "65.35MiB / 1GiB",
+            "MemPerc": "6.38%",
+            "PIDs": "22"
+          }
+        ],
+        "database": {
+          "connections": 16,
+          "active": 0,
+          "lockWaits": 0
+        },
+        "poolWaitMetrics": "not exposed by current application",
+        "hostCpuPercent": 12.09655044853417,
+        "hostMemoryUsedPercent": 85.7077785725376,
+        "threshold": null
+      },
+      {
+        "at": "2026-10-06T11:47:17.135Z",
+        "elapsedMs": 21955.5821,
+        "containers": [
+          {
+            "Name": "sd-book-my-show-api-a-1",
+            "CPUPerc": "2.38%",
+            "MemUsage": "210.4MiB / 320MiB",
+            "MemPerc": "65.75%",
+            "PIDs": "34"
+          },
+          {
+            "Name": "sd-book-my-show-api-b-1",
+            "CPUPerc": "3.80%",
+            "MemUsage": "202.3MiB / 320MiB",
+            "MemPerc": "63.22%",
+            "PIDs": "34"
+          },
+          {
+            "Name": "sd-book-my-show-gateway-1",
+            "CPUPerc": "0.82%",
+            "MemUsage": "15.18MiB / 96MiB",
+            "MemPerc": "15.81%",
+            "PIDs": "17"
+          },
+          {
+            "Name": "sd-book-my-show-postgres-1",
+            "CPUPerc": "1.86%",
+            "MemUsage": "65.47MiB / 1GiB",
+            "MemPerc": "6.39%",
+            "PIDs": "22"
+          }
+        ],
+        "database": {
+          "connections": 16,
+          "active": 0,
+          "lockWaits": 0
+        },
+        "poolWaitMetrics": "not exposed by current application",
+        "hostCpuPercent": 14.841228366788606,
+        "hostMemoryUsedPercent": 85.90457246348552,
+        "threshold": null
+      },
+      {
+        "at": "2026-10-06T11:47:19.152Z",
+        "elapsedMs": 23973.3189,
+        "containers": [
+          {
+            "Name": "sd-book-my-show-api-a-1",
+            "CPUPerc": "3.41%",
+            "MemUsage": "210.6MiB / 320MiB",
+            "MemPerc": "65.82%",
+            "PIDs": "34"
+          },
+          {
+            "Name": "sd-book-my-show-api-b-1",
+            "CPUPerc": "4.32%",
+            "MemUsage": "202.4MiB / 320MiB",
+            "MemPerc": "63.24%",
+            "PIDs": "34"
+          },
+          {
+            "Name": "sd-book-my-show-gateway-1",
+            "CPUPerc": "0.97%",
+            "MemUsage": "15.19MiB / 96MiB",
+            "MemPerc": "15.82%",
+            "PIDs": "17"
+          },
+          {
+            "Name": "sd-book-my-show-postgres-1",
+            "CPUPerc": "2.20%",
+            "MemUsage": "66.79MiB / 1GiB",
+            "MemPerc": "6.52%",
+            "PIDs": "22"
+          }
+        ],
+        "database": {
+          "connections": 16,
+          "active": 0,
+          "lockWaits": 0
+        },
+        "poolWaitMetrics": "not exposed by current application",
+        "hostCpuPercent": 17.59795465746673,
+        "hostMemoryUsedPercent": 85.94851167428982,
+        "threshold": null
+      },
+      {
+        "at": "2026-10-06T11:47:21.164Z",
+        "elapsedMs": 25985.1999,
+        "containers": [
+          {
+            "Name": "sd-book-my-show-api-a-1",
+            "CPUPerc": "0.54%",
+            "MemUsage": "210.6MiB / 320MiB",
+            "MemPerc": "65.80%",
+            "PIDs": "34"
+          },
+          {
+            "Name": "sd-book-my-show-api-b-1",
+            "CPUPerc": "0.53%",
+            "MemUsage": "202.1MiB / 320MiB",
+            "MemPerc": "63.17%",
+            "PIDs": "34"
+          },
+          {
+            "Name": "sd-book-my-show-gateway-1",
+            "CPUPerc": "0.11%",
+            "MemUsage": "15.41MiB / 96MiB",
+            "MemPerc": "16.06%",
+            "PIDs": "17"
+          },
+          {
+            "Name": "sd-book-my-show-postgres-1",
+            "CPUPerc": "3.01%",
+            "MemUsage": "65.93MiB / 1GiB",
+            "MemPerc": "6.44%",
+            "PIDs": "22"
+          }
+        ],
+        "database": {
+          "connections": 16,
+          "active": 0,
+          "lockWaits": 0
+        },
+        "poolWaitMetrics": "not exposed by current application",
+        "hostCpuPercent": 10.10402111473374,
+        "hostMemoryUsedPercent": 85.61752636776538,
+        "threshold": null
+      },
+      {
+        "at": "2026-10-06T11:47:23.178Z",
+        "elapsedMs": 27999.2296,
+        "containers": [
+          {
+            "Name": "sd-book-my-show-api-a-1",
+            "CPUPerc": "0.47%",
+            "MemUsage": "210.6MiB / 320MiB",
+            "MemPerc": "65.80%",
+            "PIDs": "34"
+          },
+          {
+            "Name": "sd-book-my-show-api-b-1",
+            "CPUPerc": "1.59%",
+            "MemUsage": "202.1MiB / 320MiB",
+            "MemPerc": "63.17%",
+            "PIDs": "34"
+          },
+          {
+            "Name": "sd-book-my-show-gateway-1",
+            "CPUPerc": "0.10%",
+            "MemUsage": "15.17MiB / 96MiB",
+            "MemPerc": "15.80%",
+            "PIDs": "17"
+          },
+          {
+            "Name": "sd-book-my-show-postgres-1",
+            "CPUPerc": "1.04%",
+            "MemUsage": "66.54MiB / 1GiB",
+            "MemPerc": "6.50%",
+            "PIDs": "22"
+          }
+        ],
+        "database": {
+          "connections": 16,
+          "active": 0,
+          "lockWaits": 0
+        },
+        "poolWaitMetrics": "not exposed by current application",
+        "hostCpuPercent": 13.806096920653555,
+        "hostMemoryUsedPercent": 85.73757197346885,
+        "threshold": null
+      },
+      {
+        "at": "2026-10-06T11:47:25.195Z",
+        "elapsedMs": 30016.4598,
+        "containers": [
+          {
+            "Name": "sd-book-my-show-api-a-1",
+            "CPUPerc": "0.52%",
+            "MemUsage": "210.6MiB / 320MiB",
+            "MemPerc": "65.82%",
+            "PIDs": "34"
+          },
+          {
+            "Name": "sd-book-my-show-api-b-1",
+            "CPUPerc": "0.55%",
+            "MemUsage": "202.1MiB / 320MiB",
+            "MemPerc": "63.17%",
+            "PIDs": "34"
+          },
+          {
+            "Name": "sd-book-my-show-gateway-1",
+            "CPUPerc": "0.11%",
+            "MemUsage": "15.17MiB / 96MiB",
+            "MemPerc": "15.80%",
+            "PIDs": "17"
+          },
+          {
+            "Name": "sd-book-my-show-postgres-1",
+            "CPUPerc": "1.10%",
+            "MemUsage": "65.62MiB / 1GiB",
+            "MemPerc": "6.41%",
+            "PIDs": "22"
+          }
+        ],
+        "database": {
+          "connections": 16,
+          "active": 0,
+          "lockWaits": 0
+        },
+        "poolWaitMetrics": "not exposed by current application",
+        "hostCpuPercent": 14.07985682547519,
+        "hostMemoryUsedPercent": 85.7459407702345,
+        "threshold": null
+      },
+      {
+        "at": "2026-10-06T11:47:27.208Z",
+        "elapsedMs": 32029.5168,
+        "containers": [
+          {
+            "Name": "sd-book-my-show-api-a-1",
+            "CPUPerc": "0.49%",
+            "MemUsage": "210.6MiB / 320MiB",
+            "MemPerc": "65.80%",
+            "PIDs": "34"
+          },
+          {
+            "Name": "sd-book-my-show-api-b-1",
+            "CPUPerc": "0.48%",
+            "MemUsage": "202.1MiB / 320MiB",
+            "MemPerc": "63.17%",
+            "PIDs": "34"
+          },
+          {
+            "Name": "sd-book-my-show-gateway-1",
+            "CPUPerc": "0.10%",
+            "MemUsage": "15.18MiB / 96MiB",
+            "MemPerc": "15.81%",
+            "PIDs": "17"
+          },
+          {
+            "Name": "sd-book-my-show-postgres-1",
+            "CPUPerc": "2.97%",
+            "MemUsage": "65.71MiB / 1GiB",
+            "MemPerc": "6.42%",
+            "PIDs": "22"
+          }
+        ],
+        "database": {
+          "connections": 16,
+          "active": 0,
+          "lockWaits": 0
+        },
+        "poolWaitMetrics": "not exposed by current application",
+        "hostCpuPercent": 10.237052226054,
+        "hostMemoryUsedPercent": 85.62951639496941,
+        "threshold": null
+      },
+      {
+        "at": "2026-10-06T11:47:29.276Z",
+        "elapsedMs": 34097.097,
+        "containers": [
+          {
+            "Name": "sd-book-my-show-api-a-1",
+            "CPUPerc": "2.00%",
+            "MemUsage": "210.6MiB / 320MiB",
+            "MemPerc": "65.81%",
+            "PIDs": "34"
+          },
+          {
+            "Name": "sd-book-my-show-api-b-1",
+            "CPUPerc": "2.12%",
+            "MemUsage": "202.1MiB / 320MiB",
+            "MemPerc": "63.17%",
+            "PIDs": "34"
+          },
+          {
+            "Name": "sd-book-my-show-gateway-1",
+            "CPUPerc": "0.10%",
+            "MemUsage": "15.17MiB / 96MiB",
+            "MemPerc": "15.80%",
+            "PIDs": "17"
+          },
+          {
+            "Name": "sd-book-my-show-postgres-1",
+            "CPUPerc": "1.47%",
+            "MemUsage": "65.7MiB / 1GiB",
+            "MemPerc": "6.42%",
+            "PIDs": "22"
+          }
+        ],
+        "database": {
+          "connections": 16,
+          "active": 0,
+          "lockWaits": 0
+        },
+        "poolWaitMetrics": "not exposed by current application",
+        "hostCpuPercent": 20.990460241035912,
+        "hostMemoryUsedPercent": 87.00462718160968,
+        "threshold": null
+      },
+      {
+        "at": "2026-10-06T11:47:31.278Z",
+        "elapsedMs": 36099.282,
+        "containers": [
+          {
+            "Name": "sd-book-my-show-api-a-1",
+            "CPUPerc": "0.59%",
+            "MemUsage": "211.1MiB / 320MiB",
+            "MemPerc": "65.95%",
+            "PIDs": "34"
+          },
+          {
+            "Name": "sd-book-my-show-api-b-1",
+            "CPUPerc": "0.53%",
+            "MemUsage": "202.1MiB / 320MiB",
+            "MemPerc": "63.17%",
+            "PIDs": "34"
+          },
+          {
+            "Name": "sd-book-my-show-gateway-1",
+            "CPUPerc": "0.09%",
+            "MemUsage": "15.66MiB / 96MiB",
+            "MemPerc": "16.32%",
+            "PIDs": "17"
+          },
+          {
+            "Name": "sd-book-my-show-postgres-1",
+            "CPUPerc": "1.09%",
+            "MemUsage": "65.62MiB / 1GiB",
+            "MemPerc": "6.41%",
+            "PIDs": "22"
+          }
+        ],
+        "database": {
+          "connections": 16,
+          "active": 0,
+          "lockWaits": 0
+        },
+        "poolWaitMetrics": "not exposed by current application",
+        "hostCpuPercent": 36.399028279556504,
+        "hostMemoryUsedPercent": 87.24934484795797,
+        "threshold": null
+      },
+      {
+        "at": "2026-10-06T11:47:33.272Z",
+        "elapsedMs": 38092.7103,
+        "containers": [
+          {
+            "Name": "sd-book-my-show-api-a-1",
+            "CPUPerc": "0.71%",
+            "MemUsage": "210.6MiB / 320MiB",
+            "MemPerc": "65.80%",
+            "PIDs": "34"
+          },
+          {
+            "Name": "sd-book-my-show-api-b-1",
+            "CPUPerc": "0.53%",
+            "MemUsage": "202.1MiB / 320MiB",
+            "MemPerc": "63.17%",
+            "PIDs": "34"
+          },
+          {
+            "Name": "sd-book-my-show-gateway-1",
+            "CPUPerc": "0.13%",
+            "MemUsage": "15.17MiB / 96MiB",
+            "MemPerc": "15.80%",
+            "PIDs": "17"
+          },
+          {
+            "Name": "sd-book-my-show-postgres-1",
+            "CPUPerc": "3.69%",
+            "MemUsage": "65.81MiB / 1GiB",
+            "MemPerc": "6.43%",
+            "PIDs": "22"
+          }
+        ],
+        "database": {
+          "connections": 16,
+          "active": 0,
+          "lockWaits": 0
+        },
+        "poolWaitMetrics": "not exposed by current application",
+        "hostCpuPercent": 33.6576117361845,
+        "hostMemoryUsedPercent": 86.40414481918191,
+        "threshold": null
+      },
+      {
+        "at": "2026-10-06T11:47:35.315Z",
+        "elapsedMs": 40136.4361,
+        "containers": [
+          {
+            "Name": "sd-book-my-show-api-a-1",
+            "CPUPerc": "0.52%",
+            "MemUsage": "210.6MiB / 320MiB",
+            "MemPerc": "65.82%",
+            "PIDs": "34"
+          },
+          {
+            "Name": "sd-book-my-show-api-b-1",
+            "CPUPerc": "0.58%",
+            "MemUsage": "202.1MiB / 320MiB",
+            "MemPerc": "63.17%",
+            "PIDs": "34"
+          },
+          {
+            "Name": "sd-book-my-show-gateway-1",
+            "CPUPerc": "0.09%",
+            "MemUsage": "15.17MiB / 96MiB",
+            "MemPerc": "15.80%",
+            "PIDs": "17"
+          },
+          {
+            "Name": "sd-book-my-show-postgres-1",
+            "CPUPerc": "1.20%",
+            "MemUsage": "65.62MiB / 1GiB",
+            "MemPerc": "6.41%",
+            "PIDs": "22"
+          }
+        ],
+        "database": {
+          "connections": 16,
+          "active": 0,
+          "lockWaits": 0
+        },
+        "poolWaitMetrics": "not exposed by current application",
+        "hostCpuPercent": 40.59031589218197,
+        "hostMemoryUsedPercent": 86.52112630682214,
+        "threshold": null
+      }
+    ]
+  },
+  "docker": {
+    "serviceProject": "sd-book-my-show",
+    "loadProject": "sd-book-my-show-load-test",
+    "loadMemoryBytes": 268435456,
+    "loadCpuQuota": 0.5,
+    "loadExitCode": 0,
+    "postgresMemoryBytes": 1073741824,
+    "postgresMemoryAndSwapTotalBytes": 2147483648,
+    "postgresContainerId": "74a8b5863b01b2e006a68e884030005ed38f2f0e9a4d8c44d67a3d6e5dd6f472",
+    "postgresIdUnchanged": true,
+    "postgresVolume": "sd-book-my-show_booking-data",
+    "postgresHealthy": true,
+    "noNewListener": true
+  },
+  "sqlAudit": {
+    "runId": "d95d073367e9dae0",
+    "violations": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "heldAtAudit": 100
+  },
+  "validation": {
+    "dockerNodeTests": 28,
+    "failures": 0,
+    "skipped": 0,
+    "bothComposeConfigsValid": true,
+    "mavenRerun": false,
+    "artifacts": {
+      "requiredFiles": 100,
+      "namedRequests": 169,
+      "scriptBlocks": 177,
+      "markdownFiles": 40,
+      "localLinks": 449,
+      "brokenLinks": 0,
+      "externalReferenceLinks": 34
+    }
+  },
+  "retained": {
+    "fixtureEvents": 2,
+    "oneUnusedFixture": true,
+    "bookings": 100,
+    "loadContainer": true,
+    "testContainer": true,
+    "interruptedHostPreflightEvents": 2,
+    "interruptedHostPreflightHoldRequests": 0,
+    "bodiesCaptured": false
+  },
+  "redis": {
+    "phase": 3,
+    "status": "deferred/unbuilt",
+    "proposedMemoryMiB": 500
+  },
+  "limits": [
+    "Small local Docker path only",
+    "No throughput/SLO or RAM improvement comparison",
+    "No Ankita/Tailscale run",
+    "No Redis/shared admission/movie push implementation"
+  ]
+}

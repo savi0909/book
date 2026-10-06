@@ -1,5 +1,19 @@
 # SD Book My Show agent instructions
 
+## Local Docker smoke / resource continuation — 2026-10-06
+
+User explicitly selected this machine for10 RPS and a separate Docker group.
+Read [Docker runbook/result](docs/DOCKER_LOAD_TEST_TUTORIAL.md). Load Compose
+project sd-book-my-show-load-test connects only to the existing booking network;
+256 MiB/0.5 CPU, fixed100 fresh holds/10s/one attempt/no faults. Actual100/100201,
+ten buckets of10, all SQL violations0, exited0. Preserve results/fixtures and
+retained test containers. PostgreSQL limit is now1 GiB, live-updated without a
+restart; same container/data volume. Base Compose persists1g/2g total memory+swap.
+Redis explicitly deferred to phase3 for quick availability/high throughput;
+500 MiB is a future budget, no Redis service or movie cache/push added. Older
+local20-operation guard remains for the ordinary CLI; this fixed Docker smoke
+is a separate explicit selection. Long/final remote load stays on Ankita.
+
 ## Current load-test module delivery — 2026-10-06
 
 User authorized the load-test module here and will check it out/run it on Ankita.

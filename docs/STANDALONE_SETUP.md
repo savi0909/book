@@ -1,5 +1,9 @@
 # Standalone SD Book My Show setup
 
+Current resource follow-up2026-10-06: PostgreSQL1 GiB memory ceiling (2 GiB total
+memory+swap), existing retained volume. [Separate Docker load-test group/result](DOCKER_LOAD_TEST_TUTORIAL.md).
+Redis is deferred to phase3; no Redis service is part of the present stack.
+
 Created on October 5, 2026 at `D:/sd-book-my-show` with a fresh `git init`.
 The source lab remains in `D:/java-projects/ticket-booking-lab`.
 

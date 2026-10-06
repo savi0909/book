@@ -48,6 +48,8 @@ required.push('load-test/package.json', 'load-test/config.small.json', 'load-tes
   'load-test/test/observer.test.mjs', 'load-test/test/compare.test.mjs',
   'load-test/test/postgres-contract.mjs', 'docs/HOLD_LOAD_TEST_TUTORIAL.md',
   'docs/HOLD_LOAD_TEST_VERIFICATION.md', 'src/test/java/com/example/booking/HoldLoadClientIntegrationTest.java');
+required.push('load-test/Dockerfile', 'load-test/compose.yml', 'load-test/docker-smoke.mjs',
+  'docs/DOCKER_LOAD_TEST_TUTORIAL.md', 'docs/evidence/DOCKER_10RPS_2026-10-06.json');
 for (const name of required) assert.ok(fs.existsSync(path.join(project, name)), name);
 const { configCheck } = await import('../load-test/lib.mjs');
 configCheck(JSON.parse(fs.readFileSync('load-test/config.small.json', 'utf8')));

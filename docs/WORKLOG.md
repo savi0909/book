@@ -140,3 +140,29 @@ no Git metadata; these records are updated locally.
 Final artifact check:95 required files,169 requests,177 script blocks,39 Markdown
 files,434 local links,0 broken. Git whitespace checks passed. No Maven clean,
 file/data deletion, original lab operation or remote generator installation.
+
+
+## 2026-10-06: separate Docker10 RPS / PostgreSQL1 GiB / defer Redis
+
+User corrected run origin to this machine, requested a separate Docker group,
+PostgreSQL1 GiB and then deferred Redis to phase3 for quick availability/high
+throughput.500 MiB is the future Redis budget, not a current allocation.
+Delivered [runbook/result](D:/sd-book-my-show/docs/DOCKER_LOAD_TEST_TUTORIAL.md).
+Project sd-book-my-show-load-test uses256 MiB/0.5 CPU and existing booking network.
+Actual run d95d073367e9dae0:100 fresh generic holds,10 every second for ten
+buckets,100201 successes,zero retries/conflicts/unresolved/stops; avg7.95ms,
+p507.04ms,p9511.63ms,p9921.47ms Docker HTTP latency. All SQL violations0.
+28 Node tests passed in Docker; Java unchanged, prior69 Maven tests not rerun.
+PostgreSQL updated live to1073741824-byte limit; same container/retained volume,
+healthy, no restart. Base Compose persists1g RAM/2g combined memory+swap.
+Loader exited0; observer completed40s, no stop. Containers/fixtures/data retained,
+no file/volume deletion. Interrupted pre-Docker setup retained2 unused events and
+ran no holds. Current smoke retained2 events/100 bookings. No Redis/push/cache
+added; PostgreSQL ownership remains authoritative. Final longer runs on Ankita
+remain pending; current local result is not a capacity or1 GiB improvement claim.
+Origin absent; local scoped commit/bundle, no push claim.
+
+Follow-up final validation:100 required artifacts,169 requests,177 script blocks,
+40 Markdown files,449 local links,0 broken; both Compose configs/whitespace passed.
+No application code changed; Docker unit tests28/28 and actual100-request smoke
+supply task validation. Canonical records updated locally; origin still absent.

@@ -1,5 +1,9 @@
 # Hold retry load-test module
 
+Latest: [separate Docker group/single-arm10 RPS smoke](../docs/DOCKER_LOAD_TEST_TUTORIAL.md).
+Run completed locally at user request. This fixed smoke is independent of the
+two-arm retry comparison; final remote measurements still belong on Ankita.
+
 Dependency-free Node >=22 client for the existing **generic** `/api/holds` API.
 Run business comparisons and discovery on **Ankita**; Abhishek hosts services,
 creates retained fixtures, runs the optional scoped ingress and observes metadata.

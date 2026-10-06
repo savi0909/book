@@ -1,5 +1,8 @@
 # SD Book My Show
 
+[Separate Docker load-test group and10 RPS result](docs/DOCKER_LOAD_TEST_TUTORIAL.md):
+100/100 successful holds; PostgreSQL1 GiB. Redis availability is reserved for phase3.
+
 [Hold load-test module](load-test/README.md): finite immediate/jittered generic
 hold comparison, scoped default-off faults, metadata observer and discovery.
 [Ankita runbook/tutorial](docs/HOLD_LOAD_TEST_TUTORIAL.md) and

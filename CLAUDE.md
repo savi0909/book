@@ -1,5 +1,9 @@
 @AGENTS.md
 
+Latest: [separate Docker10 RPS smoke](docs/DOCKER_LOAD_TEST_TUTORIAL.md) passed
+100 holds/zero violations. PostgreSQL1 GiB applied; Redis500 MiB availability
+phase3 deferred. Own load Compose group, exited; fixtures/metadata preserved.
+
 Current module: [hold comparison runbook](docs/HOLD_LOAD_TEST_TUTORIAL.md) and
 [verification](docs/HOLD_LOAD_TEST_VERIFICATION.md). Built/tested locally; final
 business run belongs on Ankita. Generic-only; shared admission/movie load unbuilt.

@@ -2,3 +2,5 @@
 .idea
 target/*
 !target/sd-book-my-show-1.0.0.jar
+load-test/results/
+*.started

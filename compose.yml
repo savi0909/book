@@ -13,7 +13,8 @@ services:
       interval: 3s
       timeout: 3s
       retries: 20
-    mem_limit: 256m
+    mem_limit: 1g
+    memswap_limit: 2g
   api-a:
     build: .
     environment: &api-env

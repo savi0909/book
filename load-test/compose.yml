@@ -1,0 +1,25 @@
+name: sd-book-my-show-load-test
+services:
+  load-tester:
+    image: sd-book-my-show-load-test:local
+    build:
+      context: ..
+      dockerfile: load-test/Dockerfile
+    hostname: book-my-show-loader
+    command: ["load-test/docker-smoke.mjs"]
+    environment:
+      SMOKE_RUN_NAME: ${HOLD_SMOKE_RUN_NAME:?Set a fresh output directory name}
+      SMOKE_CONTROL_FILE: ${HOLD_SMOKE_CONTROL_FILE:?Start the observer and set its container-visible STOP path}
+    volumes:
+      - ./results:/results
+    networks: [booking]
+    mem_limit: 256m
+    cpus: 0.5
+    pids_limit: 64
+    init: true
+    restart: "no"
+    stop_grace_period: 6s
+networks:
+  booking:
+    external: true
+    name: sd-book-my-show_default

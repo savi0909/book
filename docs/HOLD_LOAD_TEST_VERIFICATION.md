@@ -1,5 +1,9 @@
 # Hold-load client verification — 2026-10-06
 
+Follow-up: [separate Docker10 RPS result](DOCKER_LOAD_TEST_TUTORIAL.md),100/100
+fresh holds,zero SQL violations,28 Node tests inside Docker. PostgreSQL1 GiB;
+Redis phase3 deferred. Historical checks below retain their original scope.
+
 User-selected scope: build a checkoutable load-test module here; the user will
 execute the final business comparison on Ankita. See the
 [runbook/tutorial](HOLD_LOAD_TEST_TUTORIAL.md) and [module](../load-test/README.md).
