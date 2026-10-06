@@ -3,6 +3,10 @@
 Resume with [project context](../PROJECT_CONTEXT.md) and [worklog](WORKLOG.md);
 read [agent instructions](../AGENTS.md) before changing this repository.
 
+For a fresh implementation session, use the
+[hold-retry/admission handover prompt](HANDOVER_HOLD_RETRY_BUILD.md).
+Creating the handover does not execute its instructions in the current session.
+
 Current movie domain:5-100 screens/multiplex,200-500 seats/screen, two or three
 categories (default10/20/70), independent shows, atomic1-10-seat groups and
 95/4.5/0.5 mock payment paths. Failed payment retains the original deadline/group;

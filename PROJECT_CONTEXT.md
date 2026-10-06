@@ -100,6 +100,12 @@ Restore normal mode by omitting that overlay. Read
 
 ## Next work and publishing
 
+User requested a fresh-session build prompt on2026-10-06. Saved
+[controlled hold retries and admission handover](docs/HANDOVER_HOLD_RETRY_BUILD.md).
+This session only prepares the prompt; invoking it in a later session explicitly
+selects that implementation scope. It does not select live SSE/waiting-room/100K
+work or change this session's teaching-only boundary.
+
 User selected the scenario2 study on2026-10-06. Delivered
 [source-reading lesson](docs/SCENARIO_02_PROTECTION_STUDY.md) with request trace,
 protection boundaries, evidence pointers and prediction exercises. This records

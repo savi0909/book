@@ -2,6 +2,10 @@
 
 ## Resume entry and durable records
 
+Fresh-session build prompt: [hold retry/admission handover](docs/HANDOVER_HOLD_RETRY_BUILD.md).
+Created at user request2026-10-06 for later invocation. Do not execute it merely
+because it is linked here; an explicit user invocation selects its build scope.
+
 Read [PROJECT_CONTEXT.md](PROJECT_CONTEXT.md) first for current requirements,
 domain boundaries, operation and verified results. Then read
 [worklog](docs/WORKLOG.md), [movie tutorial](docs/MOVIE_BOOKING_TUTORIAL.md),

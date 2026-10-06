@@ -3,6 +3,9 @@
 Resume entry: [project context](PROJECT_CONTEXT.md), [worklog](docs/WORKLOG.md)
 and [agent instructions](AGENTS.md).
 
+Fresh-session implementation prompt:
+[controlled hold retries and admission](docs/HANDOVER_HOLD_RETRY_BUILD.md).
+
 Movie-booking backend with multiplexes, dated shows, category prices, atomic
 group reservations and durable mock payment retries. Start with the
 [movie walkthrough](docs/MOVIE_BOOKING_TUTORIAL.md),

@@ -97,3 +97,20 @@ Artifact check passed:77 required files,169 requests,177 script blocks,35 Markdo
 files,381 local links and0 broken links. Whitespace checks passed.
 Shared canonical learning records updated locally. Local commit uses actual time;
 fresh standalone origin is still absent, so publication remains pending.
+
+## 2026-10-06: fresh-session implementation handover
+
+User requested a handover prompt to build the missing protections next session.
+Created [hold retry/admission handover](HANDOVER_HOLD_RETRY_BUILD.md), linked from
+README/context/AGENTS/future work. The prompt selects a finite generic-hold client
+comparison, then separately measured admission. It preserves Abhishek-services/
+Ankita-Tailscale-load topology, existing movie semantics and already implemented
+generic provider protections. Live SSE/waiting-room/100K work remain later.
+
+This delivery only writes the handover; no implementation, load, networking or
+service changes. Includes scope, source-reading order, implementation acceptance,
+actual-evidence boundaries, full learning kit and commit/push requirements.
+Documentation validation: artifact/local-link and Git whitespace checks. Updated
+canonical resume records locally. Standalone origin absent; publication pending.
+Artifact check passed:36 Markdown files,393 local links and0 broken links;
+77 required files,169 requests and177 script blocks validated. Whitespace passed.
