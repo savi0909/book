@@ -67,6 +67,22 @@ public class MovieCatalog {
             rs->{result.put(Category.valueOf(rs.getString("category")),rs.getInt("seat_count"));},screen);
         return result;
     }
+    /** Permanent catalog sites only (V7); demo multiplexes are reachable by id. */
+    public List<MultiplexSummary> catalogMultiplexes(String city) {
+        return store.jdbc().query("""
+            SELECT mx.id,mx.name,cs.brand,cs.city,cs.state,mx.screen_count
+            FROM movie_catalog_sites cs JOIN movie_multiplexes mx ON mx.id=cs.multiplex_id
+            WHERE ?::text IS NULL OR cs.city=? ORDER BY cs.city,mx.name
+            """,(rs,n)->new MultiplexSummary(rs.getObject("id",UUID.class),rs.getString("name"),rs.getString("brand"),
+                rs.getString("city"),rs.getString("state"),rs.getInt("screen_count")),city,city);
+    }
+    public List<NowShowing> nowShowing() {
+        return store.jdbc().query("""
+            SELECT m.id,m.title,m.language,m.duration_minutes,n.blockbuster
+            FROM movie_now_showing n JOIN movies m ON m.id=n.movie_id ORDER BY n.weight DESC,m.title
+            """,(rs,n)->new NowShowing(rs.getObject("id",UUID.class),rs.getString("title"),rs.getString("language"),
+                rs.getInt("duration_minutes"),rs.getBoolean("blockbuster")));
+    }
     public Movie createMovie(MovieRequest r) {
         UUID id=UUID.randomUUID();
         store.jdbc().update("INSERT INTO movies VALUES (?,?,?,?)",id,r.title(),r.language(),r.durationMinutes());

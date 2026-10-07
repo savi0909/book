@@ -61,6 +61,19 @@ class MovieScheduleIntegrationTest {
         assertThat(count("SELECT count(*) FROM movie_now_showing WHERE blockbuster")).isEqualTo(3);
     }
 
+    @Test void browseListsOnlyCatalogSitesByCityAndTheSlateBlockbustersFirst() {
+        catalog.createMultiplex(new MultiplexRequest("Demo "+UUID.randomUUID(),"Asia/Kolkata",
+            java.util.stream.IntStream.rangeClosed(1,5).mapToObj(n->new ScreenRequest("Screen "+n,200,null)).toList()));
+        var all=catalog.catalogMultiplexes(null);
+        assertThat(all).hasSize(303).allSatisfy(m->assertThat(m.screenCount()).isBetween(5,100));
+        var pune=catalog.catalogMultiplexes("Pune");
+        assertThat(pune).isNotEmpty().allSatisfy(m->assertThat(m.city()).isEqualTo("Pune"));
+        assertThat(catalog.catalogMultiplexes("Atlantis")).isEmpty();
+        var slate=catalog.nowShowing();
+        assertThat(slate).hasSize(20);
+        assertThat(slate.subList(0,3)).allSatisfy(m->assertThat(m.blockbuster()).isTrue());
+    }
+
     @Test void fillIsIdempotentAndBuildsNonOverlappingPricedShowsInsideOpeningHours() {
         UUID multiplex=site(0);var day=today().plusDays(1);
         var first=maintainer.fill(day,List.of(multiplex));
