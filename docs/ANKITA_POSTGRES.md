@@ -25,6 +25,8 @@ That volume is stopped, not deleted.
 
 ## On Ankita
 
+Copy-paste runbook: [infra/ankita/README.md](../infra/ankita/README.md).
+
 Prerequisites: Docker Desktop is running, Tailscale is connected, and the
 repository is checked out.
 
