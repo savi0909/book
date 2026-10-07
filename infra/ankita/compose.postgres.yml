@@ -1,0 +1,25 @@
+# PostgreSQL for sd-book-my-show, hosted on Ankita and reached over Tailscale.
+# Start with infra/ankita/start-postgres.ps1 (it writes .env); see docs/ANKITA_POSTGRES.md.
+# The port is published on Ankita's Tailscale IP only, never on the LAN or 0.0.0.0.
+name: sd-book-my-show-db
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: booking
+      POSTGRES_USER: booking_demo
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Run infra/ankita/start-postgres.ps1 to create infra/ankita/.env}
+      POSTGRES_INITDB_ARGS: --auth-host=scram-sha-256
+    ports: ["${TAILSCALE_IP:?Run infra/ankita/start-postgres.ps1}:5553:5432"]
+    volumes: ["booking-data:/var/lib/postgresql/data"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U booking_demo -d booking"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+    mem_limit: 3g
+    memswap_limit: 4g
+    cpus: 2.0
+    restart: unless-stopped
+volumes:
+  booking-data:
