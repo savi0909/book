@@ -1,5 +1,18 @@
 # SD Book My Show agent instructions
 
+## Permanent PVR catalog / rolling window — 2026-10-07
+
+User selected permanent movie catalog data for later booking/cancellation
+simulation. Read [PVR catalog](docs/PVR_CATALOG_SCHEDULE.md). V6 schema + V7
+generated data: 303 real PVR/INOX names in 77 cities (district.in), synthetic
+layouts (1,971 screens, 200-500 seats, 2-3 classes), 20-film synthetic slate.
+MovieScheduleMaintainer (MOVIE_SCHEDULE_ENABLED, base Compose on, tests/movie
+overlay off) fills today..today+3 local days and purges whole past days with
+all dependent booking/payment rows (open payments kept; refunds counted in
+movie_purge_log). Holds beyond today+3 return409 SHOW_NOT_YET_OPEN. Regenerate
+V7 only via scripts/generate_pvr_catalog.py into a NEW migration (V7 checksum is
+applied). Booking/cancellation simulation is the next, separate selection.
+
 ## Documentation/status refresh — 2026-10-07
 
 Read [current project status](docs/PROJECT_STATUS.md) before historical notes.

@@ -22,6 +22,7 @@ services:
       DB_USER: booking_demo
       DB_PASSWORD: booking_demo
       INSTANCE_ID: api-a
+      MOVIE_SCHEDULE_ENABLED: "true"
     ports: ["127.0.0.1:8130:8105"]
     depends_on:
       postgres:

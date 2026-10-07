@@ -224,3 +224,35 @@ budget remains a phase3 proposal. Markdown links/artifact checks and whitespace
 validation passed; no functional suite rerun for these documentation-only edits.
 Origin absent; local documentation commit and verified transfer bundle. Canonical
 learning records updated locally (reference tree has no Git metadata).
+
+## 2026-10-07: permanent PVR catalog and rolling show window
+
+User requested permanent PVR multiplex/screen/show data for future
+booking/cancellation simulation, and chose:
+- real names with generated layouts
+- a today+3 window
+- whole-day purge of past shows, bookings and payments
+- a synthetic film slate
+
+They asked to implement directly from a checklist (no spec document).
+
+A Sonnet research agent compiled 303 properties in 77 cities from district.in city
+pages. No source stated screen counts.
+
+Added:
+- `V6` schema
+- `V7` generated data
+- `scripts/generate_pvr_catalog.py`
+- `MovieScheduleMaintainer`
+- the hold window rule (`SHOW_NOT_YET_OPEN`)
+- `MovieScheduleIntegrationTest`
+
+Results:
+- `mvn -B -ntp verify` passed 74 tests.
+- The live stack was started (the PostgreSQL container was recreated; the volume
+  was retained).
+- The first tick added 40,333 shows / 14.25M seat rows in 7.8 minutes and purged
+  1 past fixture show with its 2 bookings, 3 payments and 1 refund-required.
+- Live audit: all violation counts were zero; the database is 1.7 GB.
+
+Services were left running. Booking/cancellation simulation is not built.

@@ -1,4 +1,4 @@
-# Explicit movie-payment study controls. Both legacy and movie loops are off.
+# Explicit movie-payment study controls. Legacy, movie-payment and schedule loops are off.
 # Restore base+failover without this overlay to resume scheduled processing.
 services:
   api-a:
@@ -6,8 +6,10 @@ services:
       MOVIE_PAYMENT_CONTROLS_ENABLED: "true"
       MOVIE_PAYMENT_WORKER_ENABLED: "false"
       MAINTENANCE_ENABLED: "false"
+      MOVIE_SCHEDULE_ENABLED: "false"
   api-b:
     environment:
       MOVIE_PAYMENT_CONTROLS_ENABLED: "true"
       MOVIE_PAYMENT_WORKER_ENABLED: "false"
       MAINTENANCE_ENABLED: "false"
+      MOVIE_SCHEDULE_ENABLED: "false"

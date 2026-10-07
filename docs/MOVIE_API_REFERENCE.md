@@ -72,6 +72,9 @@ a following show may start exactly at `occupiedUntil`.
 Send `Idempotency-Key: alice-group-1`. Reversed order is the same canonical set.
 Changed show/set/TTL under the same buyer/key409. Response gives every selected
 category/price, total, currency, state and deadline, bounded by show start.
+Booking opens `MOVIE_BOOKING_WINDOW_DAYS` (default 3) local days ahead: a show
+dated after today+3 in its multiplex zone returns409 `SHOW_NOT_YET_OPEN`; a show
+that already started returns409 `SHOW_STARTED`. See [PVR catalog](PVR_CATALOG_SCHEDULE.md).
 
 Checkout with `Idempotency-Key: alice-payment-1` and `{}`. Optional `delayMs`0-10000
 defers normal initial worker eligibility; it is not an HTTP sleep. Response:
