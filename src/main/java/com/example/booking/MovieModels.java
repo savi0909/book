@@ -20,6 +20,8 @@ public final class MovieModels {
             @NotNull @Size(min=5,max=100) List<@NotNull @Valid ScreenRequest> screens) {}
     public record Screen(UUID id,String name,int seatCount,Map<Category,Integer> categorySeats) {}
     public record Multiplex(UUID id,String name,String zoneId,List<Screen> screens) {}
+    public record MultiplexSummary(UUID id,String name,String brand,String city,String state,int screenCount) {}
+    public record NowShowing(UUID movieId,String title,String language,int durationMinutes,boolean blockbuster) {}
     public record MovieRequest(@NotBlank @Size(max=100) String title,
             @NotBlank @Size(max=40) String language,@NotNull @Min(1) @Max(360) Integer durationMinutes) {}
     public record Movie(UUID id,String title,String language,int durationMinutes) {}

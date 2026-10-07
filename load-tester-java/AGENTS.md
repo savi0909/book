@@ -18,8 +18,9 @@ is at most10 RPS/10s/100 operations, with a live metadata observer. Remote
 mode remains finite (200 operations/run) and requires an Ankita hostname and
 literal Tailscale target; this is a configuration guard, not host authentication.
 Do not expose management ports remotely or silently configure Tailscale.
-Redis phase3 only; PostgreSQL authoritative. Do not add movie/payments/SSE,
-shared admission or massive load solely because future docs mention them.
+Redis phase3 only; PostgreSQL authoritative. User selected MOVIE journeys on
+2026-10-07 (own local cap 20/s, 600 s, 12k journeys, 16 HTTP calls; see README).
+Do not add SSE, shared admission or massive load solely because docs mention them.
 
 The older Node module is retained. Never delete files/directories/data/containers
 or remove markers without explicit permission. Preserve unrelated stacks.

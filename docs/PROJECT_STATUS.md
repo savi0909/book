@@ -1,9 +1,9 @@
 # Book My Show project status
 
-Updated **2026-10-07**. Repository: `D:/sd-book-my-show`, branch `main`.
-Latest implementation commit: **8f9fd03** (Java virtual-thread load tester).
-This refresh updates documentation and status; it does not start implementation,
-restart services or generate traffic. Read [project context](../PROJECT_CONTEXT.md)
+Updated **2026-10-07** (13:30 IST). Repository: `D:/sd-book-my-show`, branch
+`feature/pvr-rolling-catalog`. Latest delivery: **permanent PVR catalog and rolling
+today+3 show window** ([details](PVR_CATALOG_SCHEDULE.md)); previous implementation
+commit 8f9fd03 (Java load tester). Read [project context](../PROJECT_CONTEXT.md)
 for domain rules and [worklog](WORKLOG.md) for dated delivery history.
 
 ## Delivered
@@ -13,15 +13,55 @@ for domain rules and [worklog](WORKLOG.md) for dated delivery history.
 | Generic ticket booking | Implemented: seat locks, durable hold/checkout keys, database-time expiry, payment recovery and late-success refund obligations | [API](API_REFERENCE.md), [verification](VERIFICATION.md) |
 | Generic failure scenarios 1–4 | Delivered: API failover, provider isolation, poison-job handling, transactional outbox | [scenario guide](FAILURE_SCENARIOS.md) |
 | Movie V5 | Implemented: multiplex/screens/categories/shows, atomic 1–10-seat groups, immutable hold deadlines and mock payment histories/retries | [tutorial](MOVIE_BOOKING_TUTORIAL.md), [verification](MOVIE_VERIFICATION.md) |
+| PVR catalog + rolling window | Implemented: V6/V7 permanent 303 PVR/INOX sites, 1,971 screens; maintainer fills today+3 and purges past days; holds beyond window 409 | [PVR catalog](PVR_CATALOG_SCHEDULE.md) |
 | Java load tester | Delivered: Java 21 / Spring Boot 3.5.16, virtual-thread RestClient, fixed arrivals, HOLD/AVAILABILITY/MIXED, finite retries and unknown-hold discovery | [module](../load-tester-java/README.md), [tutorial](JAVA_LOAD_TESTER_TUTORIAL.md) |
 | Node comparison module | Retained: controlled generic hold retry comparison, scoped default-off faults, journals, observer and capped discovery | [runbook](HOLD_LOAD_TEST_TUTORIAL.md) |
-| Resources and Docker separation | PostgreSQL 1 GiB; Java generator owns `sd-book-my-show-java-load-test` with 384 MiB / 0.5 CPU; Node group remains separate | [setup](STANDALONE_SETUP.md), [Java Compose](../load-tester-java/compose.local.yml) |
+| Resources and Docker separation | Defaults applied 2026-10-07: PostgreSQL 3 GB / 2 CPU (shared_buffers 768MB, effective_cache_size 2GB, work_mem 16MB, maintenance_work_mem 256MB, shm 256MB); APIs 512 MB / 1 CPU each (heap 60% ≈ 308 MB, Serial GC); gateway 96 MB / 0.5 CPU; Java loader 384 MB / 1 CPU (heap 50%); Node group separate | [setup](STANDALONE_SETUP.md), [Java Compose](../load-tester-java/compose.local.yml) |
 
 The Java generator is the user's latest selected implementation. Its workload
 currently uses **generic ticket endpoints in this Book My Show repository**.
 Movie group holds/payments and live availability traffic are not covered by it.
 Client concurrency caps are not shared A/B hold admission. Generic provider and
 outbox protections do not automatically apply to the movie domain.
+
+## Movie advance-booking simulation — executed on 2026-10-07
+
+| Run | Result |
+| --- | --- |
+| Smoke 1 (5/s × 20 s) | Exposed a loader bug: it expected 201 from checkout, but the API returns 202. All 77 server-side checkouts confirmed; the loader stopped following them |
+| Smoke 2 after fix | 100 journeys: 61 CONFIRMED, 16 CANCELLED, 12 ABANDONED, 11 BROWSED; every call 2xx |
+| Main (20/s × 300 s) | **User-stopped** at 537 journeys: 339 CONFIRMED, 60 CANCELLED, 79 ABANDONED, 53 BROWSED, 6 stopped mid-poll; 2,459 calls, all 2xx; hold p50 9.0 ms / p95 32.6 ms |
+| Database after runs | Movie bookings from journeys: 482 CONFIRMED, 76 CANCELLED, 104 EXPIRED; 0 open payments |
+
+**Correction (2026-10-07):** the JIT fix (46ff584) was first verified against an
+API image built from a stale jar. `mvn test` does not repackage, so the low CPU
+reading was not evidence of the fix. The fixed jar was packaged with `-DskipTests`
+and deployed together with the resource defaults. The deployed class was checked
+to contain `jit = off`, and PostgreSQL sat at 3.5% CPU after the startup tick.
+
+Also found and fixed during setup:
+- **Maintainer JIT cost.** Each no-op batch took 733 ms with JIT and 8.4 ms
+  without, so every tick pinned a PostgreSQL core. Fix: `SET LOCAL jit = off`
+  (commit 46ff584).
+- **Git Bash path mangling.** Git Bash rewrote `/results/...` in the loader's env
+  var into a Windows path, so run Compose with `MSYS_NO_PATHCONV=1`.
+
+Host memory was at about 91%. To make room, three unrelated stacks were
+**stopped** (data kept) and the Docker VM page cache was dropped.
+
+## Verified results — executed on 2026-10-07 (PVR catalog)
+
+| Check | Result |
+| --- | --- |
+| `mvn -B -ntp verify` | 74 tests (69 earlier + 5 `MovieScheduleIntegrationTest`); zero failures/errors/skips |
+| Live Flyway | V6 + V7 applied to retained `booking-data` in 1.24 s (API B; API A waited on Flyway lock) |
+| First maintainer tick (API B) | 40,333 shows / 14,254,490 seat rows in 467.8 s; purged 1 past fixture show, 2 bookings, 3 payments, 1 refund-required |
+| Window per local day | 7 Oct 7,236 (future slots only, plus 2 retained fixture shows) · 8 Oct 11,026 · 9 Oct 11,046 · 10 Oct 11,027 |
+| Live SQL audit | Seat-count mismatches 0, overlapping shows 0, past shows 0, catalog screens missing day 3 0 |
+| Gateway reads | Multiplex/shows/seats via 8132 returned tier-1 prices and AVAILABLE seats |
+| Database size | 1,723 MB after the fill (was 9.5 MB) |
+
+No bookings, holds or load were generated against the catalog.
 
 ## Verified results — executed on 2026-10-06
 
@@ -42,7 +82,15 @@ capacity benchmark. Historical backend 69-test and Node 28-test results remain
 their own earlier evidence. No application tests or load runs were repeated for
 this documentation refresh.
 
-## Current runtime — observed 2026-10-07 at 12:21 IST
+## Current runtime — 2026-10-07 at 13:30 IST
+
+PostgreSQL limit is now **3 GB / 2 CPUs** (live `docker update`, persisted in `compose.yml`). Base + failover Compose is **running**: API A/B, gateway 8132 and PostgreSQL
+healthy, with `MOVIE_SCHEDULE_ENABLED=true` on both APIs. Starting the stack
+**recreated** the PostgreSQL container from Compose; the named `booking-data`
+volume and the 1 GiB / 2 GiB memory+swap limits were retained. The Java and Node
+load-generator groups remain stopped. The section below is the earlier 12:21 snapshot.
+
+## Earlier runtime — observed 2026-10-07 at 12:21 IST
 
 | Component | Observed state |
 | --- | --- |

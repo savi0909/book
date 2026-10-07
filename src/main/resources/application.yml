@@ -45,3 +45,6 @@ movie:
   payment-controls-enabled: ${MOVIE_PAYMENT_CONTROLS_ENABLED:false}
   payment-worker-enabled: ${MOVIE_PAYMENT_WORKER_ENABLED:true}
   payment-tick-ms: ${MOVIE_PAYMENT_TICK_MS:200}
+  booking-window-days: ${MOVIE_BOOKING_WINDOW_DAYS:3}
+  schedule-enabled: ${MOVIE_SCHEDULE_ENABLED:false}
+  schedule-interval-ms: ${MOVIE_SCHEDULE_INTERVAL_MS:900000}

@@ -19,3 +19,4 @@ services:
       api-b:
         condition: service_healthy
     mem_limit: 96m
+    cpus: 0.5

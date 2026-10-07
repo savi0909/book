@@ -20,6 +20,8 @@ public class MovieController {
     }
     @PostMapping("/api/demo/movie/multiplexes") ResponseEntity<Multiplex> multiplex(@Valid @RequestBody MultiplexRequest r) { return ResponseEntity.status(201).body(catalog.createMultiplex(r)); }
     @GetMapping("/api/movie/multiplexes/{id}") Multiplex multiplex(@PathVariable UUID id) { return catalog.multiplex(id); }
+    @GetMapping("/api/movie/multiplexes") List<MultiplexSummary> catalogMultiplexes(@RequestParam(required=false) String city) { return catalog.catalogMultiplexes(city); }
+    @GetMapping("/api/movie/now-showing") List<NowShowing> nowShowing() { return catalog.nowShowing(); }
     @PostMapping("/api/demo/movie/movies") ResponseEntity<Movie> movie(@Valid @RequestBody MovieRequest r) { return ResponseEntity.status(201).body(catalog.createMovie(r)); }
     @PostMapping("/api/demo/movie/shows") ResponseEntity<Show> show(@Valid @RequestBody ShowRequest r) { return ResponseEntity.status(201).body(catalog.createShow(r)); }
     @GetMapping("/api/movie/shows") List<Show> shows(@RequestParam UUID multiplexId,@RequestParam LocalDate date,

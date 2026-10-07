@@ -1,5 +1,13 @@
 @AGENTS.md
 
+Latest: movie advance-booking journeys in the Java loader; PostgreSQL 3 GB/2 CPU;
+[Ankita PostgreSQL over Tailscale](docs/ANKITA_POSTGRES.md) scripted, not yet run.
+User asked for no further tests/load until requested.
+
+Latest: [permanent PVR catalog + rolling window](docs/PVR_CATALOG_SCHEDULE.md).
+303 PVR/INOX sites/1,971 screens (V7), shows today+3 auto-filled, past days purged,
+holds beyond window409. Next selection: booking/cancellation simulation.
+
 Current entry: [project status — 2026-10-07](docs/PROJECT_STATUS.md).
 Java loader delivered; all service/generator containers currently stopped and
 retained. Final Ankita run pending; Redis phase3 deferred; origin absent.

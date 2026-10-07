@@ -54,13 +54,14 @@ public class LoadRunService {
     private final LoaderSettings settings;
     private final ObjectMapper mapper;
     private final BookingClient client;
+    private final RunSlot slot;
     private final ExecutorService threads=Executors.newVirtualThreadPerTaskExecutor();
     private final ScheduledExecutorService watcher=Executors.newSingleThreadScheduledExecutor();
     private final Map<String,Run> runs=new LinkedHashMap<>();
     private volatile Run active;
 
-    LoadRunService(LoaderSettings settings,ObjectMapper mapper,BookingClient client) {
-        this.settings=settings;this.mapper=mapper;this.client=client;
+    LoadRunService(LoaderSettings settings,ObjectMapper mapper,BookingClient client,RunSlot slot) {
+        this.settings=settings;this.mapper=mapper;this.client=client;this.slot=slot;
     }
     public synchronized String start(RunSpec input) throws IOException {
         if (active!=null) throw new IllegalStateException("Run "+active.id+" is still active");
@@ -71,9 +72,12 @@ public class LoadRunService {
         String problem=settings.observerProblem();
         if (problem!=null) throw new IllegalStateException(problem);
         Run run=new Run(spec,settings.resultsDir());
-        Files.createDirectories(settings.resultsDir());Files.createDirectory(run.dir);
-        write(run,"manifest.json",Map.of("runId",run.id,"request",spec,"startedAt",run.startedAt.toString(),
-                "target",settings.target().toString(),"localValidation",settings.allowLocal(),"contract","generic-v1-holds"));
+        if (!slot.acquire(run.id)) throw new IllegalStateException("Run "+slot.owner()+" is still active");
+        try {
+            Files.createDirectories(settings.resultsDir());Files.createDirectory(run.dir);
+            write(run,"manifest.json",Map.of("runId",run.id,"request",spec,"startedAt",run.startedAt.toString(),
+                    "target",settings.target().toString(),"localValidation",settings.allowLocal(),"contract","generic-v1-holds"));
+        } catch (IOException | RuntimeException e) { slot.release(run.id);throw e; }
         runs.put(run.id,run);active=run;
         threads.submit(() -> execute(run));
         return run.id;
@@ -130,6 +134,7 @@ public class LoadRunService {
                 run.state=run.error!=null ? "FAILED" : run.stopped.get() ? "STOPPED" : "COMPLETED";
                 try { finish(run); } catch (IOException e) { run.state="FAILED";run.error="REPORT_WRITE_FAILED"; }
                 if (active==run) active=null;
+                slot.release(run.id);
             }
         }
     }
@@ -239,7 +244,9 @@ public class LoadRunService {
         if (client.openCalls()!=0) throw new IllegalStateException("Wait until previous HTTP tasks close before discovery");
         if (run.discovering) throw new IllegalStateException("Discovery already admitted; its lifetime budget cannot reset");
         String problem=settings.observerProblem();if (problem!=null) throw new IllegalStateException(problem);
-        Files.writeString(run.dir.resolve("discovery.started"),Instant.now().toString(),StandardOpenOption.CREATE_NEW);
+        if (!slot.acquire(run.id)) throw new IllegalStateException("Run "+slot.owner()+" is still active");
+        try { Files.writeString(run.dir.resolve("discovery.started"),Instant.now().toString(),StandardOpenOption.CREATE_NEW); }
+        catch (IOException | RuntimeException e) { slot.release(run.id);throw e; }
         run.discovering=true;run.stopped.set(false);run.stopReason=null;run.state="DISCOVERING";active=run;
         threads.submit(() -> {
             try {
@@ -250,10 +257,10 @@ public class LoadRunService {
                     if (run.stopped.get()) break;
                 }
                 synchronized(this) {
-                    run.state=run.stopped.get() ? "STOPPED" : "COMPLETED";finish(run);active=null;
+                    run.state=run.stopped.get() ? "STOPPED" : "COMPLETED";finish(run);active=null;slot.release(run.id);
                 }
             } catch (Exception e) {
-                synchronized(this) { run.state="FAILED";run.error="DISCOVERY_FAILED";active=null; }
+                synchronized(this) { run.state="FAILED";run.error="DISCOVERY_FAILED";active=null;slot.release(run.id); }
             }
         });
         return id;

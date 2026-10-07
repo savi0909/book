@@ -1,5 +1,6 @@
 package com.example.booking;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import java.util.*;
 import static com.example.booking.MovieModels.*;
@@ -8,7 +9,10 @@ import static com.example.booking.MovieModels.*;
 public class MovieBookingService {
     private final MovieStore store;
     private final MovieCatalog catalog;
-    public MovieBookingService(MovieStore store,MovieCatalog catalog) { this.store=store;this.catalog=catalog; }
+    private final int windowDays;
+    public MovieBookingService(MovieStore store,MovieCatalog catalog,@Value("${movie.booking-window-days:3}") int windowDays) {
+        this.store=store;this.catalog=catalog;this.windowDays=windowDays;
+    }
     public Booking hold(HoldRequest r,String key) {
         BookingService.validateKey(key);
         List<Integer> numbers=r.seatNumbers().stream().sorted().toList();
@@ -28,6 +32,12 @@ public class MovieBookingService {
             store.lockSeats(r.showId(),numbers);
             if(!Boolean.TRUE.equals(store.db().jdbc().queryForObject("SELECT starts_at>clock_timestamp() FROM movie_shows WHERE id=?",Boolean.class,r.showId())))
                 throw ApiException.conflict("SHOW_STARTED","Cannot reserve seats after a show starts");
+            if(!Boolean.TRUE.equals(store.db().jdbc().queryForObject("""
+                SELECT (sh.starts_at AT TIME ZONE mx.zone_id)::date<=(clock_timestamp() AT TIME ZONE mx.zone_id)::date+?
+                FROM movie_shows sh JOIN movie_screens s ON s.id=sh.screen_id JOIN movie_multiplexes mx ON mx.id=s.multiplex_id
+                WHERE sh.id=?
+                """,Boolean.class,windowDays,r.showId())))
+                throw ApiException.conflict("SHOW_NOT_YET_OPEN","Booking opens "+windowDays+" days before the show's local date");
             var all=store.db().jdbc().query("""
                 SELECT s.seat_number,s.category,s.price_minor,
                   (b.state='CONFIRMED' OR (b.state IN ('HELD','PAYMENT_PENDING') AND b.expires_at>clock_timestamp())) AS occupied

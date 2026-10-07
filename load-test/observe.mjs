@@ -25,7 +25,7 @@ export function serverThreshold(sample) {
   return null;
 }
 export async function observe(dir, seconds, stopFile) {
-  if (!Number.isInteger(seconds) || seconds < 10 || seconds > 600) throw new Error('duration-seconds must be 10..600');
+  if (!Number.isInteger(seconds) || seconds < 10 || seconds > 900) throw new Error('duration-seconds must be 10..900');
   fs.mkdirSync(path.dirname(path.resolve(dir)), { recursive: true }); fs.mkdirSync(dir);
   if (fs.existsSync(stopFile) || fs.existsSync(`${stopFile}.heartbeat`)) throw new Error('Use a fresh stop-file path');
   fs.mkdirSync(path.dirname(path.resolve(stopFile)), { recursive: true });

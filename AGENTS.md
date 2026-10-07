@@ -1,5 +1,32 @@
 # SD Book My Show agent instructions
 
+## Movie advance-booking simulation / Ankita PostgreSQL — 2026-10-07
+
+User selected a MOVIE journey workload in the Java loader (POST /load/movie-runs):
+browse -> seat map -> adjacent group hold -> checkout(202) -> poll -> optional
+cancel; local cap 20/s, 600 s, 12k journeys, 16 concurrent HTTP calls; observer
+may run 900 s. Live runs: two 100-journey smokes and one 20/s run the user
+STOPPED at 537 journeys. Totals: 482 CONFIRMED, 76 CANCELLED, 104 EXPIRED, no
+open payments, all HTTP 2xx. User then said: run no more tests/load until asked.
+Resource defaults applied: PostgreSQL 3 GB/2 CPU tuned (shared_buffers 768MB etc.),
+APIs 512 MB/1 CPU (MaxRAMPercentage 60, Serial GC), gateway 0.5 CPU, loader 1 CPU.
+Ankita-hosted PostgreSQL scripts exist (docs/ANKITA_POSTGRES.md) but were NOT run;
+fresh schema via Flyway was selected. Unrelated stacks ticket-booking-java,
+url-shortener-java and mcp-gateway-coordinator were stopped (data kept) to free memory.
+
+## Permanent PVR catalog / rolling window — 2026-10-07
+
+User selected permanent movie catalog data for later booking/cancellation
+simulation. Read [PVR catalog](docs/PVR_CATALOG_SCHEDULE.md). V6 schema + V7
+generated data: 303 real PVR/INOX names in 77 cities (district.in), synthetic
+layouts (1,971 screens, 200-500 seats, 2-3 classes), 20-film synthetic slate.
+MovieScheduleMaintainer (MOVIE_SCHEDULE_ENABLED, base Compose on, tests/movie
+overlay off) fills today..today+3 local days and purges whole past days with
+all dependent booking/payment rows (open payments kept; refunds counted in
+movie_purge_log). Holds beyond today+3 return409 SHOW_NOT_YET_OPEN. Regenerate
+V7 only via scripts/generate_pvr_catalog.py into a NEW migration (V7 checksum is
+applied). Booking/cancellation simulation is the next, separate selection.
+
 ## Documentation/status refresh — 2026-10-07
 
 Read [current project status](docs/PROJECT_STATUS.md) before historical notes.

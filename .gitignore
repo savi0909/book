@@ -4,3 +4,4 @@ target/
 load-test/results/
 load-tester-java/results/
 *.started
+infra/ankita/.env
