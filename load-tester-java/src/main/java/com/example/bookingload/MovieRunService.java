@@ -185,7 +185,8 @@ public class MovieRunService {
                 Map.of(),"mv:"+run.id+":"+j.index+":pay");
         if (checkout==null) return stoppedAt("CHECKOUT");
         if (ambiguous(checkout)) return "UNKNOWN_PAYMENT";
-        if (checkout.status()!=201) { j.code=checkout.body().path("code").asText();return "CHECKOUT_REJECTED"; }
+        // Contract: 202 for a newly admitted payment, 200 for a replay of the same key.
+        if (checkout.status()!=202 && checkout.status()!=200) { j.code=checkout.body().path("code").asText();return "CHECKOUT_REJECTED"; }
         long deadline=System.nanoTime()+run.spec.paymentWaitMs()*1_000_000L;
         JsonNode booking=checkout.body().path("booking");
         while (booking.path("state").asText().equals("PAYMENT_PENDING")) {

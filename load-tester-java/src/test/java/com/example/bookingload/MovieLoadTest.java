@@ -180,7 +180,7 @@ class MovieLoadTest {
                 int seats=((List<?>)booking.get("seats")).size();
                 if (parts.length==6 && parts[5].equals("checkout")) {
                     booking.put("state","PAYMENT_PENDING");
-                    send(exchange,201,"{\"booking\":{\"state\":\"PAYMENT_PENDING\"},\"payment\":{\"state\":\"PENDING\"},\"replayed\":false}");return;
+                    send(exchange,202,"{\"booking\":{\"state\":\"PAYMENT_PENDING\"},\"payment\":{\"state\":\"PENDING\"},\"replayed\":false}");return;
                 }
                 if (parts.length==6 && parts[5].equals("cancel")) {
                     booking.put("state","CANCELLED");
