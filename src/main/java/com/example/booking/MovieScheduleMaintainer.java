@@ -189,7 +189,14 @@ public class MovieScheduleMaintainer {
         });
     }
 
+    /**
+     * Also disables JIT for this transaction: generate_series row estimates push these batch
+     * statements past jit_above_cost, and compiling took ~700 ms per batch versus ~8 ms of
+     * actual work (measured 2026-10-07), pinning a PostgreSQL core for every tick.
+     */
     private boolean locked() {
-        return Boolean.TRUE.equals(store.jdbc().queryForObject("SELECT pg_try_advisory_xact_lock(?)",Boolean.class,LOCK_KEY));
+        if(!Boolean.TRUE.equals(store.jdbc().queryForObject("SELECT pg_try_advisory_xact_lock(?)",Boolean.class,LOCK_KEY))) return false;
+        store.jdbc().execute("SET LOCAL jit = off");
+        return true;
     }
 }
