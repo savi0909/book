@@ -1,5 +1,14 @@
 # Next-session prompt: controlled hold retries and admission
 
+Status refresh2026-10-07: [project status](PROJECT_STATUS.md) and
+[Java virtual-thread tutorial](JAVA_LOAD_TESTER_TUTORIAL.md) are the current entry.
+Java client delivered at8f9fd03; Node comparison/fault/discovery module retained.
+Local10 RPS functionality is verified; final Ankita execution remains pending.
+Shared server admission and movie streaming remain unbuilt; Redis deferred phase3.
+All service/generator containers were observed stopped with data retained.
+The broader prompt below selects additional work only if explicitly invoked;
+resume delivered clients instead of reimplementing them.
+
 Continuation2026-10-06: user separately selected the checkoutable load-test
 module. Resume [implemented client/runbook](HOLD_LOAD_TEST_TUTORIAL.md) and
 [verification](HOLD_LOAD_TEST_VERIFICATION.md). User will run final business
@@ -14,7 +23,11 @@ does not start that work now. Copy the prompt below into a fresh session, or sen
 ## Copyable next-session prompt
 
 Work in **D:/sd-book-my-show**, the standalone Java21/Spring Boot/PostgreSQL movie
-and ticket-booking lab. Implement the controlled hold-retry comparison, then
+and ticket-booking lab. Read docs/PROJECT_STATUS.md first. Generic Java and Node
+clients already exist: preserve their verified behavior, resource bounds and
+distinct manifests. Review their parity/verification before selecting any missing
+comparison functionality; do not rebuild them. Continue the controlled comparison
+only where the selected experiment requires additional work, then
 bounded hold-traffic admission as a separately measured change. This invocation
 selects implementation for this session and supersedes the prior teaching-only
 “do not implement yet” instruction for these deliverables. Do not build all future

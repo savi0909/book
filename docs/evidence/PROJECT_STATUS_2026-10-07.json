@@ -1,0 +1,87 @@
+{
+  "observedAtUtc": "2026-10-07T06:51:20.1183583Z",
+  "date": "2026-10-07",
+  "purpose": "Read-only documentation/status refresh",
+  "implementationCommit": "8f9fd03",
+  "gitWorkingTreeCleanBeforeEdit": true,
+  "originConfigured": false,
+  "containers": [
+    {
+      "name": "sd-book-my-show-api-a-1",
+      "id": "e472f4267f2076c379d12d4d91af945549c12a37c87e22743727945c6011dba8",
+      "project": "sd-book-my-show",
+      "state": "exited",
+      "exitCode": 143,
+      "finishedAt": "2026-10-07T06:43:27.666897638Z",
+      "oomKilled": false,
+      "memoryLimitBytes": 335544320,
+      "cpuQuotaNanoCpus": 0,
+      "retainedVolumeNames": []
+    },
+    {
+      "name": "sd-book-my-show-api-b-1",
+      "id": "1dde2ffb2c04ecd15c3f55969d009b55f42dee1a5b8de28a7b9c9bc2f2aa4501",
+      "project": "sd-book-my-show",
+      "state": "exited",
+      "exitCode": 143,
+      "finishedAt": "2026-10-07T06:43:28.083760565Z",
+      "oomKilled": false,
+      "memoryLimitBytes": 335544320,
+      "cpuQuotaNanoCpus": 0,
+      "retainedVolumeNames": []
+    },
+    {
+      "name": "sd-book-my-show-gateway-1",
+      "id": "fecc13f4427350b82d8122a53c886d047c58b12c461b4385a79d48399da9ee99",
+      "project": "sd-book-my-show",
+      "state": "exited",
+      "exitCode": 0,
+      "finishedAt": "2026-10-07T06:43:26.710352505Z",
+      "oomKilled": false,
+      "memoryLimitBytes": 100663296,
+      "cpuQuotaNanoCpus": 0,
+      "retainedVolumeNames": []
+    },
+    {
+      "name": "sd-book-my-show-postgres-1",
+      "id": "74a8b5863b01b2e006a68e884030005ed38f2f0e9a4d8c44d67a3d6e5dd6f472",
+      "project": "sd-book-my-show",
+      "state": "exited",
+      "exitCode": 0,
+      "finishedAt": "2026-10-07T06:43:28.512272893Z",
+      "oomKilled": false,
+      "memoryLimitBytes": 1073741824,
+      "cpuQuotaNanoCpus": 0,
+      "retainedVolumeNames": [
+        "sd-book-my-show_booking-data"
+      ]
+    },
+    {
+      "name": "sd-book-my-show-java-load-test-load-tester-1",
+      "id": "7d03dbfd9fdfd08ec01d20305074edee737ffa9beb8c23cde33e99084be33aa9",
+      "project": "sd-book-my-show-java-load-test",
+      "state": "exited",
+      "exitCode": 143,
+      "finishedAt": "2026-10-06T12:13:19.202561072Z",
+      "oomKilled": false,
+      "memoryLimitBytes": 402653184,
+      "cpuQuotaNanoCpus": 500000000,
+      "retainedVolumeNames": []
+    },
+    {
+      "name": "sd-book-my-show-java-load-test-load-tester-run-ce8442f9ba94",
+      "id": "1e019262246524cfeff5330dbd6e80469e87b944845df26aa82d9c1491543acb",
+      "project": "sd-book-my-show-java-load-test",
+      "state": "exited",
+      "exitCode": 143,
+      "finishedAt": "2026-10-06T12:15:18.900199911Z",
+      "oomKilled": false,
+      "memoryLimitBytes": 402653184,
+      "cpuQuotaNanoCpus": 500000000,
+      "retainedVolumeNames": []
+    }
+  ],
+  "actions": "No services started/stopped/reconfigured, no workloads/application tests executed, no files/data deleted",
+  "historicalLoadEvidence": "docs/evidence/JAVA_LOAD_TESTER_2026-10-06.json",
+  "remoteAnkitaExecution": "pending, not checked from Ankita in this refresh"
+}

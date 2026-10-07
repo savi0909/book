@@ -1,5 +1,9 @@
 # Verification — 2026-10-06
 
+Status refresh2026-10-07: [current project status](../../docs/PROJECT_STATUS.md).
+All business and generator containers are now stopped and retained. Results below
+were executed onOctober6; no application tests/load were repeated for the refresh.
+
 `mvn -B -ntp -f load-tester-java/pom.xml verify`:14 tests,0 failures/errors/skips.
 Actual Spring management API and virtual-thread RestClient hit local HTTP stubs.
 Checks cover fixed arrivals, loss-after-commit exact replay, separate discovery,
@@ -31,7 +35,7 @@ After runtime checks, finalization was made atomic with status reads so complete
 state/report persistence/active-slot release publish together; the14-test suite
 was rerun successfully and the packaged Docker image rebuilt.
 Generator containers stopped and retained; SIGTERM shutdown exited143 with
-Tomcat graceful shutdown complete. Original service group remains healthy,
+Tomcat graceful shutdown complete. Original service group was healthy at that check,
 PostgreSQL same container/volume/1073741824-byte limit. No Redis deployed.
 
 See [tutorial](../../docs/JAVA_LOAD_TESTER_TUTORIAL.md) and

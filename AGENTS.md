@@ -1,5 +1,16 @@
 # SD Book My Show agent instructions
 
+## Documentation/status refresh — 2026-10-07
+
+Read [current project status](docs/PROJECT_STATUS.md) before historical notes.
+Java virtual-thread loader is delivered at8f9fd03; generic Node module retained.
+At12:21 IST, APIs/gateway/PostgreSQL and both load-generator groups were stopped
+with containers/data retained. PostgreSQL still1 GiB; Redis phase3 deferred.
+October6 tests/runtime observations remain dated historical evidence. This request
+updates documentation and status only; no service startup or load is selected.
+Final Ankita gateway reachability/run remains pending; origin absent. Superseded
+teaching-only/unbuilt-client statements below do not undo delivered client work.
+
 ## Java virtual-thread generator delivery — 2026-10-06
 
 User selected the earlier URL-shortener Spring Boot generator approach. Read
@@ -64,7 +75,7 @@ Date observations accurately; check current service/remote state before repeatin
 historical claims. Sections below preserve inherited study context; the current
 movie/standalone sections take precedence for this repository.
 
-## Current movie expansion - 2026-10-05
+## Historical movie/planning selection - 2026-10-05
 
 User-selected2026-10-06: study scenario2 protections before the hold-retry comparison.
 Start with [protection study](docs/SCENARIO_02_PROTECTION_STUDY.md) and the detailed
@@ -72,14 +83,18 @@ provider tutorial. This is a documentation/source-reading session, not permissio
 to run fault/load experiments, switch provider topology or implement the harness.
 Record explained/delivered separately from learner mastery or newly executed tests.
 
-Latest user override: **do not implement yet**. Read
+Historical teaching-only override: **do not implement yet**. Later loader selections
+above supersede it for client work. Read
 [hot-show/availability/retry plan](docs/HOT_SHOW_AVAILABILITY_AND_RETRY_PLAN.md).
 Study existing generic scenario2 protections first; the general hold retry-storm
-comparison and movie availability stream/admission are still unbuilt. Existing
+client comparison is now delivered; movie availability stream/admission remains
+unbuilt. Existing
 DB-time logical expiry/owner-checked cleanup must not be confused with live push.
 Future experiment topology is now selected: Abhishek runs actual services;
 Ankita is the business-load generator over Tailscale. Endpoint/ingress/tool/resource
-budgets remain unresolved; no networking changes or workload are authorized now.
+budgets were unresolved in that planning session. Java client budgets now exist;
+private remote gateway access remains pending. No new workload is selected by
+this documentation/status refresh.
 The 33-seat hot-show example does not change current200-500 screen validation.
 
 User explicitly selected movie booking in this standalone repository, overriding

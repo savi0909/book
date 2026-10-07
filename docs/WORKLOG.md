@@ -197,3 +197,30 @@ Both Java Compose configs and whitespace checks passed. Final Ankita private
 reachability/run pending; no Tailscale changes. Java restart discovery/Node
 manifest compatibility/movie group load/live faults/shared hold admission
 remain separate work. Canonical records updated locally, origin absent.
+
+## 2026-10-07: documentation and project-status refresh
+
+User requested updated docs and project status after the Java generator delivery.
+Added [current status](PROJECT_STATUS.md) with delivered generic/movie features,
+Java-versus-Node scope, dated verification, current runtime, pending Ankita work,
+shared admission/extensions and Redis phase3. Updated README/context/agent entries,
+future work, standalone setup, resume/hold-retry handovers and Java module entry/
+verification docs. Superseded older unbuilt-client/teaching-only statements while
+preserving historical evidence and proposal boundaries.
+
+Read-only runtime observation at2026-10-07T06:51:20Z (12:21 IST): API A/B,
+gateway and PostgreSQL stopped, same containers/data retained. PostgreSQL remains
+1073741824-byte limit with sd-book-my-show_booking-data. Both Java and Node
+loader groups stopped/retained. No services were started/stopped/reconfigured,
+no application tests or loads executed, no files/volumes deleted by this refresh.
+[Container metadata](evidence/PROJECT_STATUS_2026-10-07.json) records the snapshot;
+no new database-integrity result is inferred while PostgreSQL is stopped.
+
+Implementation commit8f9fd03 and October6 results remain unchanged: Java14 tests,
+Newman8 requests/9 assertions, real100/100201 at10 RPS, SQL violations0. Backend
+69-test and Node28-test results remain separately dated prior evidence. Final
+Ankita/private gateway execution pending; Redis500 MiB advisory availability
+budget remains a phase3 proposal. Markdown links/artifact checks and whitespace
+validation passed; no functional suite rerun for these documentation-only edits.
+Origin absent; local documentation commit and verified transfer bundle. Canonical
+learning records updated locally (reference tree has no Git metadata).

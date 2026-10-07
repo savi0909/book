@@ -1,5 +1,9 @@
 @AGENTS.md
 
+Current entry: [project status — 2026-10-07](docs/PROJECT_STATUS.md).
+Java loader delivered; all service/generator containers currently stopped and
+retained. Final Ankita run pending; Redis phase3 deferred; origin absent.
+
 Latest selected loader: [Java virtual-thread module](load-tester-java/README.md)
 and [tutorial](docs/JAVA_LOAD_TESTER_TUTORIAL.md), own Docker group/control8135.
 14 Java tests,8 Postman requests/9 assertions,100/100 actual10 RPS holds passed;

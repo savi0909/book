@@ -1,11 +1,22 @@
 # SD Book My Show project context
 
-Updated2026-10-06. Start here when resuming this repository, then read
+Updated2026-10-07. Start with [current project status](docs/PROJECT_STATUS.md), then read
 [AGENTS.md](AGENTS.md), [worklog](docs/WORKLOG.md),
 [movie tutorial](docs/MOVIE_BOOKING_TUTORIAL.md) and
 [movie verification](docs/MOVIE_VERIFICATION.md).
 
-## Latest follow-up: local Docker10 RPS — 2026-10-06
+## Current runtime and delivery boundary — 2026-10-07
+
+Documentation/status refresh only. Repository was clean at implementation commit
+8f9fd03; origin remains absent. Actual inspection at12:21 IST found API A/B,
+gateway and PostgreSQL stopped; Java and Node generator containers also stopped
+and retained. PostgreSQL is the same container with its1 GiB limit and retained
+booking-data volume. No services were started, no workload/application tests were
+run, and no data was deleted. [Observation](docs/evidence/PROJECT_STATUS_2026-10-07.json).
+October6 runtime/test evidence below is historical. Java load tester is delivered;
+final Ankita/private gateway execution remains pending. Redis is deferred phase3.
+
+## Latest implementation: Java virtual-thread loader — 2026-10-06
 
 Superseding generator selection: user requested Java/Spring Boot like the actual
 `D:/java-projects/url-shortener-load-test`. Delivered [Java module](load-tester-java/README.md)
@@ -16,22 +27,24 @@ sd-book-my-show-java-load-test,384 MiB/0.5 CPU, management8135 loopback.
 14 tests and Newman8 requests/9 assertions passed. Final real10 RPS100-call smoke
 100201, all SQL violations0, avg14.11ms/p9535.56ms/p99119.47ms. Earlier Java smoke
 100201 plus Postman1 hold also retained: three events/201 bookings total here.
-Java containers stopped/retained, ordinary backend healthy, no PostgreSQL/Redis
+Java containers stopped/retained, ordinary backend healthy at that delivery, no PostgreSQL/Redis
 change. Node implementation preserved. Final Ankita reachability/load pending.
 Java restart recovery and movie group/payment load are not implemented.
+
+## Earlier Docker smoke and resource delivery — 2026-10-06
 
 User corrected run origin to this machine, selected a separate Docker load group
 and PostgreSQL1 GiB. Delivered [runbook/result](docs/DOCKER_LOAD_TEST_TUTORIAL.md):
 project sd-book-my-show-load-test,256 MiB/0.5 CPU,100 holds at10/s,one attempt,
 no faults.100201 successes,zero errors/conflicts/unresolved; all SQL violations0.
 Avg7.95ms/p9511.63ms/p9921.47ms local Docker HTTP timings, not Ankita/capacity.
-Loader exited0; server group remains healthy, PostgreSQL same container/volume
+Loader exited0; server group was healthy at that delivery, PostgreSQL same container/volume
 with verified1 GiB limit. Persistent compose memory1g/combined memory+swap2g.
 Redis deferred explicitly to phase3 for quick availability/high-throughput study;
 500 MiB future budget. No Redis/movie push/cache deployed.28 Node tests passed
 in Docker; Java unchanged, prior69 Maven tests not rerun for this follow-up.
 
-## Latest selection: checkoutable load-test module — 2026-10-06
+## Retained Node comparison delivery — 2026-10-06
 
 User selected building the module here and will run it on Ankita. Implemented
 Node >=22 generic `/api/holds` immediate/seeded-jitter comparison: matched arrivals,
@@ -124,9 +137,10 @@ SLO. Runtime fixtures and evidence are retained. See
 
 ## Local operation
 
-Last verified stack was running in **base+failover**, automatic legacy/movie workers
-enabled, movie study controls off. Check actual Docker/HTTP state before relying
-on that historical observation. Only operate on Compose project `sd-book-my-show`.
+The last runtime verification used **base+failover**, automatic legacy/movie workers
+enabled and movie study controls off. On2026-10-07 the service and generator
+containers were observed stopped with data retained; see the status page.
+Only operate on this project's explicitly selected Compose group.
 
 | Service | Host address |
 | --- | --- |
@@ -149,28 +163,30 @@ Restore normal mode by omitting that overlay. Read
 
 User requested a fresh-session build prompt on2026-10-06. Saved
 [controlled hold retries and admission handover](docs/HANDOVER_HOLD_RETRY_BUILD.md).
-This session only prepares the prompt; invoking it in a later session explicitly
-selects that implementation scope. It does not select live SSE/waiting-room/100K
-work or change this session's teaching-only boundary.
+The prompt's creation was documentation-only. Later user selections delivered
+the Node comparison and then the Java virtual-thread generator. Resume those
+implementations rather than rebuilding them. The broader shared-admission and
+movie SSE/waiting-room/100K scope still needs an explicit selection.
 
 User selected the scenario2 study on2026-10-06. Delivered
 [source-reading lesson](docs/SCENARIO_02_PROTECTION_STUDY.md) with request trace,
 protection boundaries, evidence pointers and prediction exercises. This records
-an explanation, not learner mastery or a new runtime verification. General hold
-retry comparison is still unbuilt and needs a separate implementation selection.
+an explanation, not learner mastery or a new runtime verification. The later
+generic client implementation is delivered; shared server admission remains unbuilt.
 
-Latest direction on2026-10-05: **do not implement yet**. Current study is the
+Historical teaching-only direction on2026-10-05 preceded the later loader builds.
+The planning source is the
 [100K hot-show, live availability and retry-storm plan](docs/HOT_SHOW_AVAILABILITY_AND_RETRY_PLAN.md).
-Study generic scenario2 protections first, then separately select the controlled
-generic-hold retry comparison. Movie SSE/snapshot fan-out, waiting room and shared
+The generic hold retry clients now exist. Movie SSE/snapshot fan-out, waiting room and shared
 hold admission are proposals, not delivered features. Existing database-time
 expiry already permits safe rebooking independently of delayed durable cleanup.
 The33-seat example is conceptual; screen constraints remain200-500.
 
 Selected later work: [same-day thousands-user simulation](docs/MOVIE_LOAD_SIMULATION_PLAN.md).
 Selected machine roles: **Abhishek hosts actual services; Ankita generates business
-load over Tailscale**. Choose tool/resource budget, workload shape and scoped private
-ingress before implementation. Published movie ports currently bind loopback;
+load over Tailscale**. Java is the selected generator, with finite documented
+resource/workload bounds; private remote gateway access remains pending. Published
+movie ports currently bind loopback;
 tailnet connectivity/reachability has not been verified or configured. No sustained
 workload has been run. Other proposals are in [future work](docs/FUTURE_WORK.md).
 Do not start additional scenarios/features solely because they appear there.

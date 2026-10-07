@@ -1,5 +1,11 @@
 # Standalone SD Book My Show setup
 
+Status refresh2026-10-07: [current project status](PROJECT_STATUS.md).
+Business services and both generator groups are currently stopped/retained.
+The Java virtual-thread generator has its own [setup/tutorial](JAVA_LOAD_TESTER_TUTORIAL.md)
+and separate Compose project; startup commands below are instructions, not
+evidence that the services are currently running.
+
 Current resource follow-up2026-10-06: PostgreSQL1 GiB memory ceiling (2 GiB total
 memory+swap), existing retained volume. [Separate Docker load-test group/result](DOCKER_LOAD_TEST_TUTORIAL.md).
 Redis is deferred to phase3; no Redis service is part of the present stack.
@@ -9,11 +15,13 @@ The source lab remains in `D:/java-projects/ticket-booking-lab`.
 
 ## What is included
 
-This is one independent Maven application, with Java 21, Spring Boot 3.5.16,
+The booking backend is one independent Maven application, with Java 21, Spring Boot 3.5.16,
 JDBC, Flyway and PostgreSQL. The root workspace POM was an IDE aggregator, not
 an inherited parent. There are **no dependent workspace modules to copy**.
+The delivered `load-tester-java/pom.xml` is an additional standalone client build;
+the backend POM does not aggregate it. The older Node client is also retained.
 
-The repository contains all tracked Java production/test code, migrations V1-V4,
+The repository contains all tracked Java production/test code, migrations V1-V5,
 the independent Java provider stub under `infra/`, its Dockerfile, HAProxy config,
 base Compose and four study overlays, runtime scripts, Postman collections and
 environments, tutorials and the original committed verification evidence.
@@ -49,7 +57,13 @@ They do not need the original application running. Do not run `mvn clean`.
 | Failover gateway | localhost:8107 | localhost:8132 |
 | Optional provider | localhost:8123 | localhost:8133 |
 | PostgreSQL | localhost:5547 | localhost:5553 |
+| Java load-tester management | Separate client | localhost:8135 |
 | Compose project | ticket-booking-java | sd-book-my-show |
+
+The Java generator uses project `sd-book-my-show-java-load-test`, not the backend
+project. Local mode joins the booking network; Ankita mode uses a private gateway
+over Tailscale and needs no Abhishek Docker network. Its384 MiB/0.5 CPU allocation
+is separate from PostgreSQL1 GiB. Redis is still deferred.
 
 The Compose application containers still listen on port8105; HAProxy uses those
 internal service addresses. The provider still listens on8121 inside its container.

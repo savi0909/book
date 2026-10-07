@@ -1,5 +1,9 @@
 # Java Book My Show load tester
 
+[Project status — 2026-10-07](../docs/PROJECT_STATUS.md): delivered and locally
+verified; generator and business services currently stopped/retained. Final
+Ankita execution pending; runtime setup requires a fresh observer and target check.
+
 Standalone Java21 / Spring Boot3.5.16 service, adapted from the existing
 `D:/java-projects/url-shortener-load-test` Spring Boot generator. Each logical
 operation runs on a virtual thread and calls the booking API through blocking

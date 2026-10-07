@@ -1,4 +1,43 @@
-# Next-session handover: review completed ticket scenarios1–4
+# Next-session handover: standalone Book My Show
+
+Updated2026-10-07. Resume `D:/sd-book-my-show`, not the original ticket workspace.
+Read [current project status](PROJECT_STATUS.md), [context](../PROJECT_CONTEXT.md),
+[agent instructions](../AGENTS.md) and [worklog](WORKLOG.md) first.
+
+```text
+Resume D:/sd-book-my-show from its current project status and Git state.
+Java virtual-thread load tester is delivered at implementation commit8f9fd03:
+load-tester-java is a standalone Boot3.5.16/Java21 application using RestClient,
+fixed initial arrivals and finite generic hold/read/mixed workloads. Its own
+Docker group publishes management8135 on loopback.14 tests and Newman8 requests/
+9 assertions passed; two local100-request10 RPS smokes returned100201, SQL
+violations0. Preserve the retained Node module and all fixtures/recovery markers.
+
+Read docs/JAVA_LOAD_TESTER_TUTORIAL.md and load-tester-java/docs/VERIFICATION.md.
+Current status inspection2026-10-07 found APIs/gateway/PostgreSQL and Java/Node
+generators stopped, containers/data retained. PostgreSQL remains1 GiB.
+Final business execution belongs on Ankita, actual services on Abhishek; private
+gateway reachability/run is pending. No Tailscale configuration was changed.
+Redis is deferred phase3 (proposed500 MiB) for advisory availability; SQL retains
+seat authority. Shared hold admission/movie load/SSE/waiting room/100K and Java
+automatic restart discovery are not implemented by the generator delivery.
+
+This handover records state; it does not automatically start services, load,
+faults or a new feature. Follow the user's next explicit selection. Documentation
+and study requests stay within their scope. Commit validated task changes; push
+only to this standalone repository's origin when configured and verify its SHA.
+Origin currently absent; verified complete-history bundles support transfer.
+Preserve unrelated edits and all data; never delete files/directories or run
+Maven clean/reset/prune without explicit permission.
+```
+
+## Historical inherited handovers
+
+The original ticket-workspace review/implementation prompts below are retained as
+dated source history. Their original addresses, working tree and runtime state
+do not describe this standalone repository's current status.
+
+## Historical scenario4 review — 2026-10-05
 
 Latest user continuation2026-10-05 selected and delivered scenario4. Read
 [transactional outbox tutorial](TRANSACTIONAL_OUTBOX_TUTORIAL.md) and current

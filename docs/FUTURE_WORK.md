@@ -1,5 +1,24 @@
 # Future work and next-session handoff
 
+Updated2026-10-07. Start with [current project status](PROJECT_STATUS.md).
+The **Java virtual-thread load tester is delivered**, with its own Docker group,
+14 passing tests,8 Postman requests/9 assertions and a locally verified100-call
+10 RPS smoke. Read [Java tutorial](JAVA_LOAD_TESTER_TUTORIAL.md) and
+[verification](../load-tester-java/docs/VERIFICATION.md). The earlier Node controlled
+comparison remains retained; do not rebuild either from an older planning note.
+
+At12:21 IST, APIs/gateway/PostgreSQL and Java/Node generator containers were
+observed stopped and retained. PostgreSQL keeps its1 GiB limit and existing volume.
+No application tests or workload were run during this documentation refresh.
+
+Next pending work is the selected **Ankita checkout/private connectivity/finite
+run**. Java automatic restart discovery, paired live-fault orchestration, shared
+hold admission and movie group/payment load remain separate extensions. Redis
+availability is deferred to **phase3**, with a proposed500 MiB allocation and
+PostgreSQL remaining seat-ownership authority. No Redis/cache/SSE exists here yet.
+
+## Earlier deliveries — 2026-10-06
+
 Latest2026-10-06: [local separate Docker10 RPS smoke](DOCKER_LOAD_TEST_TUTORIAL.md)
 passed100/100 fresh holds after PostgreSQL was raised to1 GiB. User deferred
 Redis to **phase3**, for high-throughput/quick availability updates, with a future
@@ -29,13 +48,15 @@ a fresh key creates a fresh attempt. Read [tutorial](MOVIE_BOOKING_TUTORIAL.md),
 [verification](MOVIE_VERIFICATION.md).
 
 The selected later work is [thousands-user same-day simulation](MOVIE_LOAD_SIMULATION_PLAN.md).
-Latest override: **do not implement yet**. Read the
+The earlier **do not implement yet** override applied to the planning session;
+later selections delivered the generic load clients. Read the
 [hot-show availability and retry-storm plan](HOT_SHOW_AVAILABILITY_AND_RETRY_PLAN.md).
-First study existing generic scenario2 protections; separately select the controlled
-generic-hold retry comparison before building availability streaming/admission.
+Existing generic scenario2 protections and generic client comparison are available
+for study. Availability streaming/shared admission still need separate selection.
 Existing logical expiry is implemented; live client updates are not.
 Future roles are selected: Abhishek hosts services; Ankita generates load over
-Tailscale. Tool/budgets/private ingress remain to be chosen. No sustained load run.
+Tailscale. Java tool/budgets are documented; private remote ingress and actual
+Ankita execution remain pending. No sustained capacity run is recorded.
 
 Other proposals remain separate:
 
@@ -45,7 +66,8 @@ Other proposals remain separate:
 - Actual refund workflow, buyer authentication, callback verification and retention/idempotency policy.
 - Catalog/layout/schedule edits with a defined policy for existing bookings.
 - Show partitioning, waiting rooms, read caching and DB HA driven by measured needs.
-- Original generic scenarios5-6, optimistic seats and general retry-storm harness are still proposals.
+- Original generic scenarios5-6, optimistic seats and a larger retry-storm study
+  beyond the delivered finite generic clients remain proposals.
 
 Repository is `D:/sd-book-my-show`, main branch, Maven artifact `sd-book-my-show`.
 Earlier14 source snapshots use disclosed September15-October5 reconstructed
@@ -58,8 +80,8 @@ Movie needs no provider container. Preserve original repositories/IntelliJ edits
 services and all data. No file/directory deletion or Maven clean/prune/reset without
 explicit user permission. Check verification for final scheduled/manual stack state.
 
-At this delivery's handoff the standalone base+failover stack is running, both
+Historical movie handoff on2026-10-05: the standalone base+failover stack was running, both
 legacy/movie workers enabled, movie controls off.68 tests,23 A/B runtime checks,
 30 movie requests/60 assertions and75 generic requests/110 assertions passed.
-Pending movie payments and confirmed ownership mismatches are both0. Resume
+Pending movie payments and confirmed ownership mismatches were both0 at that check. Resume
 with the tutorial; implement sustained simulation only when the user selects it.

@@ -1,5 +1,9 @@
 # SD Book My Show
 
+[Current project status — 2026-10-07](docs/PROJECT_STATUS.md): Java loader delivered
+and locally verified; services currently stopped with data retained. Ankita run
+pending; Redis availability remains deferred to phase 3.
+
 [Java virtual-thread load tester](load-tester-java/README.md): Spring Boot/RestClient,
 own Docker group, finite HOLD/read/mixed workloads and bounded retries/discovery.
 [Tutorial and Ankita/local commands](docs/JAVA_LOAD_TESTER_TUTORIAL.md).
@@ -31,7 +35,9 @@ The inherited generic single-seat studies below remain separately available.
 study existing provider protections first, then separately compare bounded immediate
 and jittered hold retries. Availability streaming/admission remain proposals.
 Future experiments: Abhishek hosts services; Ankita sends load over Tailscale.
-Latest direction: documentation only; do not implement or run load yet.
+The generic Java/Node load clients are now implemented and locally verified.
+Movie streaming, shared hold admission and sustained/high-throughput work remain
+separate selections; see the current project status before resuming older plans.
 
 Standalone Java ticket-booking study project at `D:/sd-book-my-show`. Start with
 [standalone setup](docs/STANDALONE_SETUP.md) and the
@@ -49,8 +55,9 @@ holds, durable request keys, expiry, checkout outcomes and late-payment refunds
 make the no-oversell invariant observable. This is a new interview lab; related
 original sources are listed in [PARITY.md](PARITY.md).
 
-Java 21, Spring Boot 3.5.16 and Maven; JDBC keeps SQL locking visible. One executable
-application, one PostgreSQL database, no Redis or broker. All buyers and provider
+Java 21, Spring Boot 3.5.16 and Maven; JDBC keeps SQL locking visible. The booking
+backend is one executable application with one PostgreSQL database, no Redis or
+broker. The Java load tester has its own independent Maven build. All buyers and provider
 controls are unauthenticated local fixtures. The provider is simulated; no money
 is charged and no card data is accepted.
 
