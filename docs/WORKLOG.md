@@ -256,3 +256,30 @@ Results:
 - Live audit: all violation counts were zero; the database is 1.7 GB.
 
 Services were left running. Booking/cancellation simulation is not built.
+
+## 2026-10-07: movie advance-booking simulation and Ankita PostgreSQL scripts
+
+Added two browse endpoints:
+- `GET /api/movie/multiplexes?city=`
+- `GET /api/movie/now-showing`
+
+Added the loader's MOVIE journey runner, using a shared run slot with the generic
+runner. It was validated with 19 loader tests and 75 backend tests.
+
+Live runs and what they found:
+- Before any load, the observer refused on SERVER_CPU. Investigation traced this
+  to JIT compiling every maintainer batch; fixed as above.
+- The observer then refused on host memory. The user approved stopping three
+  unrelated stacks.
+- The first smoke exposed the checkout 202/201 mismatch; fixed, and the stub now
+  returns 202.
+- The second smoke passed.
+- The user stopped the main run at 537 journeys and asked for no more tests.
+
+PostgreSQL was raised to 3 GB / 2 CPUs at the user's request.
+
+The Ankita PostgreSQL plan (`infra/ankita/*`, `compose.remote-db.yml`,
+`scripts/use-*-db.ps1`, [runbook](ANKITA_POSTGRES.md)) was written and
+statically validated only (compose config, PowerShell parse). It was not executed:
+Ankita was offline, and the user asked for no runs.
+

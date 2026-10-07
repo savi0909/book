@@ -24,6 +24,25 @@ Movie group holds/payments and live availability traffic are not covered by it.
 Client concurrency caps are not shared A/B hold admission. Generic provider and
 outbox protections do not automatically apply to the movie domain.
 
+## Movie advance-booking simulation — executed on 2026-10-07
+
+| Run | Result |
+| --- | --- |
+| Smoke 1 (5/s × 20 s) | Exposed a loader bug: it expected 201 from checkout, but the API returns 202. All 77 server-side checkouts confirmed; the loader stopped following them |
+| Smoke 2 after fix | 100 journeys: 61 CONFIRMED, 16 CANCELLED, 12 ABANDONED, 11 BROWSED; every call 2xx |
+| Main (20/s × 300 s) | **User-stopped** at 537 journeys: 339 CONFIRMED, 60 CANCELLED, 79 ABANDONED, 53 BROWSED, 6 stopped mid-poll; 2,459 calls, all 2xx; hold p50 9.0 ms / p95 32.6 ms |
+| Database after runs | Movie bookings from journeys: 482 CONFIRMED, 76 CANCELLED, 104 EXPIRED; 0 open payments |
+
+Also found and fixed during setup:
+- **Maintainer JIT cost.** Each no-op batch took 733 ms with JIT and 8.4 ms
+  without, so every tick pinned a PostgreSQL core. Fix: `SET LOCAL jit = off`
+  (commit 46ff584).
+- **Git Bash path mangling.** Git Bash rewrote `/results/...` in the loader's env
+  var into a Windows path, so run Compose with `MSYS_NO_PATHCONV=1`.
+
+Host memory was at about 91%. To make room, three unrelated stacks were
+**stopped** (data kept) and the Docker VM page cache was dropped.
+
 ## Verified results — executed on 2026-10-07 (PVR catalog)
 
 | Check | Result |
@@ -59,7 +78,7 @@ this documentation refresh.
 
 ## Current runtime — 2026-10-07 at 13:30 IST
 
-Base + failover Compose is **running**: API A/B, gateway 8132 and PostgreSQL
+PostgreSQL limit is now **3 GB / 2 CPUs** (live `docker update`, persisted in `compose.yml`). Base + failover Compose is **running**: API A/B, gateway 8132 and PostgreSQL
 healthy, with `MOVIE_SCHEDULE_ENABLED=true` on both APIs. Starting the stack
 **recreated** the PostgreSQL container from Compose; the named `booking-data`
 volume and the 1 GiB / 2 GiB memory+swap limits were retained. The Java and Node

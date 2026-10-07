@@ -1,5 +1,18 @@
 # SD Book My Show agent instructions
 
+## Movie advance-booking simulation / Ankita PostgreSQL — 2026-10-07
+
+User selected a MOVIE journey workload in the Java loader (POST /load/movie-runs):
+browse -> seat map -> adjacent group hold -> checkout(202) -> poll -> optional
+cancel; local cap 20/s, 600 s, 12k journeys, 16 concurrent HTTP calls; observer
+may run 900 s. Live runs: two 100-journey smokes and one 20/s run the user
+STOPPED at 537 journeys. Totals: 482 CONFIRMED, 76 CANCELLED, 104 EXPIRED, no
+open payments, all HTTP 2xx. User then said: run no more tests/load until asked.
+PostgreSQL limit raised to 3 GB / 2 CPUs (live docker update + compose.yml).
+Ankita-hosted PostgreSQL scripts exist (docs/ANKITA_POSTGRES.md) but were NOT run;
+fresh schema via Flyway was selected. Unrelated stacks ticket-booking-java,
+url-shortener-java and mcp-gateway-coordinator were stopped (data kept) to free memory.
+
 ## Permanent PVR catalog / rolling window — 2026-10-07
 
 User selected permanent movie catalog data for later booking/cancellation
