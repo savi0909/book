@@ -36,13 +36,14 @@ powershell -ExecutionPolicy Bypass -File infra/ankita/start-postgres.ps1
 
 The script:
 - Verifies the Tailscale IP (must be in 100.64.0.0/10) and that Docker is running.
-- Writes `infra/ankita/.env` (git-ignored) with a random 48-hex-character
-  password. The password only applies when the volume is first initialised.
+- Writes `infra/ankita/.env` (git-ignored) holding only the Tailscale IP.
+- Credentials are fixed: database `booking`, user `postgres`, password `postgres`.
+  They apply when the volume is first initialised.
 - Starts postgres:16 (3 GB, 2 CPUs) with the port published only on
   `<tailscale-ip>:5553`.
 - Adds a Windows Firewall rule allowing TCP 5553 from 100.64.0.0/10 only. This
   needs an elevated shell; otherwise it prints the command to run.
-- Prints `REMOTE_DB_HOST` and `REMOTE_DB_PASSWORD`. Send the password privately.
+- Prints the host to use from Abhishek.
 
 To stop the database (data is kept), run the same script with `-Stop`.
 
@@ -50,7 +51,6 @@ To stop the database (data is kept), run the same script with `-Stop`.
 
 ```powershell
 Set-Location D:/sd-book-my-show
-$env:REMOTE_DB_PASSWORD = '<password from Ankita>'
 powershell -ExecutionPolicy Bypass -File scripts/use-remote-db.ps1 -RemoteHost 100.84.247.65
 docker compose logs -f api-a api-b     # Flyway lines, then "Movie schedule: ... added N shows"
 ```
@@ -77,7 +77,7 @@ Switch back with `scripts/use-local-db.ps1`.
   includes the database). Holds and payments stop until Ankita reconnects. Nothing
   is lost: PostgreSQL stays authoritative, and the APIs reconnect by themselves.
 - **Security.** The port is reachable only from the tailnet, and the firewall rule
-  also limits it to 100.64.0.0/10. The password is random and uses SCRAM. Do not
+  also limits it to 100.64.0.0/10. The `postgres`/`postgres` credentials are deliberately simple (user choice, 2026-10-07): the only protection is that the port is tailnet-only. Do not
   publish 5553 on `0.0.0.0` or the LAN.
 - **Ankita's memory.** PostgreSQL may use up to 3 GB (4 GB with swap) and 2 CPUs on
   Ankita.

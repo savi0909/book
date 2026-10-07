@@ -1,14 +1,17 @@
 # Point both APIs at PostgreSQL on Ankita (infra/ankita) over Tailscale.
 # Use scripts/use-remote-db.ps1; scripts/use-local-db.ps1 switches back.
+# Credentials postgres/postgres match infra/ankita/compose.postgres.yml.
 # Longer connect/socket timeouts absorb tailnet latency (a DERP relay can add 50-200 ms).
 services:
   api-a:
     environment:
       DB_URL: jdbc:postgresql://${REMOTE_DB_HOST:?Set REMOTE_DB_HOST}:5553/booking?connectTimeout=5&socketTimeout=10
-      DB_PASSWORD: ${REMOTE_DB_PASSWORD:?Set REMOTE_DB_PASSWORD}
+      DB_USER: postgres
+      DB_PASSWORD: postgres
     depends_on: !reset {}
   api-b:
     environment:
       DB_URL: jdbc:postgresql://${REMOTE_DB_HOST:?Set REMOTE_DB_HOST}:5553/booking?connectTimeout=5&socketTimeout=10
-      DB_PASSWORD: ${REMOTE_DB_PASSWORD:?Set REMOTE_DB_PASSWORD}
+      DB_USER: postgres
+      DB_PASSWORD: postgres
     depends_on: !reset {}
