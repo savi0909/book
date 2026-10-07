@@ -16,7 +16,7 @@ for domain rules and [worklog](WORKLOG.md) for dated delivery history.
 | PVR catalog + rolling window | Implemented: V6/V7 permanent 303 PVR/INOX sites, 1,971 screens; maintainer fills today+3 and purges past days; holds beyond window 409 | [PVR catalog](PVR_CATALOG_SCHEDULE.md) |
 | Java load tester | Delivered: Java 21 / Spring Boot 3.5.16, virtual-thread RestClient, fixed arrivals, HOLD/AVAILABILITY/MIXED, finite retries and unknown-hold discovery | [module](../load-tester-java/README.md), [tutorial](JAVA_LOAD_TESTER_TUTORIAL.md) |
 | Node comparison module | Retained: controlled generic hold retry comparison, scoped default-off faults, journals, observer and capped discovery | [runbook](HOLD_LOAD_TEST_TUTORIAL.md) |
-| Resources and Docker separation | PostgreSQL 1 GiB; Java generator owns `sd-book-my-show-java-load-test` with 384 MiB / 0.5 CPU; Node group remains separate | [setup](STANDALONE_SETUP.md), [Java Compose](../load-tester-java/compose.local.yml) |
+| Resources and Docker separation | Defaults applied 2026-10-07: PostgreSQL 3 GB / 2 CPU (shared_buffers 768MB, effective_cache_size 2GB, work_mem 16MB, maintenance_work_mem 256MB, shm 256MB); APIs 512 MB / 1 CPU each (heap 60% ≈ 308 MB, Serial GC); gateway 96 MB / 0.5 CPU; Java loader 384 MB / 1 CPU (heap 50%); Node group separate | [setup](STANDALONE_SETUP.md), [Java Compose](../load-tester-java/compose.local.yml) |
 
 The Java generator is the user's latest selected implementation. Its workload
 currently uses **generic ticket endpoints in this Book My Show repository**.
@@ -32,6 +32,12 @@ outbox protections do not automatically apply to the movie domain.
 | Smoke 2 after fix | 100 journeys: 61 CONFIRMED, 16 CANCELLED, 12 ABANDONED, 11 BROWSED; every call 2xx |
 | Main (20/s × 300 s) | **User-stopped** at 537 journeys: 339 CONFIRMED, 60 CANCELLED, 79 ABANDONED, 53 BROWSED, 6 stopped mid-poll; 2,459 calls, all 2xx; hold p50 9.0 ms / p95 32.6 ms |
 | Database after runs | Movie bookings from journeys: 482 CONFIRMED, 76 CANCELLED, 104 EXPIRED; 0 open payments |
+
+**Correction (2026-10-07):** the JIT fix (46ff584) was first verified against an
+API image built from a stale jar. `mvn test` does not repackage, so the low CPU
+reading was not evidence of the fix. The fixed jar was packaged with `-DskipTests`
+and deployed together with the resource defaults. The deployed class was checked
+to contain `jit = off`, and PostgreSQL sat at 3.5% CPU after the startup tick.
 
 Also found and fixed during setup:
 - **Maintainer JIT cost.** Each no-op batch took 733 ms with JIT and 8.4 ms

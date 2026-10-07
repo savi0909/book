@@ -26,7 +26,7 @@ per run. Default10 RPS/10s/100 seats/one attempt. Optional bounded IMMEDIATE or
 JITTER retries preserve buyer/key/payload. Unknown holds have a separate two-call
 discovery budget. HTTP/status metadata is saved; request/response bodies are not.
 
-Local Docker group: `sd-book-my-show-java-load-test`,384 MiB/0.5 CPU, separate
+Local Docker group: `sd-book-my-show-java-load-test`, 384 MiB/1 CPU (was 0.5 until 2026-10-07), separate
 from both business services and the retained Node generator. Local runs require
 the existing metadata observer. Final remote experiments belong on Ankita.
 Redis remains deferred to phase3; PostgreSQL remains at1 GiB.

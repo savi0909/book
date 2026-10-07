@@ -23,7 +23,7 @@ Superseding generator selection: user requested Java/Spring Boot like the actual
 and [tutorial](docs/JAVA_LOAD_TESTER_TUTORIAL.md): independent Java21/Boot3.5.16
 POM, virtual-thread RestClient, fixed arrivals, finite hold/read/mixed workloads,
 bounded retries/unknown discovery and metadata-only reports. Own Docker project
-sd-book-my-show-java-load-test,384 MiB/0.5 CPU, management8135 loopback.
+sd-book-my-show-java-load-test,384 MiB/1 CPU (2026-10-07), management8135 loopback.
 14 tests and Newman8 requests/9 assertions passed. Final real10 RPS100-call smoke
 100201, all SQL violations0, avg14.11ms/p9535.56ms/p99119.47ms. Earlier Java smoke
 100201 plus Postman1 hold also retained: three events/201 bookings total here.

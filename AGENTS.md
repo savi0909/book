@@ -8,7 +8,8 @@ cancel; local cap 20/s, 600 s, 12k journeys, 16 concurrent HTTP calls; observer
 may run 900 s. Live runs: two 100-journey smokes and one 20/s run the user
 STOPPED at 537 journeys. Totals: 482 CONFIRMED, 76 CANCELLED, 104 EXPIRED, no
 open payments, all HTTP 2xx. User then said: run no more tests/load until asked.
-PostgreSQL limit raised to 3 GB / 2 CPUs (live docker update + compose.yml).
+Resource defaults applied: PostgreSQL 3 GB/2 CPU tuned (shared_buffers 768MB etc.),
+APIs 512 MB/1 CPU (MaxRAMPercentage 60, Serial GC), gateway 0.5 CPU, loader 1 CPU.
 Ankita-hosted PostgreSQL scripts exist (docs/ANKITA_POSTGRES.md) but were NOT run;
 fresh schema via Flyway was selected. Unrelated stacks ticket-booking-java,
 url-shortener-java and mcp-gateway-coordinator were stopped (data kept) to free memory.

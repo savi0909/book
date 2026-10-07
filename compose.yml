@@ -2,6 +2,11 @@ name: sd-book-my-show
 services:
   postgres:
     image: postgres:16-alpine
+    # Tuned for the 3 GB / 2 CPU limit: ~25% shared buffers, planner told about page cache.
+    command: ["postgres", "-c", "shared_buffers=768MB", "-c", "effective_cache_size=2GB",
+              "-c", "work_mem=16MB", "-c", "maintenance_work_mem=256MB"]
+    # Parallel queries use /dev/shm; Docker's 64 MB default is too small for 16 MB work_mem.
+    shm_size: 256mb
     environment:
       POSTGRES_DB: booking
       POSTGRES_USER: booking_demo
@@ -33,7 +38,8 @@ services:
       interval: 5s
       timeout: 3s
       retries: 20
-    mem_limit: 320m
+    mem_limit: 512m
+    cpus: 1.0
   api-b:
     build: .
     environment:
@@ -44,6 +50,7 @@ services:
       postgres:
         condition: service_healthy
     healthcheck: *api-health
-    mem_limit: 320m
+    mem_limit: 512m
+    cpus: 1.0
 volumes:
   booking-data:

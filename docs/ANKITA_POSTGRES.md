@@ -31,7 +31,6 @@ repository is checked out.
 ```powershell
 git clone https://github.com/savi0909/book.git sd-book-my-show
 Set-Location sd-book-my-show
-git checkout feature/pvr-rolling-catalog    # until PR #1 is merged
 powershell -ExecutionPolicy Bypass -File infra/ankita/start-postgres.ps1
 ```
 

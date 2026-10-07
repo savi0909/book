@@ -6,7 +6,8 @@ The Java virtual-thread generator has its own [setup/tutorial](JAVA_LOAD_TESTER_
 and separate Compose project; startup commands below are instructions, not
 evidence that the services are currently running.
 
-Current resource follow-up2026-10-06: PostgreSQL1 GiB memory ceiling (2 GiB total
+Resource defaults 2026-10-07: PostgreSQL 3 GB/2 CPU (tuned), APIs 512 MB/1 CPU, gateway 0.5 CPU,
+Java loader 1 CPU; see PROJECT_STATUS. Earlier follow-up2026-10-06: PostgreSQL1 GiB memory ceiling (2 GiB total
 memory+swap), existing retained volume. [Separate Docker load-test group/result](DOCKER_LOAD_TEST_TUTORIAL.md).
 Redis is deferred to phase3; no Redis service is part of the present stack.
 
