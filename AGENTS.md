@@ -23,17 +23,17 @@ layouts (1,971 screens, 200-500 seats, 2-3 classes), 20-film synthetic slate.
 MovieScheduleMaintainer (MOVIE_SCHEDULE_ENABLED, base Compose on, tests/movie
 overlay off) fills today..today+3 local days and purges whole past days with
 all dependent booking/payment rows (open payments kept; refunds counted in
-movie_purge_log). Holds beyond today+3 return409 SHOW_NOT_YET_OPEN. Regenerate
+movie_purge_log). Holds beyond today+3 return 409 SHOW_NOT_YET_OPEN. Regenerate
 V7 only via scripts/generate_pvr_catalog.py into a NEW migration (V7 checksum is
 applied). Booking/cancellation simulation is the next, separate selection.
 
 ## Documentation/status refresh — 2026-10-07
 
 Read [current project status](docs/PROJECT_STATUS.md) before historical notes.
-Java virtual-thread loader is delivered at8f9fd03; generic Node module retained.
-At12:21 IST, APIs/gateway/PostgreSQL and both load-generator groups were stopped
-with containers/data retained. PostgreSQL still1 GiB; Redis phase3 deferred.
-October6 tests/runtime observations remain dated historical evidence. This request
+Java virtual-thread loader is delivered at 8f9fd03; generic Node module retained.
+At 12:21 IST, APIs/gateway/PostgreSQL and both load-generator groups were stopped
+with containers/data retained. PostgreSQL still 1 GiB; Redis phase 3 deferred.
+October 6 tests/runtime observations remain dated historical evidence. This request
 updates documentation and status only; no service startup or load is selected.
 Final Ankita gateway reachability/run remains pending; origin absent. Superseded
 teaching-only/unbuilt-client statements below do not undo delivered client work.
@@ -42,30 +42,30 @@ teaching-only/unbuilt-client statements below do not undo delivered client work.
 
 User selected the earlier URL-shortener Spring Boot generator approach. Read
 [Java module](load-tester-java/README.md) and [tutorial](docs/JAVA_LOAD_TESTER_TUTORIAL.md).
-Standalone Java21/Boot3.5.16 RestClient with virtual threads, own Maven POM and
-Docker project sd-book-my-show-java-load-test (384 MiB/0.5 CPU, control8135 loopback).
+Standalone Java 21/Boot 3.5.16 RestClient with virtual threads, own Maven POM and
+Docker project sd-book-my-show-java-load-test (384 MiB/0.5 CPU, control 8135 loopback).
 Finite HOLD/AVAILABILITY/MIXED generic workloads, stable retry identities,
-terminal409s, seeded jitter, deadlines/concurrency/observer guards, separate
-bounded discovery.14 Java tests and Newman8 requests/9 assertions passed.
-Final local100-request10 RPS smoke passed100201/all SQL violations0; earlier
-Java smoke100201 and collection1 hold retained too. Both Java containers stopped
+terminal 409s, seeded jitter, deadlines/concurrency/observer guards, separate
+bounded discovery. 14 Java tests and Newman 8 requests/9 assertions passed.
+Final local 100-request 10 RPS smoke passed 100 HTTP 201/all SQL violations 0; earlier
+Java smoke 100 HTTP 201 and collection 1 hold retained too. Both Java containers stopped
 and retained, services/data untouched. Node module remains retained. Final load
 on Ankita remains pending; private gateway forwarding not configured here.
 Java restart recovery/Node manifest compatibility/movie workflows remain unbuilt.
-PostgreSQL1 GiB unchanged; Redis advisory availability deferred to phase3.
+PostgreSQL 1 GiB unchanged; Redis advisory availability deferred to phase 3.
 
 ## Local Docker smoke / resource continuation — 2026-10-06
 
-User explicitly selected this machine for10 RPS and a separate Docker group.
+User explicitly selected this machine for 10 RPS and a separate Docker group.
 Read [Docker runbook/result](docs/DOCKER_LOAD_TEST_TUTORIAL.md). Load Compose
 project sd-book-my-show-load-test connects only to the existing booking network;
-256 MiB/0.5 CPU, fixed100 fresh holds/10s/one attempt/no faults. Actual100/100201,
-ten buckets of10, all SQL violations0, exited0. Preserve results/fixtures and
-retained test containers. PostgreSQL limit is now1 GiB, live-updated without a
-restart; same container/data volume. Base Compose persists1g/2g total memory+swap.
-Redis explicitly deferred to phase3 for quick availability/high throughput;
+256 MiB/0.5 CPU, fixed 100 fresh holds/10s/one attempt/no faults. Actual 100/100 HTTP 201,
+ten buckets of 10, all SQL violations 0, exited 0. Preserve results/fixtures and
+retained test containers. PostgreSQL limit is now 1 GiB, live-updated without a
+restart; same container/data volume. Base Compose persists 1g/2g total memory+swap.
+Redis explicitly deferred to phase 3 for quick availability/high throughput;
 500 MiB is a future budget, no Redis service or movie cache/push added. Older
-local20-operation guard remains for the ordinary CLI; this fixed Docker smoke
+local 20-operation guard remains for the ordinary CLI; this fixed Docker smoke
 is a separate explicit selection. Long/final remote load stays on Ankita.
 
 ## Current load-test module delivery — 2026-10-06
@@ -78,7 +78,7 @@ Abhishek hosts actual services/fixtures/scoped ingress/metadata observer; Ankita
 alone runs final/sustained business comparison/discovery. User additionally
 authorized bounded local loader validation: --local-validation permits loopback
 only, <=20 operations/arm, <=8 concurrent and <=30s/arm. Two small local checks
-passed with retained fixtures; temporary loopback8134 ingress closed afterward.
+passed with retained fixtures; temporary loopback 8134 ingress closed afterward.
 No remote/sustained run, tailnet exposure or Compose change. Default-off finite
 busy/committed-loss ingress is fixture/token scoped and heartbeat/STOP bounded.
 Retain fixtures/journals/markers; do not reset them to hide ambiguous outcomes.
@@ -90,7 +90,7 @@ broader handover. Origin absent; bundle transfer available, no push claimed.
 ## Resume entry and durable records
 
 Fresh-session build prompt: [hold retry/admission handover](docs/HANDOVER_HOLD_RETRY_BUILD.md).
-Created at user request2026-10-06 for later invocation. Do not execute it merely
+Created at user request 2026-10-06 for later invocation. Do not execute it merely
 because it is linked here; an explicit user invocation selects its build scope.
 
 Read [PROJECT_CONTEXT.md](PROJECT_CONTEXT.md) first for current requirements,
@@ -104,7 +104,7 @@ movie/standalone sections take precedence for this repository.
 
 ## Historical movie/planning selection - 2026-10-05
 
-User-selected2026-10-06: study scenario2 protections before the hold-retry comparison.
+User-selected 2026-10-06: study scenario 2 protections before the hold-retry comparison.
 Start with [protection study](docs/SCENARIO_02_PROTECTION_STUDY.md) and the detailed
 provider tutorial. This is a documentation/source-reading session, not permission
 to run fault/load experiments, switch provider topology or implement the harness.
@@ -113,7 +113,7 @@ Record explained/delivered separately from learner mastery or newly executed tes
 Historical teaching-only override: **do not implement yet**. Later loader selections
 above supersede it for client work. Read
 [hot-show/availability/retry plan](docs/HOT_SHOW_AVAILABILITY_AND_RETRY_PLAN.md).
-Study existing generic scenario2 protections first; the general hold retry-storm
+Study existing generic scenario 2 protections first; the general hold retry-storm
 client comparison is now delivered; movie availability stream/admission remains
 unbuilt. Existing
 DB-time logical expiry/owner-checked cleanup must not be confused with live push.
@@ -122,12 +122,12 @@ Ankita is the business-load generator over Tailscale. Endpoint/ingress/tool/reso
 budgets were unresolved in that planning session. Java client budgets now exist;
 private remote gateway access remains pending. No new workload is selected by
 this documentation/status refresh.
-The 33-seat hot-show example does not change current200-500 screen validation.
+The 33-seat hot-show example does not change current 200-500 screen validation.
 
 User explicitly selected movie booking in this standalone repository, overriding
 earlier teaching-only/stop-at-API3 scope for this delivery. Read movie tutorial,
 API/ADR/verification/FUTURE_WORK. V5:5-100 screens,200-500 seats,2-3 categories,
-atomic1-10-seat groups, separate show inventory.95/4.5/0.5 mock plans; one logical
+atomic 1-10-seat groups, separate show inventory. 95/4.5/0.5 mock plans; one logical
 retry per payment; failed payment retains original hold until expiry, fresh key
 admits a new payment. Movie tables do not inherit generic outbox/poison semantics.
 Optional compose.movie.yml enables fixtures/manual ticks, disables both legacy
@@ -144,9 +144,9 @@ They do not require access to the original workspace to build or test this copy.
 No workspace modules are required. Provider stub/config/scripts/docs are included.
 Maven artifact is sd-book-my-show; package com.example.booking is preserved.
 Compose project sd-book-my-show uses separate retained volumes and host ports
-A8130/B8131/gateway8132/provider8133/PostgreSQL5553; APIs listen8105 in containers.
+A 8130/B 8131/gateway 8132/provider 8133/PostgreSQL 5553; APIs listen 8105 in containers.
 Do not operate on original ticket-booking-java containers or their retained data.
-The first14 commits use disclosed reconstructed sprint dates; verification dates
+The first 14 commits use disclosed reconstructed sprint dates; verification dates
 are real source evidence and must not be rewritten as earlier execution dates.
 Future commits use actual dates. Origin awaits the user's new repository URL.
 Never delete files/directories or run Maven clean without explicit permission.
@@ -166,31 +166,31 @@ before advancing. This request is teaching/documentation only; existing applicat
 code and infrastructure stay preserved. Do not resume scenario implementation
 from a request to review or explain an API.
 
-## Latest scenario4 delivery - 2026-10-05
+## Latest scenario 4 delivery - 2026-10-05
 
-User continued the concepts implementation after scenario3. Read
+User continued the concepts implementation after scenario 3. Read
 [outbox tutorial](docs/TRANSACTIONAL_OUTBOX_TUTORIAL.md) and [evidence](docs/VERIFICATION.md).
 V4 adds booking delivery_version/outbox/local inbox/receipts/projection. Actual
 CONFIRMED/CANCELLED transitions emit once inside the inventory transaction;
-no retroactive event backfill or optimistic seat locking. Claim5s/token commits
+no retroactive event backfill or optimistic seat locking. Claim 5s/token commits
 before local consume; inbox/effect/projection commit together; ack requires
 current token/unexpired lease. Delivery is recoverable with duplicates, no actual
 sends/broker/external exactly-once. Monotonic snapshots ignore stale confirmation
 after cancellation; no FIFO or delta semantics. DB errors abort batch, other item
-errors defer2s; no outbox exhaustion/quarantine policy is silently inherited.
+errors defer 2s; no outbox exhaustion/quarantine policy is silently inherited.
 Default worker requires maintenance+dispatch flags and lifecycle gate. Optional
 compose.outbox.yml enables bounded after-consume delay/manual controls with both
 loops off; base+failover restores scheduled operation. Gateway excludes replica
 outbox controls. Preserve retained events/inbox/receipts/data and other services.
-Old writers ignore outbox: drain before rollout. Historical provider8123 conflicts
-with shortener C. Scenarios1–4 complete; stop;5–6/optimistic seats/retry storms remain
-proposals. This section supersedes earlier stop-at3 notes for the new continuation.
+Old writers ignore outbox: drain before rollout. Historical provider 8123 conflicts
+with shortener C. Scenarios 1–4 complete; stop;5–6/optimistic seats/retry storms remain
+proposals. This section supersedes earlier stop-at-3 notes for the new continuation.
 
 ## Current scenario 3 delivery - 2026-10-04
 
 Read [poison tutorial](docs/POISON_JOB_TUTORIAL.md) and [verification](docs/VERIFICATION.md).
-Scenario3 implements per-item processing isolation, durable3-failure quarantine,
-history and keyed maximum2 lifetime redrives using the original payment UUID.
+Scenario 3 implements per-item processing isolation, durable 3-failure quarantine,
+history and keyed maximum 2 lifetime redrives using the original payment UUID.
 Provider/DB failures stay separate; UNKNOWN/quarantine remains reconciliation
 liability. Redrive does not reset budgets; same-key replay cannot dispatch.
 Active token/unexpired lease fences failure recording. Quarantine stays until
@@ -198,23 +198,23 @@ terminal apply; late SUCCESS preserves REFUND_REQUIRED and newer seat ownership.
 Older workers ignore quarantine: drain before rollout; do not mix old/new workers.
 Optional compose.poison.yml enables safe after-accept fixtures and manual recovery
 ticks with both schedulers disabled. Default controls/injection off; base+failover
-restores scheduled operation. Historical provider8123 now conflicts with shortener
+restores scheduled operation. Historical provider 8123 now conflicts with shortener
 API C; preserve that service and retained provider-data. Read current topology.
-Scenarios1–3 delivered separately; stop here.4–6/optimistic seats/retry storms remain
-proposals. This latest section supersedes earlier 'scenario3 next' handover notes.
+Scenarios 1–3 delivered separately; stop here. 4–6/optimistic seats/retry storms remain
+proposals. This latest section supersedes earlier 'scenario 3 next' handover notes.
 
 ## Current scenario delivery - 2026-10-04
 
 Scenario 2 provider isolation is implemented and verified. Read
 [the provider tutorial](D:/java-projects/ticket-booking-lab/docs/PROVIDER_ISOLATION_TUTORIAL.md)
 and [verification](D:/java-projects/ticket-booking-lab/docs/VERIFICATION.md).
-Optional provider overlay adds host8123/container8121 and retained provider-data;
-A8105/B8106/gateway8107/PostgreSQL5547 data remain. Two HTTP slots per API,
-two actual stub processing slots, bounded deadlines/breaker probes, durable4/10s
-retry budget and shared100/30s backlog admission. Existing checkout keys replay;
+Optional provider overlay adds host 8123/container 8121 and retained provider-data;
+A 8105/B 8106/gateway 8107/PostgreSQL 5547 data remain. Two HTTP slots per API,
+two actual stub processing slots, bounded deadlines/breaker probes, durable 4/10s
+retry budget and shared 100/30s backlog admission. Existing checkout keys replay;
 exhausted UNKNOWN retains reconciliation, late success requires refunds.
 Default simulator and original unlimited-polling collection remain separate.
-Stop this delivery. Scenario3 poison-job isolation is selected next, separately;
+Stop this delivery. Scenario 3 poison-job isolation is selected next, separately;
 4-6, optimistic seat versions and general retry-storm harness remain proposals.
 No real payments, production auth/HA/SLO or external exactly-once claim.
 
@@ -227,13 +227,13 @@ and a concise set of 3–5 interview points for the scenario and its subtopics.
 Scenario 1 (API failover/graceful restart) is implemented and verified; read
 [the tutorial](D:/java-projects/ticket-booking-lab/docs/API_FAILOVER_TUTORIAL.md)
 and [evidence](D:/java-projects/ticket-booking-lab/docs/VERIFICATION.md).
-Optional overlay: A8105/B8106/gateway8107/PostgreSQL5547; original data retained.
+Optional overlay: A 8105/B 8106/gateway 8107/PostgreSQL 5547; original data retained.
 Local controls default off; no database/host HA or production-auth claim.
 Finish this delivery, then stop. Provider isolation (2) and poison-job handling
 (3) are selected next, in separate deliveries; 4–6 remain proposals. Optimistic
 seat versions and the controlled retry-storm harness remain separate proposals.
 
-User-directed2026-10-03: this is the primary domain for foundations-first study
+User-directed 2026-10-03: this is the primary domain for foundations-first study
 of databases, pessimistic/optimistic locking, retries and retry storms. Read
 [the foundations tutorial](docs/DISTRIBUTED_SYSTEMS_FOUNDATIONS.md). Use local
 downloaded articles/original JavaScript/Python first, then web sources if needed.

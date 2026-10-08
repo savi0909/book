@@ -1,6 +1,6 @@
 # Scenario 2: a payment-provider outage without exhausting booking capacity
 
-For the2026-10-06 study session, start with the
+For the 2026-10-06 study session, start with the
 [protection reading guide](SCENARIO_02_PROTECTION_STUDY.md): one request trace,
 source checkpoints and prediction exercises before the future hold-retry comparison.
 This tutorial's original experiment dates/addresses remain historical.

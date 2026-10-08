@@ -5,20 +5,20 @@ Follow [parent instructions](../AGENTS.md). Read [README](README.md),
 [verification](docs/VERIFICATION.md), [parity](PARITY.md) and
 [tutorial](../docs/JAVA_LOAD_TESTER_TUTORIAL.md) before changes.
 
-Standalone Java21/Boot3.5.16; build with `mvn -B -ntp verify` here, no clean.
+Standalone Java 21/Boot 3.5.16; build with `mvn -B -ntp verify` here, no clean.
 No backend Maven parent/module change. Virtual threads plus bounded logical
 concurrency; no unlimited queue. Keep one HTTP task per logical operation at a
-time. A timeout may hide commit; same-key retry/discovery only.409 is terminal.
+time. A timeout may hide commit; same-key retry/discovery only. 409 is terminal.
 Separate application attempts from initial arrivals and discovery traffic.
 No request/response-body storage. Preserve keys, fixtures, reports and markers.
 
 Actual services remain in sd-book-my-show; generator gets its own Docker group.
 Ankita is the final business-load origin. Explicitly selected local exception
-is at most10 RPS/10s/100 operations, with a live metadata observer. Remote
+is at most 10 RPS/10s/100 operations, with a live metadata observer. Remote
 mode remains finite (200 operations/run) and requires an Ankita hostname and
 literal Tailscale target; this is a configuration guard, not host authentication.
 Do not expose management ports remotely or silently configure Tailscale.
-Redis phase3 only; PostgreSQL authoritative. User selected MOVIE journeys on
+Redis phase 3 only; PostgreSQL authoritative. User selected MOVIE journeys on
 2026-10-07 (own local cap 20/s, 600 s, 12k journeys, 16 HTTP calls; see README).
 Do not add SSE, shared admission or massive load solely because docs mention them.
 

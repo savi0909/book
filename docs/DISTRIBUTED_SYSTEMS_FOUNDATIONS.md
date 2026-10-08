@@ -2,10 +2,10 @@
 
 Requested and refined: 2026-10-03. Primary learning project: `ticket-booking-lab`.
 
-Implemented extension2026-10-04: [scenario1 API failover and graceful restart](API_FAILOVER_TUTORIAL.md).
+Implemented extension 2026-10-04: [scenario 1 API failover and graceful restart](API_FAILOVER_TUTORIAL.md).
 It adds lifecycle drain admission; throughput/retry-storm admission remains a
-separate proposal. The learner wants detailed study plus3–5 interview points per
-scenario/subtopic, delivering scenarios1,2,3 one at a time.
+separate proposal. The learner wants detailed study plus 3–5 interview points per
+scenario/subtopic, delivering scenarios 1,2,3 one at a time.
 
 For focused next additions, see [six failure-handling and availability scenarios](FAILURE_SCENARIOS.md),
 covering API failover, provider isolation, poison jobs, outbox delivery, refund
