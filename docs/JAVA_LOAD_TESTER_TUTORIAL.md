@@ -33,6 +33,21 @@ One configured gateway already balances the booking A/B services, so a second
 Spring Cloud client balancer adds no value here. Management 8135 is separate from
 backend 8130/8131 and gateway 8132. Load Compose is separate from the business stack.
 
+```mermaid
+flowchart LR
+  S[Arrival schedule<br/>due = start + i/rate] -->|on time| T{free logical slot?}
+  T -- yes --> V[virtual thread<br/>one HTTP task at a time]
+  T -- no --> X[stop: saturation<br/>never queue, never slow down]
+  V --> R[RestClient to gateway]
+  R -->|201/200/409| D[definite outcome]
+  R -->|timeout/5xx| U[UNKNOWN: same-key retry<br/>or discovery only]
+```
+
+> **Common misconception.** "Virtual threads let the tester generate unlimited
+> load." They make *waiting* cheap. Backend connections, PostgreSQL row locks and
+> the gateway's capacity are unchanged, so this tester also bounds logical
+> concurrency and stops rather than queueing.
+
 ## Contracts and pacing
 
 Every start creates one fresh generic event (setup traffic, not measured), then

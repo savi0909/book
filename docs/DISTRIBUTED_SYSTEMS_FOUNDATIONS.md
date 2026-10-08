@@ -285,6 +285,30 @@ release boundary. Never include a remote payment wait inside the seat lock.
 
 ## 6. Optimistic locking: a proposed alternative for the same seats
 
+The two strategies side by side (diagram added 2026-10-08; the optimistic half is
+the proposal described below, not existing code):
+
+```mermaid
+sequenceDiagram
+  participant A as Alice
+  participant DB as PostgreSQL
+  participant B as Bob
+  Note over A,B: Pessimistic (today): wait for the lock, then decide
+  A->>DB: SELECT seat 7 FOR UPDATE (gets the lock)
+  B->>DB: SELECT seat 7 FOR UPDATE (waits)
+  A->>DB: insert HELD, commit (lock released)
+  DB-->>B: lock granted, sees Alice's hold, 409
+  Note over A,B: Optimistic (proposal): no wait, version check at write time
+  A->>DB: UPDATE seat 7 SET version=13 WHERE version=12 (1 row)
+  B->>DB: UPDATE seat 7 SET version=13 WHERE version=12 (0 rows)
+  DB-->>B: 0 rows means a conflict: reread, then 409 or retry
+```
+
+> **Common misconception.** "Optimistic locking is faster, so use it for hot
+> seats." It avoids waiting, but on a contended row most writers lose and retry.
+> That converts lock waits into retry traffic, the input to the retry storm in
+> section 8. It wins when conflicts are rare.
+
 The current seat table has no version column. The following is a design exercise,
 not a migration, existing endpoint, or implemented switch.
 

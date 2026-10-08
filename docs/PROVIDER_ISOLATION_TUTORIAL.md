@@ -46,6 +46,11 @@ creates a refund obligation and cannot reclaim another buyer’s seat.”
 This describes the local implementation, not a production payment guarantee.
 Executed results and their limits are in [VERIFICATION](VERIFICATION.md).
 
+> **Common misconception.** "A circuit breaker protects the provider, so retries
+> are fine behind it." The breaker only stops calls while it is open. Bounded
+> slots (bulkheads), deadlines and *one* retry owner stop a slow provider from
+> consuming booking capacity. Without them, the breaker trips after the damage is done.
+
 ## The failure story, step by step
 
 Alice holds seat 1 for 120 seconds. Checkout commits payment P and returns 202.

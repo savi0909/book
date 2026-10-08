@@ -127,6 +127,12 @@ the proxy notices manual drain. During a crash there is no filter left to answer
 - Keep liveness separate so a drained instance is not mistaken for a broken one.
 - Let admitted work finish; persist enough state to recover work cut off by a crash.
 
+> **Common misconception.** "The proxy should retry failed requests on the other
+> replica." For reads, perhaps. For a write such as checkout, the first replica may
+> already have committed. A blind proxy retry would turn one lost response into a
+> second operation. This lab sets HAProxy `retries 0` / `retry-on none` and leaves
+> replay to the caller, who still holds the idempotency key.
+
 ## 4. The most important failure boundary: commit before response
 
 ```mermaid
@@ -294,6 +300,24 @@ multi-zone placement and sustained-load verification are later studies.
 - State which failure was tested: one API process, not every dependency.
 - Keep capacity headroom for the surviving replica and database.
 - Report measured recovery and correctness separately from availability promises.
+
+## Exercises (added 2026-10-08; reading and prediction only)
+
+1. **Drain timeline.** A is drained at t=0 while a checkout on A is mid-transaction.
+   HAProxy checks readiness every 500 ms. List what each of these returns between
+   0 and 1 s: `/actuator/health/liveness` on A, `/actuator/health/readiness` on A,
+   a *new* `/api/holds` sent straight to A, and the in-flight checkout. Then say
+   which component guarantees each answer.
+2. **Commit boundary.** In the sequence diagram in section 4, move the SIGKILL to
+   *before* the commit. Predict the replayed request's response, the number of
+   payment rows and the audit entries. Then compare with the original diagram.
+3. **Wrong recovery.** A client times out on checkout and retries with a *new*
+   idempotency key. Trace both requests through `BookingService.checkout` and
+   explain which database constraint or rule stops a second payment, or why
+   nothing does.
+4. **Graceful ≠ crash.** Explain why a passing graceful-stop test (SIGTERM, 20 s
+   grace) provides no evidence about the SIGKILL case, using the words *admitted*,
+   *committed* and *delivered*.
 
 Next: review these five interview points and reproduce scenario 1. Provider
 isolation and poison-job handling are authorized in that order for later separate

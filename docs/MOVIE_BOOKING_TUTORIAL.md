@@ -208,9 +208,24 @@ Exercise 1: overlap 2,21,62 with 1,21,61 and predict rollback. Exercise 2: in ma
 mode fail bucket 9950, submit a new key with 9500, then compare both IDs/deadlines.
 Exercise 3: hold the same seat numbers in two shows and explain their independence.
 
-Interview points: inventory identity is show/seat; sorted locks provide atomic
-groups; automatic retry differs from a fresh user attempt; confirmation checks
-current ownership/deadline; scale claims require measured contention and drain.
+Interview points:
+
+1. Inventory identity is `(show_id, seat_number)`. The same seat number in two
+   shows is two independent items.
+2. Locking every requested seat in ascending order makes a group hold atomic and
+   prevents lock-order deadlocks between overlapping groups.
+3. An automatic retry keeps the same payment UUID. A fresh user attempt needs a
+   new key and creates a new payment, and neither extends the hold's deadline.
+4. Confirmation re-checks current ownership and the deadline. A late success can
+   only create a refund obligation, never take back seats.
+5. Scale claims need measured contention and worker drain, not reasoning alone.
+
+> **Common misconception.** "95% / 4.5% / 0.5% means 4.5% of the retries succeed."
+> The percentages apply to *all* payments: 9,500 of 10,000 succeed on call 1, 450 on
+> call 2 and 50 fail. So 90% of the 5% that need a retry succeed on it.
+
+Continue with the [advance-booking tutorial](MOVIE_ADVANCE_BOOKING_TUTORIAL.md): the
+permanent catalog, rolling window and journey load built on this domain.
 
 No frontend, production auth, real payment/refund, movie notification outbox or
 independent provider HA is delivered. Generic outbox/poison studies remain separate

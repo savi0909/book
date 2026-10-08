@@ -183,6 +183,27 @@ inspection. An additional host process adds connections or namespace participant
 so its observations are separate from the previously recorded two-replica checks.
 No interactive IntelliJ run is claimed by this documentation session.
 
+## Interview points (added 2026-10-08)
+
+1. Name the **authoritative state** first (PostgreSQL rows), then the lock that
+   protects it (the seat row `FOR UPDATE`), then the atomic boundary (one transaction).
+2. A durable idempotency key turns "retry after a lost reply" into a lookup.
+   Without one, a retry is a second operation.
+3. Expiry is decided with the **database clock** inside the same transaction.
+   Comparing a browser or JVM clock against stored deadlines invites disagreement.
+4. Inventory decisions and payment results are separate state machines. A late
+   payment success can create a refund obligation, but it must never steal a seat.
+5. A debugger changes timing. Pausing while holding a row lock or lease changes
+   the experiment, so prefer thread-only suspension and short pauses.
+
+> **Common misconception.** "`@Transactional` (or `TransactionTemplate`) makes
+> concurrent requests safe." A transaction makes *one* request's writes atomic.
+> Two concurrent holds for seat 7 are serialised because both lock the same seat
+> row first. Remove the lock, and both can read "free". Then only the
+> `one_active_booking_per_seat` unique index (V1) stops the second insert, and the
+> buyer gets a constraint error instead of a clean `409 SEAT_UNAVAILABLE`. The lock
+> gives the clean decision; the index is the last line of defence.
+
 ## Study record
 
 Write a short trace in your own words: input identity, admission, authoritative state, atomic boundary, reply, and retry after a lost reply. Record predictions separately from observations. Explain one limitation and the evidence you would need to remove it. Retain your fixtures; do not run Maven clean, file deletion, data resets, or global Docker cleanup. Any live fault experiment should follow the project run guide and restore only its selected services.

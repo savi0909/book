@@ -66,6 +66,11 @@ lab transport choice; its connect cost is part of Ankita's observed latency.
 
 ## Classify responses before retrying
 
+> **Common misconception.** "Jitter reduces the number of retries." It does not:
+> both arms may send the same number of attempts. Jitter spreads them out in time,
+> so retries stop arriving in synchronised waves. Budgets and deadlines are what
+> cap the count.
+
 | Observation | Action |
 | --- | --- |
 | Valid 201/200 with matching buyer, event and seat | RESOLVED; preserve booking ID, creation time and expiry |

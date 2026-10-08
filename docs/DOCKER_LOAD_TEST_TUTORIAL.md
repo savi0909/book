@@ -142,6 +142,25 @@ cache reconstruction and failure behavior before claiming quick/high-throughput
 updates. Movie transition publishing/streaming remain unbuilt; the generic outbox
 does not automatically publish movie changes.
 
+## Interview points (added 2026-10-08)
+
+1. A separate Compose project gives **resource and lifecycle isolation**, not a
+   separate failure domain: it shares the host, Docker VM and network.
+2. A memory limit is a ceiling, and `memory-swap` is a *total*. Raising memory adds
+   headroom; it is not evidence of capacity.
+3. A fixed arrival schedule (one hold every 100 ms) makes the offered load
+   reviewable. Read buckets, percentiles and SQL invariants together.
+4. A local smoke proves the path works at 10/s. It says nothing about Ankita,
+   Tailscale or higher rates.
+5. Caches such as the deferred Redis phase may *advise* availability. The
+   transactional seat lock still *decides* it.
+
+> **Common misconception.** "The loader is in its own container, so it can't
+> affect the results." It shares CPU and memory with the services on the same
+> machine. That is why this smoke caps the loader (256 MiB, 0.5 CPU) and keeps the
+> observer's host-pressure stop. The 2026-10-07 movie runs needed the same care:
+> three unrelated stacks were stopped to free host memory.
+
 Exercise: predict why a Redis AVAILABLE view cannot authorize a hold after another
 buyer commits. Then inspect the ten request buckets and compare HTTP with logical
 latency to locate the journal/scheduler overhead in this local run.

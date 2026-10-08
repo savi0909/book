@@ -38,6 +38,11 @@ acknowledges causes redelivery, so the event ID prevents duplicate local receipt
 Booking versions stop a stale confirmation from overriding cancellation. This
 proves recoverable local delivery, not exactly-once email across a network.”
 
+> **Common misconception.** "The outbox gives exactly-once delivery." It gives
+> *at-least-once* delivery of work that was committed together with the business
+> change. Duplicates are expected. The inbox's unique receipt makes the *local*
+> effect happen once, but it cannot make an external email or provider call exactly-once.
+
 ## 1. See the two different failure gaps
 
 The original payment reference commits its payment before publishing to Redis.

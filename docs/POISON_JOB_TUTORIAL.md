@@ -39,6 +39,11 @@ can make at most two keyed redrives using the original payment UUID. If acceptan
 already happened, redrive finds that receipt. A late success still requires a
 refund and cannot take a seat from its newer owner.”
 
+> **Common misconception.** "Quarantine resolves the payment." A quarantined
+> `UNKNOWN` payment is still a liability: the provider may have charged the buyer.
+> Quarantine stops it from blocking healthy work. Reconciliation or a keyed redrive
+> with the *same* payment UUID is still needed to settle it.
+
 ## 1. Understand the actual failure gap
 
 Before this change, `recoverBatch` selected up to 20 payment IDs and called recover
