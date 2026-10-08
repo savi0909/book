@@ -29,7 +29,9 @@ discovery budget. HTTP/status metadata is saved; request/response bodies are not
 Local Docker group: `sd-book-my-show-java-load-test`, 384 MiB/1 CPU (was 0.5 until 2026-10-07), separate
 from both business services and the retained Node generator. Local runs require
 the existing metadata observer. Final remote experiments belong on Ankita.
-Redis remains deferred to phase 3; PostgreSQL remains at 1 GiB.
+Redis remains deferred to phase 3. PostgreSQL was 1 GiB when this was written;
+it is 3 GB / 2 CPUs since 2026-10-07. The retained loader container still has
+0.5 CPU until it is recreated (see [project status](../docs/PROJECT_STATUS.md)).
 
 Import [Postman collection](postman/java-load-tester.postman_collection.json)
 and [local environment](postman/local.postman_environment.json) after starting
@@ -37,6 +39,9 @@ the loader. This collection deliberately creates only one measured hold; use
 the tutorial's explicit 100-call command for the selected 10 RPS smoke.
 
 ## Movie advance-booking journeys (2026-10-07)
+
+Study guide: [movie advance-booking tutorial, part 6](../docs/MOVIE_ADVANCE_BOOKING_TUTORIAL.md#part-6--the-movie-journey-workload).
+Tests: 19 in total (14 `LoadTesterTest` + 5 `MovieLoadTest`).
 
 `POST /load/movie-runs` starts a finite MOVIE run. Each arrival is one user journey
 against the permanent PVR catalog:

@@ -65,6 +65,7 @@ The Java generator uses project `sd-book-my-show-java-load-test`, not the backen
 project. Local mode joins the booking network; Ankita mode uses a private gateway
 over Tailscale and needs no Abhishek Docker network. Its 384 MiB/0.5 CPU allocation
 is separate from PostgreSQL 1 GiB. Redis is still deferred.
+(2026-10-06 values; the loader now defaults to 1 CPU and PostgreSQL has 3 GB / 2 CPUs, see the resource line at the top.)
 
 The Compose application containers still listen on port 8105; HAProxy uses those
 internal service addresses. The provider still listens on 8121 inside its container.

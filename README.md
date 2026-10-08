@@ -4,6 +4,18 @@
 and locally verified; services currently stopped with data retained. Ankita run
 pending; Redis availability remains deferred to phase 3.
 
+> **Current state (2026-10-08):** origin is `https://github.com/savi0909/book`
+> (work merges through PRs). PostgreSQL runs at 3 GB / 2 CPUs (tuned); APIs at
+> 512 MB / 1 CPU. The Java loader defaults to 1 CPU, but the retained container
+> still has 0.5 CPU. The loader has 19 tests and includes movie journeys
+> (`POST /load/movie-runs`). Statements below that say "origin absent",
+> "PostgreSQL 1 GiB", "14 Java tests", "0.5 CPU" or "movie load unbuilt" are dated
+> history. Start with [project status](docs/PROJECT_STATUS.md#study-path) and its study path.
+
+[Movie advance-booking tutorial](docs/MOVIE_ADVANCE_BOOKING_TUTORIAL.md) (2026-10-08):
+PVR catalog, rolling show window, purge, booking window, the JIT CPU incident,
+movie journeys, container sizing and PostgreSQL on Ankita.
+
 [Java virtual-thread load tester](load-tester-java/README.md): Spring Boot/RestClient,
 own Docker group, finite HOLD/read/mixed workloads and bounded retries/discovery.
 [Tutorial and Ankita/local commands](docs/JAVA_LOAD_TESTER_TUTORIAL.md).

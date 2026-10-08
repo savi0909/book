@@ -7,6 +7,13 @@ a standalone app inside this repository, with its own Docker group. Earlier
 This Java module targets the existing generic ticket endpoints in Book My Show;
 movie V5 atomic group holds/payments/live availability remain separate work.
 
+> **Current state (2026-10-08):** on 2026-10-07 the same service gained a second
+> runner, `POST /load/movie-runs`, which drives movie advance-booking journeys
+> (browse → seat map → group hold → checkout → poll → optional cancel). This
+> tutorial still covers the generic runner it was written for. The movie runner
+> is taught in [movie advance-booking tutorial, part 6](MOVIE_ADVANCE_BOOKING_TUTORIAL.md#part-6--the-movie-journey-workload).
+> The loader now has 19 tests (14 here + 5 in `MovieLoadTest`).
+
 ## What came from the reference
 
 The actual reference is `D:/java-projects/url-shortener-load-test`, rather than
@@ -115,10 +122,16 @@ uses 192 MiB Java heap and retains metadata under `load-test/results/java/<runId
 The older Node group stays retained. PostgreSQL stays 1 GiB, with its same volume.
 Redis is not added: phase 3 proposes 500 MiB for advisory availability updates.
 
+> **Current state (2026-10-08):** the paragraph above is the 2026-10-06 allocation.
+> `compose.local.yml` now gives the loader **1 CPU**, and the Dockerfile sizes the
+> heap as 50% of 384 MiB (≈192 MiB) without a fixed `-Xmx`. The retained container
+> still has 0.5 CPU until it is recreated. PostgreSQL is now **3 GB / 2 CPUs**. See
+> [project status](PROJECT_STATUS.md) and [sizing, part 7](MOVIE_ADVANCE_BOOKING_TUTORIAL.md#part-7--sizing-containers).
+
 ## Ankita checkout and run
 
-Use the committed repository or the complete-history bundle while origin is
-absent. Build the standalone loader on Ankita with Java 21/Maven and Docker.
+Clone `https://github.com/savi0909/book` (origin exists since 2026-10-07; the earlier
+Git-bundle transfer predates it). Build the standalone loader on Ankita with Java 21/Maven and Docker.
 Unlike local Compose, the [Ankita file](../load-tester-java/compose.ankita.yml)
 does not require Abhishek's Docker network.
 
@@ -163,6 +176,10 @@ Read this order in IntelliJ:
 3. [LoadRunService](../load-tester-java/src/main/java/com/example/bookingload/LoadRunService.java): execute → fixed arrivals → invoke → report.
 4. [BookingClient](../load-tester-java/src/main/java/com/example/bookingload/BookingClient.java): virtual HTTP task, RestClient, body cap, timeout and closure guard.
 5. [LoadTesterTest](../load-tester-java/src/test/java/com/example/bookingload/LoadTesterTest.java): lost commit, replay, discovery, saturation and heartbeat expiry.
+6. Movie runner (added 2026-10-07): [MovieSpec](../load-tester-java/src/main/java/com/example/bookingload/MovieSpec.java) →
+   [MovieRunService](../load-tester-java/src/main/java/com/example/bookingload/MovieRunService.java) →
+   [MovieChoices](../load-tester-java/src/main/java/com/example/bookingload/MovieChoices.java) →
+   [RunSlot](../load-tester-java/src/main/java/com/example/bookingload/RunSlot.java). It is walked through in the advance-booking tutorial.
 
 Exercise: predict the outcomes for 10 HOLD operations with 2 seats and no retries.
 Then use a separately named, observer-backed small run (`rate:10,seconds:1,seats:2`).

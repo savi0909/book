@@ -4,6 +4,17 @@ Implemented and verified: 2026-10-04. Read this guide in two passes: first learn
 the five interview points, then trace the files and run the experiments. Scenario
 2 (provider isolation) and scenario 3 (poison-job handling) are queued separately.
 
+> **Running this in this repository (note added 2026-10-08).** This tutorial was
+> written and verified in the original `D:/java-projects/ticket-booking-lab`. Its
+> commands and diagrams keep that lab's addresses as history. In this standalone
+> repository, run from `D:/sd-book-my-show` (Compose project `sd-book-my-show`) and
+> substitute: API A 8105→**8130**, API B 8106→**8131**, gateway 8107→**8132**,
+> provider 8123→**8133** (container port 8121 unchanged), PostgreSQL 5547→**5553**.
+> The full mapping is in [standalone setup](STANDALONE_SETUP.md#separate-local-addresses).
+> `git diff 6c2e57a..main` shows the generic code it uses is unchanged; later
+> commits added only movie code and resource limits.
+> Recommended order: see the [study path](PROJECT_STATUS.md#study-path).
+
 ## The five points to say in an interview
 
 1. **Use one client endpoint with multiple API replicas.** HAProxy routes new

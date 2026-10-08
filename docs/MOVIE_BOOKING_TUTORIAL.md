@@ -98,6 +98,14 @@ Availability reads treat expired pointers as logically free before the sweeper
 updates old booking state. A new hold replaces them under seat locks. Every
 admission/confirmation uses database time, not a browser clock.
 
+> **Added 2026-10-07:** after locking the seats, `MovieBookingService.hold` makes
+> two date checks before reading ownership. A show that has started returns
+> `409 SHOW_STARTED`. A show whose local date is after today + `movie.booking-window-days`
+> (default 3) returns `409 SHOW_NOT_YET_OPEN`. Both checks use the database clock
+> and the multiplex's zone. Both throw inside the transaction, so the seat locks
+> roll back and no booking row is written. Taught in
+> [advance-booking tutorial, part 4](MOVIE_ADVANCE_BOOKING_TUTORIAL.md#part-4--the-booking-window).
+
 ## Payment percentages and identities
 
 The percentages apply across **all payment attempts**:9500 of 10000 plans succeed
@@ -151,6 +159,14 @@ docker compose -f compose.yml -f compose.failover.yml build api-a api-b
 docker compose -f compose.yml -f compose.failover.yml up -d --wait
 ```
 
+> **Current state (2026-10-08):** base `compose.yml` sets `MOVIE_SCHEDULE_ENABLED=true`
+> on both APIs, so this `up` also starts `MovieScheduleMaintainer`. Against an
+> empty database, its first tick fills today..today+3 for the whole PVR catalog:
+> 40,333 shows and 14.25M seat rows, which took 467.8 s on 2026-10-07 and grew
+> the database to about 1.7 GB. Your own demo shows are purged once their local
+> day has passed. See [PVR catalog](PVR_CATALOG_SCHEDULE.md) and
+> [advance-booking tutorial](MOVIE_ADVANCE_BOOKING_TUTORIAL.md).
+
 Use A 8130/B 8131/gateway 8132/PostgreSQL 5553. Movie mock is in-process; the inherited
 `compose.provider.yml` is for generic ticket studies, not this movie workflow.
 Ordinary checkout uses `{}` and automatically chooses its plan. 202 means durable
@@ -158,7 +174,8 @@ intent; poll GET booking to discover the result. If a response is uncertain,
 replay the original key before considering a new payment.
 
 For deterministic learning, the optional overlay enables `testBucket` and manual
-reconcile, and disables both legacy/movie loops on both replicas:
+reconcile, and disables both legacy/movie loops on both replicas (since 2026-10-07
+it also sets `MOVIE_SCHEDULE_ENABLED=false`, so no catalog fill or purge runs):
 
 ```powershell
 docker compose -f compose.yml -f compose.failover.yml -f compose.movie.yml config --quiet

@@ -7,6 +7,14 @@ The **Java virtual-thread load tester is delivered**, with its own Docker group,
 [verification](../load-tester-java/docs/VERIFICATION.md). The earlier Node controlled
 comparison remains retained; do not rebuild either from an older planning note.
 
+> **Current state (2026-10-08):** origin is `https://github.com/savi0909/book`
+> (work merges through PRs). PostgreSQL runs at 3 GB / 2 CPUs (tuned); APIs at
+> 512 MB / 1 CPU. The Java loader defaults to 1 CPU, but the retained container
+> still has 0.5 CPU. The loader has 19 tests and includes movie journeys
+> (`POST /load/movie-runs`). Statements below that say "origin absent",
+> "PostgreSQL 1 GiB", "14 Java tests", "0.5 CPU" or "movie load unbuilt" are dated
+> history. Start with [project status](PROJECT_STATUS.md#study-path) and its study path.
+
 At 12:21 IST, APIs/gateway/PostgreSQL and Java/Node generator containers were
 observed stopped and retained. PostgreSQL keeps its 1 GiB limit and existing volume.
 No application tests or workload were run during this documentation refresh.

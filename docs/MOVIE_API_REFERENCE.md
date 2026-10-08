@@ -8,6 +8,8 @@ operate separately from inherited `/api/events` and generic bookings.
 | --- | --- |
 | POST /api/demo/movie/multiplexes |201;5-100 uniquely named screens,200-500 seats each, valid IANA zone |
 | GET /api/movie/multiplexes/{id} |200; screens/category counts |
+| GET /api/movie/multiplexes?city= |200 (added 2026-10-07); permanent catalog sites only, ordered by city then name; `{id,name,brand,city,state,screenCount}`; omit `city` for all 303 |
+| GET /api/movie/now-showing |200 (added 2026-10-07); synthetic slate ordered by weight; `{movieId,title,language,durationMinutes,blockbuster}` |
 | POST /api/demo/movie/movies |201; title/language/runtime 1-360 minutes |
 | POST /api/demo/movie/shows |201; future timestamp, turnaround 0-120 minutes; overlap 409 |
 | GET /api/movie/shows?multiplexId=&date=&limit=&offset= |200; local start date; limit 1-100/default 50, offset 0-100000 |

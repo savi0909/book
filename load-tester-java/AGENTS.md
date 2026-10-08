@@ -25,4 +25,5 @@ Do not add SSE, shared admission or massive load solely because docs mention the
 The older Node module is retained. Never delete files/directories/data/containers
 or remove markers without explicit permission. Preserve unrelated stacks.
 After task validation commit; push only to this repo's configured origin and
-verify it. Origin is currently absent. Update canonical learning records.
+verify it. Origin is https://github.com/savi0909/book (since 2026-10-07); use a
+branch and PR. Update canonical learning records.

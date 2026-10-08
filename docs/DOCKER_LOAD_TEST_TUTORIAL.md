@@ -11,11 +11,18 @@ it preserves the existing manifest format. No payments/movie workload are sent.
 
 ## Docker groups and resources
 
-| Project | Service | Current limit |
+| Project | Service | Limit on 2026-10-06 |
 | --- | --- | --- |
 | sd-book-my-show | postgres |1 GiB memory;2 GiB combined memory+swap ceiling |
 | sd-book-my-show | api-a / api-b / gateway | Existing limits/configuration retained |
 | sd-book-my-show-load-test | load-tester |256 MiB,0.5 CPU,64 PIDs,128 MiB Node heap |
+
+> **Current state (2026-10-08):** PostgreSQL is now **3 GB memory / 4 GB
+> memory+swap / 2 CPUs**, with `shared_buffers=768MB`, `effective_cache_size=2GB`,
+> `work_mem=16MB`, `maintenance_work_mem=256MB` and `shm_size: 256mb`
+> ([compose.yml](../compose.yml)). APIs are 512 MB / 1 CPU each, the gateway 96 MB /
+> 0.5 CPU. The Node load-test group above is unchanged. Why these numbers were
+> chosen: [advance-booking tutorial, part 7](MOVIE_ADVANCE_BOOKING_TUTORIAL.md#part-7--sizing-containers).
 
 [Load Compose](../load-test/compose.yml) uses an external `sd-book-my-show_default`
 network to reach internal API A and the gateway. It owns no database, broker or
@@ -33,6 +40,8 @@ The actual container ID and `sd-book-my-show_booking-data` volume remained the s
 no database restart/replacement/delete was needed. Verified memory 1073741824 bytes,
 healthy. The swap setting is a total ceiling, not 2 GiB extra RAM. shared_buffers
 and other SQL settings are unchanged; memory headroom does not establish capacity.
+(On 2026-10-07 the SQL settings were tuned as noted above; this sentence describes
+the 2026-10-06 change only.)
 
 ## Repeat with new output/control names
 

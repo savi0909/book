@@ -7,6 +7,12 @@ will run business load on Ankita. Remote measurements remain pending.
 Server shared admission, movie load/payment workflows, live availability and
 100K visitors are separate future deliveries.
 
+> **Current state (2026-10-08):** movie journey load now exists in the *Java*
+> loader (`POST /load/movie-runs`, 2026-10-07). See
+> [advance-booking tutorial, part 6](MOVIE_ADVANCE_BOOKING_TUTORIAL.md#part-6--the-movie-journey-workload).
+> This Node module remains the generic retry-comparison study. Shared admission,
+> live availability and 100K visitors are still future work.
+
 The user subsequently authorized bounded local loader validation. Two small
 actual-stack checks passed; see [evidence](HOLD_LOAD_TEST_VERIFICATION.md).
 The final business comparison remains an Ankita run.
@@ -322,6 +328,10 @@ larger than the deadline in the fake policy test: predict why no second request
 is sent and why the DB-failure version stays unresolved.
 
 ## Checkout without an origin
+
+> **Current state (2026-10-08):** origin now exists. On Ankita, run
+> `git clone https://github.com/savi0909/book.git sd-book-my-show` instead of using
+> a bundle. The section below is kept as the 2026-10-06 procedure.
 
 This repository still has no origin. The delivery includes a verified Git bundle
 under `target/` for manual transfer; the final chat gives its exact filename.

@@ -5,6 +5,14 @@ Updated 2026-10-07. Start with [current project status](docs/PROJECT_STATUS.md),
 [movie tutorial](docs/MOVIE_BOOKING_TUTORIAL.md) and
 [movie verification](docs/MOVIE_VERIFICATION.md).
 
+> **Current state (2026-10-08):** origin is `https://github.com/savi0909/book`
+> (work merges through PRs). PostgreSQL runs at 3 GB / 2 CPUs (tuned); APIs at
+> 512 MB / 1 CPU. The Java loader defaults to 1 CPU, but the retained container
+> still has 0.5 CPU. The loader has 19 tests and includes movie journeys
+> (`POST /load/movie-runs`). Statements below that say "origin absent",
+> "PostgreSQL 1 GiB", "14 Java tests", "0.5 CPU" or "movie load unbuilt" are dated
+> history. Start with [project status](docs/PROJECT_STATUS.md#study-path) and its study path.
+
 ## Current runtime and delivery boundary — 2026-10-07
 
 Documentation/status refresh only. Repository was clean at implementation commit
@@ -191,7 +199,7 @@ tailnet connectivity/reachability has not been verified or configured. No sustai
 workload has been run. Other proposals are in [future work](docs/FUTURE_WORK.md).
 Do not start additional scenarios/features solely because they appear there.
 
-No origin is configured as of this context update. Await the user's fresh empty
+Historical (before 2026-10-07; origin now exists, see top): No origin is configured as of this context update. Await the user's fresh empty
 GitHub repository URL, then push main without force and verify remote HEAD.
 Do not reuse the original workspace origin. Local commits do not establish publication.
 
