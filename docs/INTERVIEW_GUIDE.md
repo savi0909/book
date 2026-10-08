@@ -1,5 +1,46 @@
 # Ticket booking interview practice
 
+Recommended order through the tutorials: [study path](PROJECT_STATUS.md#study-path).
+
+## Movie advance-booking track
+
+Read [the advance-booking tutorial](MOVIE_ADVANCE_BOOKING_TUTORIAL.md). Each part
+ends with 3–5 points. Practise these questions out loud; every one has a traced
+example in the tutorial.
+
+1. Senior: why are V7's IDs uuid5 values, and what breaks if someone edits V7?
+   Describe the safe way to change reference data.
+2. Senior: show why the fill is idempotent *without* the advisory lock. What does
+   the lock add, and why is a per-batch xact lock not leader election?
+3. Senior: delete a show with bookings, payments and receipts in one statement.
+   Why do `NO ACTION` foreign keys allow the bookings↔payments cycle, and which
+   indexes does the delete need?
+4. Senior: a buyer at 02:00 IST is told a show three days out is "not yet open".
+   Find the bug (UTC dates) and explain why the database clock decides.
+5. Staff: walk through the JIT incident as a method: the wrong hypothesis, the
+   evidence (733 ms vs 8.4 ms per no-op batch), the narrow fix (`SET LOCAL`) and the
+   stale-jar trap. Then name another place where configured ≠ running.
+6. Staff: open versus closed load models; virtual threads versus a semaphore; why a
+   409 permits a fresh-key retry but a timeout does not; the 202/200 contract bug.
+7. Staff: reconcile the 537-journey run with the database (662 holds = 482 + 76 + 104)
+   and say what it does and does not prove.
+8. Staff: size a JVM in a 512 MiB / 1 CPU container: heap, GC choice, exit codes
+   137 and 143, CPU throttling.
+9. Principal: move PostgreSQL to another laptop over Tailscale. Which timeouts see
+   network time, what breaks over DERP, how is the port exposed, and where is the
+   new single point of failure?
+
+## Load-generation track
+
+[Hold comparison (Node)](HOLD_LOAD_TEST_TUTORIAL.md) and the
+[Java loader](JAVA_LOAD_TESTER_TUTORIAL.md) each carry interview points. Core
+questions: idempotency protects identity while budgets, deadlines and jitter
+protect capacity; a timeout is uncertainty, so keep the key and separate replay 200
+from recovery 201; fixed arrivals keep offered load honest; client caps are not
+shared server admission; and a local smoke is not a capacity measurement. The
+[Docker smoke](DOCKER_LOAD_TEST_TUTORIAL.md) adds resource isolation versus
+failure domains.
+
 ## Current movie-domain interview track
 
 Read [movie walkthrough](MOVIE_BOOKING_TUTORIAL.md) and [load plan](MOVIE_LOAD_SIMULATION_PLAN.md).

@@ -4,6 +4,12 @@ Delivered 2026-10-07 on branch `feature/pvr-rolling-catalog`. This sets up the
 movie domain's catalog data for the later booking/cancellation simulation. It
 does not generate any booking or cancellation traffic itself.
 
+**Study guide (2026-10-08):** [movie advance-booking tutorial](MOVIE_ADVANCE_BOOKING_TUTORIAL.md),
+parts 1–5: catalog, fill, purge, booking window and the JIT CPU case study.
+Since this was written, every batch also runs `SET LOCAL jit = off` (see part 5).
+Generator caveat: `scripts/generate_pvr_catalog.py` currently writes straight to V7.
+Redirect its output into a new migration (reported 2026-10-08, not fixed).
+
 ## What exists now
 
 | Piece | Where | Behaviour |

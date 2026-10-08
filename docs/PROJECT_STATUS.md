@@ -23,6 +23,31 @@ delivery the permanent PVR catalog and rolling today+3 show window
 | Node comparison module | Retained: controlled generic hold retry comparison, scoped default-off faults, journals, observer and capped discovery | [runbook](HOLD_LOAD_TEST_TUTORIAL.md) |
 | Resources and Docker separation | Defaults applied 2026-10-07: PostgreSQL 3 GB / 2 CPU (shared_buffers 768MB, effective_cache_size 2GB, work_mem 16MB, maintenance_work_mem 256MB, shm 256MB); APIs 512 MB / 1 CPU each (heap 60% ≈ 308 MB, Serial GC); gateway 96 MB / 0.5 CPU; Java loader 384 MB / 1 CPU (heap 50%) as the committed Compose default, see note below; Node group separate | [setup](STANDALONE_SETUP.md), [Java Compose](../load-tester-java/compose.local.yml) |
 
+## Study path
+
+Recommended order through the tutorials (added 2026-10-08). Each builds on the
+ones before it. Take one part per sitting and stop at its pause points.
+
+| # | Tutorial | What it teaches |
+| --- | --- | --- |
+| 1 | [Distributed-systems foundations](DISTRIBUTED_SYSTEMS_FOUNDATIONS.md) | Invariants first, then pessimistic vs optimistic locking, retries and retry storms, on one seat |
+| 2 | [IntelliJ code study](INTELLIJ_CODE_STUDY_TUTORIAL.md) (+ [API 1](API_01_CREATE_EVENT_WALKTHROUGH.md), [API 2](API_02_LIST_EVENTS_WALKTHROUGH.md), [API 3](API_03_GET_EVENT_WALKTHROUGH.md) walkthroughs) | Reading the generic single-seat hold/checkout code with a debugger |
+| 3 | [Scenario 1: API failover](API_FAILOVER_TUTORIAL.md) | Liveness vs readiness, commit-before-response, graceful drain |
+| 4 | [Scenario 2: provider isolation](PROVIDER_ISOLATION_TUTORIAL.md) (start with the [protection study](SCENARIO_02_PROTECTION_STUDY.md)) | Bulkheads, deadlines, circuit breakers, one retry owner, reconciliation |
+| 5 | [Scenario 3: poison jobs](POISON_JOB_TUTORIAL.md) | Per-item isolation, quarantine, keyed redrive, failure classification |
+| 6 | [Scenario 4: transactional outbox](TRANSACTIONAL_OUTBOX_TUTORIAL.md) | Commit/publish gap, leased dispatch, inbox, snapshot versions |
+| 7 | [Movie group booking](MOVIE_BOOKING_TUTORIAL.md) | Show inventory, atomic seat groups with sorted locks, payment attempts and refunds |
+| 8 | [Hold retry comparison (Node)](HOLD_LOAD_TEST_TUTORIAL.md) | Immediate vs jittered retries, ambiguity, discovery, journals |
+| 9 | [Docker 10 RPS smoke](DOCKER_LOAD_TEST_TUTORIAL.md) | A separate Compose group; resource isolation is not a failure domain |
+| 10 | [Java virtual-thread loader](JAVA_LOAD_TESTER_TUTORIAL.md) | Fixed arrivals, virtual threads vs bounded concurrency, retry policies |
+| 11 | [Movie advance booking](MOVIE_ADVANCE_BOOKING_TUTORIAL.md) | PVR catalog, rolling window, purge, booking window, JIT case study, journeys, sizing, remote PostgreSQL |
+| 12 | [Interview guide](INTERVIEW_GUIDE.md) | Spoken practice across every track |
+
+Tutorials 3–6 were written in the original lab. Each has a note mapping its ports
+to this repository. Links into `D:/AA-SYSTEM-DESIGN-ARCHITECTURE/...` point to the
+local learning-source workspace on Abhishek's machine. They are deliberate, and
+they will not resolve on a fresh clone.
+
 **Loader CPU, observed 2026-10-08 (`docker inspect`, read-only):** the retained
 container `sd-book-my-show-java-load-test-load-tester-1` was created at
 2026-10-07T09:44Z from an earlier image. It has NanoCpus 0.5e9 and
