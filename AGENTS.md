@@ -1,5 +1,22 @@
 # SD Book My Show agent instructions
 
+## Tutorial review and advance-booking tutorial — 2026-10-08
+
+Start studying from the [study path](docs/PROJECT_STATUS.md#study-path). The new
+[movie advance-booking tutorial](docs/MOVIE_ADVANCE_BOOKING_TUTORIAL.md) covers the
+2026-10-07 work. [Review findings](docs/TUTORIAL_REVIEW_2026-10-08.md) list
+what was corrected. Current facts that supersede the older sections below:
+- Origin is https://github.com/savi0909/book; use a branch and PR, and merge only
+  on GitHub.
+- The Java loader has 19 tests (14 generic + 5 `MovieLoadTest`) and a movie runner.
+- PostgreSQL is 3 GB / 2 CPUs.
+- The loader's committed default is 1 CPU, but the retained container still has
+  0.5 CPU and `-Xmx192m` until it is recreated.
+- `MovieScheduleMaintainer` runs on **both** APIs (shared `&api-env` anchor).
+
+Open code defect (not fixed, needs user approval): `scripts/generate_pvr_catalog.py`
+writes straight to V7. The user's "no tests or load until asked" still applies.
+
 ## Movie advance-booking simulation / Ankita PostgreSQL — 2026-10-07
 
 User selected a MOVIE journey workload in the Java loader (POST /load/movie-runs):

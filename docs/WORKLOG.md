@@ -283,3 +283,25 @@ The Ankita PostgreSQL plan (`infra/ankita/*`, `compose.remote-db.yml`,
 statically validated only (compose config, PowerShell parse). It was not executed:
 Ankita was offline, and the user asked for no runs.
 
+## 2026-10-08: tutorial review, advance-booking tutorial and study path
+
+User ran the [tutorial handover](HANDOVER_TUTORIAL_REVIEW.md) on branch
+`docs/tutorial-review-advance-booking` (PR #5). Documentation only.
+
+- **Review:** 18 findings, recorded with evidence and resolutions in
+  [TUTORIAL_REVIEW_2026-10-08](TUTORIAL_REVIEW_2026-10-08.md). 16 fixed, 1
+  deferred (absolute links into the local learning-source workspace), and 1 code
+  defect reported but not fixed (`generate_pvr_catalog.py` writes straight to V7).
+- **New:** [movie advance-booking tutorial](MOVIE_ADVANCE_BOOKING_TUTORIAL.md),
+  eight parts. Its numbers come from code, V7 and the retained run reports. The
+  three movie runs reconcile with the database: 662 holds = 482 + 76 + 104.
+- **Enhanced:** spacing restored across 20 files (whitespace-only, checked by
+  script); dated current-state notes; exercises, interview points, diagrams and
+  misconception boxes; a [study path](PROJECT_STATUS.md#study-path).
+- **Observed read-only:** every sd-book-my-show container is stopped. PostgreSQL
+  shows 3 GB / 4 GB swap / 2 CPUs, and both APIs have `MOVIE_SCHEDULE_ENABLED=true`.
+  The retained loader container still has 0.5 CPU and `-Xmx192m`, so the
+  2026-10-07 movie runs used those values.
+
+No tests, load, observers, container operations or database queries were run.
+No migrations or product code changed.

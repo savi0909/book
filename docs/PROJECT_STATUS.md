@@ -23,6 +23,14 @@ delivery the permanent PVR catalog and rolling today+3 show window
 | Node comparison module | Retained: controlled generic hold retry comparison, scoped default-off faults, journals, observer and capped discovery | [runbook](HOLD_LOAD_TEST_TUTORIAL.md) |
 | Resources and Docker separation | Defaults applied 2026-10-07: PostgreSQL 3 GB / 2 CPU (shared_buffers 768MB, effective_cache_size 2GB, work_mem 16MB, maintenance_work_mem 256MB, shm 256MB); APIs 512 MB / 1 CPU each (heap 60% ≈ 308 MB, Serial GC); gateway 96 MB / 0.5 CPU; Java loader 384 MB / 1 CPU (heap 50%) as the committed Compose default, see note below; Node group separate | [setup](STANDALONE_SETUP.md), [Java Compose](../load-tester-java/compose.local.yml) |
 
+## Documentation review — 2026-10-08
+
+Reviewed all eleven tutorials against code and config; see the
+[findings and resolutions](TUTORIAL_REVIEW_2026-10-08.md). Added the
+[advance-booking tutorial](MOVIE_ADVANCE_BOOKING_TUTORIAL.md) and the study path
+below. One code defect is reported and not fixed (pending item 7). No tests, load
+or container operations were run.
+
 ## Study path
 
 Recommended order through the tutorials (added 2026-10-08). Each builds on the

@@ -1,6 +1,10 @@
 @AGENTS.md
 
-Next session (2026-10-08): [tutorial review/continue handover](docs/HANDOVER_TUTORIAL_REVIEW.md).
+Latest (2026-10-08): tutorials reviewed and the [study path](docs/PROJECT_STATUS.md#study-path)
+added; new [movie advance-booking tutorial](docs/MOVIE_ADVANCE_BOOKING_TUTORIAL.md);
+[review findings](docs/TUTORIAL_REVIEW_2026-10-08.md). Origin exists (savi0909/book).
+Generator-to-V7 defect reported, not fixed. Still no tests/load until requested.
+The [handover](docs/HANDOVER_TUTORIAL_REVIEW.md) that produced this is done (PR #5).
 
 Latest: movie advance-booking journeys in the Java loader; PostgreSQL 3 GB/2 CPU;
 [Ankita PostgreSQL over Tailscale](docs/ANKITA_POSTGRES.md) scripted, not yet run.
