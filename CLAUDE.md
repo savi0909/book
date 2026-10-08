@@ -1,5 +1,7 @@
 @AGENTS.md
 
+Next session (2026-10-08): [tutorial review/continue handover](docs/HANDOVER_TUTORIAL_REVIEW.md).
+
 Latest: movie advance-booking journeys in the Java loader; PostgreSQL 3 GB/2 CPU;
 [Ankita PostgreSQL over Tailscale](docs/ANKITA_POSTGRES.md) scripted, not yet run.
 User asked for no further tests/load until requested.
