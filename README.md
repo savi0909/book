@@ -4,12 +4,24 @@
 and locally verified; services currently stopped with data retained. Ankita run
 pending; Redis availability remains deferred to phase 3.
 
+> **Current state (2026-10-08):** origin is `https://github.com/savi0909/book`
+> (work merges through PRs). PostgreSQL runs at 3 GB / 2 CPUs (tuned); APIs at
+> 512 MB / 1 CPU. The Java loader defaults to 1 CPU, but the retained container
+> still has 0.5 CPU. The loader has 19 tests and includes movie journeys
+> (`POST /load/movie-runs`). Statements below that say "origin absent",
+> "PostgreSQL 1 GiB", "14 Java tests", "0.5 CPU" or "movie load unbuilt" are dated
+> history. Start with [project status](docs/PROJECT_STATUS.md#study-path) and its study path.
+
+[Movie advance-booking tutorial](docs/MOVIE_ADVANCE_BOOKING_TUTORIAL.md) (2026-10-08):
+PVR catalog, rolling show window, purge, booking window, the JIT CPU incident,
+movie journeys, container sizing and PostgreSQL on Ankita.
+
 [Java virtual-thread load tester](load-tester-java/README.md): Spring Boot/RestClient,
 own Docker group, finite HOLD/read/mixed workloads and bounded retries/discovery.
 [Tutorial and Ankita/local commands](docs/JAVA_LOAD_TESTER_TUTORIAL.md).
 
-[Separate Docker load-test group and10 RPS result](docs/DOCKER_LOAD_TEST_TUTORIAL.md):
-100/100 successful holds; PostgreSQL1 GiB. Redis availability is reserved for phase3.
+[Separate Docker load-test group and 10 RPS result](docs/DOCKER_LOAD_TEST_TUTORIAL.md):
+100/100 successful holds; PostgreSQL 1 GiB. Redis availability is reserved for phase 3.
 
 [Hold load-test module](load-test/README.md): finite immediate/jittered generic
 hold comparison, scoped default-off faults, metadata observer and discovery.
@@ -46,7 +58,7 @@ Its reconstructed September 15-October 5 history is explained in
 [timeline provenance](TIMELINE_PROVENANCE.md); original verification dates are retained.
 
 The copied tutorials describe the original lab's addresses. This repository uses
-API A8130, API B8131, gateway8132, provider8133 and PostgreSQL5553. Its scripts and
+API A 8130, API B 8131, gateway 8132, provider 8133 and PostgreSQL 5553. Its scripts and
 Postman environments use these standalone addresses. Original evidence and tutorial
 experiment dates describe the source lab; see standalone verification for this copy.
 
@@ -127,7 +139,7 @@ Import [the API 1 learning collection](postman/api-01-create-event.postman_colle
 
 [Scenario 2 — payment-provider isolation](docs/PROVIDER_ISOLATION_TUTORIAL.md): independent retained Java stub, bounded calls/work, deadlines, breaker, durable retry budget and backlog admission. Detailed walkthrough and interview points.
 
-[Next-session handover](docs/NEXT_SESSION_HANDOVER.md): review completed scenarios1–4; later concepts remain separate proposals.
+[Next-session handover](docs/NEXT_SESSION_HANDOVER.md): review completed scenarios 1–4; later concepts remain separate proposals.
 
 [Scenario 1 — API failover and graceful restart](docs/API_FAILOVER_TUTORIAL.md): implemented optional HAProxy setup, deterministic crash/drain experiments, detailed source walkthrough, and five interview points. Provider and poison-job isolation have separate studies.
 
@@ -139,8 +151,8 @@ Import [the API 1 learning collection](postman/api-01-create-event.postman_colle
 
 ## Optional provider-isolation study
 
-The standalone provider uses host8133, separate from the original lab and URL
-shortener. Scenario3 uses the default simulator and requires no new port. See [the poison tutorial](docs/POISON_JOB_TUTORIAL.md)
+The standalone provider uses host 8133, separate from the original lab and URL
+shortener. Scenario 3 uses the default simulator and requires no new port. See [the poison tutorial](docs/POISON_JOB_TUTORIAL.md)
 for base+failover+poison commands and manual maintenance ticks.
 
 Use all three files to retain failover controls and enable the independent stub:
@@ -153,11 +165,11 @@ node scripts/learn-provider.mjs
 npx --yes newman@6.2.2 run postman/provider.postman_collection.json -e postman/provider.postman_environment.json --delay-request 500
 ```
 
-Provider: loopback8133 (container8121), retained provider-data journal. Public local
+Provider: loopback 8133 (container 8121), retained provider-data journal. Public local
 fault controls; no real payments. Two provider-call slots per API, two actual
 processing slots at the stub, 400ms HTTP deadline, four automatic dispatches or
 10s dispatch budget; exhausted UNKNOWN needs explicit reconciliation. New checkout
-pauses at100 unresolved or30s oldest age; hold/browse and existing-key replay remain
+pauses at 100 unresolved or 30s oldest age; hold/browse and existing-key replay remain
 available. See [tutorial](docs/PROVIDER_ISOLATION_TUTORIAL.md) and [API](docs/API_REFERENCE.md).
 Original booking collection/harness use the default simulator, whose unlimited
 polling contract differs from this overlay. Run fault exercises sequentially.

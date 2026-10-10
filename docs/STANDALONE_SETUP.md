@@ -1,15 +1,15 @@
 # Standalone SD Book My Show setup
 
-Status refresh2026-10-07: [current project status](PROJECT_STATUS.md).
+Status refresh 2026-10-07: [current project status](PROJECT_STATUS.md).
 Business services and both generator groups are currently stopped/retained.
 The Java virtual-thread generator has its own [setup/tutorial](JAVA_LOAD_TESTER_TUTORIAL.md)
 and separate Compose project; startup commands below are instructions, not
 evidence that the services are currently running.
 
 Resource defaults 2026-10-07: PostgreSQL 3 GB/2 CPU (tuned), APIs 512 MB/1 CPU, gateway 0.5 CPU,
-Java loader 1 CPU; see PROJECT_STATUS. Earlier follow-up2026-10-06: PostgreSQL1 GiB memory ceiling (2 GiB total
+Java loader 1 CPU; see PROJECT_STATUS. Earlier follow-up 2026-10-06: PostgreSQL 1 GiB memory ceiling (2 GiB total
 memory+swap), existing retained volume. [Separate Docker load-test group/result](DOCKER_LOAD_TEST_TUTORIAL.md).
-Redis is deferred to phase3; no Redis service is part of the present stack.
+Redis is deferred to phase 3; no Redis service is part of the present stack.
 
 Created on October 5, 2026 at `D:/sd-book-my-show` with a fresh `git init`.
 The source lab remains in `D:/java-projects/ticket-booking-lab`.
@@ -63,13 +63,14 @@ They do not need the original application running. Do not run `mvn clean`.
 
 The Java generator uses project `sd-book-my-show-java-load-test`, not the backend
 project. Local mode joins the booking network; Ankita mode uses a private gateway
-over Tailscale and needs no Abhishek Docker network. Its384 MiB/0.5 CPU allocation
-is separate from PostgreSQL1 GiB. Redis is still deferred.
+over Tailscale and needs no Abhishek Docker network. Its 384 MiB/0.5 CPU allocation
+is separate from PostgreSQL 1 GiB. Redis is still deferred.
+(2026-10-06 values; the loader now defaults to 1 CPU and PostgreSQL has 3 GB / 2 CPUs, see the resource line at the top.)
 
-The Compose application containers still listen on port8105; HAProxy uses those
-internal service addresses. The provider still listens on8121 inside its container.
-Only host ports changed. Default host JDBC uses5553. For a host-only API, set
-`$env:PORT="8130"` before `mvn spring-boot:run`; the inherited default is8105.
+The Compose application containers still listen on port 8105; HAProxy uses those
+internal service addresses. The provider still listens on 8121 inside its container.
+Only host ports changed. Default host JDBC uses 5553. For a host-only API, set
+`$env:PORT="8130"` before `mvn spring-boot:run`; the inherited default is 8105.
 
 Container volume names are scoped to `sd-book-my-show`; the original lab's
 volumes are retained. No application stack was started during extraction.
@@ -87,7 +88,7 @@ npx --yes newman@6.2.2 run postman/ticket-booking-lab.postman_collection.json -e
 ```
 
 Run the failure exercises separately and read their tutorials first. The copied
-scripts now address8130-8133 and use this directory's Compose project. They can
+scripts now address 8130-8133 and use this directory's Compose project. They can
 restart this project's services. Original tutorials retain historical addresses:
 use the mapping above and the updated Postman environments for this repository.
 

@@ -1,34 +1,75 @@
 # Ticket booking interview practice
 
+Recommended order through the tutorials: [study path](PROJECT_STATUS.md#study-path).
+
+## Movie advance-booking track
+
+Read [the advance-booking tutorial](MOVIE_ADVANCE_BOOKING_TUTORIAL.md). Each part
+ends with 3–5 points. Practise these questions out loud; every one has a traced
+example in the tutorial.
+
+1. Senior: why are V7's IDs uuid5 values, and what breaks if someone edits V7?
+   Describe the safe way to change reference data.
+2. Senior: show why the fill is idempotent *without* the advisory lock. What does
+   the lock add, and why is a per-batch xact lock not leader election?
+3. Senior: delete a show with bookings, payments and receipts in one statement.
+   Why do `NO ACTION` foreign keys allow the bookings↔payments cycle, and which
+   indexes does the delete need?
+4. Senior: a buyer at 02:00 IST is told a show three days out is "not yet open".
+   Find the bug (UTC dates) and explain why the database clock decides.
+5. Staff: walk through the JIT incident as a method: the wrong hypothesis, the
+   evidence (733 ms vs 8.4 ms per no-op batch), the narrow fix (`SET LOCAL`) and the
+   stale-jar trap. Then name another place where configured ≠ running.
+6. Staff: open versus closed load models; virtual threads versus a semaphore; why a
+   409 permits a fresh-key retry but a timeout does not; the 202/200 contract bug.
+7. Staff: reconcile the 537-journey run with the database (662 holds = 482 + 76 + 104)
+   and say what it does and does not prove.
+8. Staff: size a JVM in a 512 MiB / 1 CPU container: heap, GC choice, exit codes
+   137 and 143, CPU throttling.
+9. Principal: move PostgreSQL to another laptop over Tailscale. Which timeouts see
+   network time, what breaks over DERP, how is the port exposed, and where is the
+   new single point of failure?
+
+## Load-generation track
+
+[Hold comparison (Node)](HOLD_LOAD_TEST_TUTORIAL.md) and the
+[Java loader](JAVA_LOAD_TESTER_TUTORIAL.md) each carry interview points. Core
+questions: idempotency protects identity while budgets, deadlines and jitter
+protect capacity; a timeout is uncertainty, so keep the key and separate replay 200
+from recovery 201; fixed arrivals keep offered load honest; client caps are not
+shared server admission; and a local smoke is not a capacity measurement. The
+[Docker smoke](DOCKER_LOAD_TEST_TUTORIAL.md) adds resource isolation versus
+failure domains.
+
 ## Current movie-domain interview track
 
 Read [movie walkthrough](MOVIE_BOOKING_TUTORIAL.md) and [load plan](MOVIE_LOAD_SIMULATION_PLAN.md).
 The inherited interview track below remains for generic single-seat studies.
 
-1. Senior: trace sorted locks for a three-category group; prove a409 leaves no
+1. Senior: trace sorted locks for a three-category group; prove a 409 leaves no
    partial hold and expired cleanup cannot release replacement ownership.
 2. Senior: distinguish same-key discovery, same-payment automatic retry and a
    fresh user payment. Explain the unchanged deadline and late-success refund.
-3. Staff: model20 shows/4000 show-seats versus one hot show. A10000-payment run
-   expects10500 logical calls before infrastructure replay; it does not imply
+3. Staff: model 20 shows/4000 show-seats versus one hot show. A10000-payment run
+   expects 10500 logical calls before infrastructure replay; it does not imply
   10500 simultaneous calls or a measured worker drain rate.
 4. Staff: diagnose lock contention, JDBC/servlet/gateway limits, polling and a
-   growing payment backlog. Define expected409 separately from availability errors.
+   growing payment backlog. Define expected 409 separately from availability errors.
 5. Principal: assign inventory/payment/reconciliation ownership; plan movie
    outbox/refund/auth rollout and show partitioning only after evidence. Old API
    versions lack movie routes: migrate schema first, route movie traffic to new
    replicas, and keep generic traffic compatible during the transition.
 
-Scenario4: [transactional outbox tutorial](TRANSACTIONAL_OUTBOX_TUTORIAL.md) gives
-five points/spoken answer plus3–5 points for atomic source work, recoverable delivery,
+Scenario 4: [transactional outbox tutorial](TRANSACTIONAL_OUTBOX_TUTORIAL.md) gives
+five points/spoken answer plus 3–5 points for atomic source work, recoverable delivery,
 inbox/ordering and operations/rollout. Trace the source/consumer/ack commits, explain
 why duplicate delivery is expected and distinguish event identity from ordering
 version. Demonstrate cancellation-first delivery without projection reactivation;
 explain snapshot versus delta semantics and why local receipt uniqueness cannot
 prove exactly-once email. Define old-writer drain and historical cutover policy.
 
-Scenario3: [poison-job tutorial](POISON_JOB_TUTORIAL.md) includes five scenario
-points, a short spoken answer and3–5 points per major subtopic: processing boundaries,
+Scenario 3: [poison-job tutorial](POISON_JOB_TUTORIAL.md) includes five scenario
+points, a short spoken answer and 3–5 points per major subtopic: processing boundaries,
 durable scheduling, classification, redrive and operational rollout/capacity. Explain
 why quarantined UNKNOWN remains liability, why redrive uses the same UUID and why
 old recovery workers must drain before enabling a new quarantine policy. Reproduce

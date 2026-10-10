@@ -1,9 +1,20 @@
 # Scenario 2: a payment-provider outage without exhausting booking capacity
 
-For the2026-10-06 study session, start with the
+For the 2026-10-06 study session, start with the
 [protection reading guide](SCENARIO_02_PROTECTION_STUDY.md): one request trace,
 source checkpoints and prediction exercises before the future hold-retry comparison.
 This tutorial's original experiment dates/addresses remain historical.
+
+> **Running this in this repository (note added 2026-10-08).** This tutorial was
+> written and verified in the original `D:/java-projects/ticket-booking-lab`. Its
+> commands and diagrams keep that lab's addresses as history. In this standalone
+> repository, run from `D:/sd-book-my-show` (Compose project `sd-book-my-show`) and
+> substitute: API A 8105→**8130**, API B 8106→**8131**, gateway 8107→**8132**,
+> provider 8123→**8133** (container port 8121 unchanged), PostgreSQL 5547→**5553**.
+> The full mapping is in [standalone setup](STANDALONE_SETUP.md#separate-local-addresses).
+> `git diff 6c2e57a..main` shows the generic code it uses is unchanged; later
+> commits added only movie code and resource limits.
+> Recommended order: see the [study path](PROJECT_STATUS.md#study-path).
 
 ## Five interview points to remember first
 
@@ -34,6 +45,11 @@ creates a refund obligation and cannot reclaim another buyer’s seat.”
 
 This describes the local implementation, not a production payment guarantee.
 Executed results and their limits are in [VERIFICATION](VERIFICATION.md).
+
+> **Common misconception.** "A circuit breaker protects the provider, so retries
+> are fine behind it." The breaker only stops calls while it is open. Bounded
+> slots (bulkheads), deadlines and *one* retry owner stop a slow provider from
+> consuming booking capacity. Without them, the breaker trips after the damage is done.
 
 ## The failure story, step by step
 

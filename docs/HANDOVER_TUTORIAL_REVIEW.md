@@ -84,6 +84,12 @@ it with file:line evidence and ask before fixing it.
   - IDs are deterministic uuid5 values.
 
 **Rolling window: `MovieScheduleMaintainer`**
+
+> Correction (2026-10-08 review): the maintainer is enabled on **both** APIs, not
+> api-a only. `MOVIE_SCHEDULE_ENABLED` sits in the `&api-env` anchor, which api-b
+> merges (`compose.yml`), and `docker inspect` shows it on both containers. The
+> per-batch advisory lock decides which replica does each batch. The hold keys
+> are `mv:<run>:<i>:h1` / `:h2` and `mv:<run>:<i>:pay` (`MovieRunService.journey`).
 - Runs on its own daemon executor, gated by `movie.schedule-enabled`. It is on in
   base Compose (api-a only) and off in tests and `compose.movie.yml`.
 - Every tick runs purgePast and then fillWindow, under

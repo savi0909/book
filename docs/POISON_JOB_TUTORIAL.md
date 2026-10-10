@@ -1,5 +1,16 @@
 # Scenario 3: one bad payment must not block healthy recovery
 
+> **Running this in this repository (note added 2026-10-08).** This tutorial was
+> written and verified in the original `D:/java-projects/ticket-booking-lab`. Its
+> commands and diagrams keep that lab's addresses as history. In this standalone
+> repository, run from `D:/sd-book-my-show` (Compose project `sd-book-my-show`) and
+> substitute: API A 8105→**8130**, API B 8106→**8131**, gateway 8107→**8132**,
+> provider 8123→**8133** (container port 8121 unchanged), PostgreSQL 5547→**5553**.
+> The full mapping is in [standalone setup](STANDALONE_SETUP.md#separate-local-addresses).
+> `git diff 6c2e57a..main` shows the generic code it uses is unchanged; later
+> commits added only movie code and resource limits.
+> Recommended order: see the [study path](PROJECT_STATUS.md#study-path).
+
 This lesson extends the completed API-failover and provider-isolation studies.
 We implement poison-job isolation, persistent quarantine, controlled redrive and
 failure classification in the existing PostgreSQL payment worker. No broker is
@@ -28,9 +39,14 @@ can make at most two keyed redrives using the original payment UUID. If acceptan
 already happened, redrive finds that receipt. A late success still requires a
 refund and cannot take a seat from its newer owner.”
 
+> **Common misconception.** "Quarantine resolves the payment." A quarantined
+> `UNKNOWN` payment is still a liability: the provider may have charged the buyer.
+> Quarantine stops it from blocking healthy work. Reconciliation or a keyed redrive
+> with the *same* payment UUID is still needed to settle it.
+
 ## 1. Understand the actual failure gap
 
-Before this change, `recoverBatch` selected up to20 payment IDs and called recover
+Before this change, `recoverBatch` selected up to 20 payment IDs and called recover
 in a loop. ProviderBoundary.Unavailable already had its own catch. An unexpected
 runtime exception escaped the loop and skipped later IDs for that tick. The
 five-second lease could eventually make the failed item recoverable, but did not
@@ -74,7 +90,7 @@ seat constraints, receipt identity and checkout keys remain intact.
 
 Payment outcome is PENDING/UNKNOWN/SUCCESS/FAILURE. Recovery control is active or
 quarantined; it is stored in separate columns. A provider dispatch budget is a
-third policy (`retryExhausted`), introduced by scenario2.
+third policy (`retryExhausted`), introduced by scenario 2.
 
 ```mermaid
 flowchart TD
@@ -90,15 +106,15 @@ flowchart TD
   O --> T[Terminal payment; clear active quarantine]
 ```
 
-`itemFailures` counts caught item failures and saturates at3. It is historical,
+`itemFailures` counts caught item failures and saturates at 3. It is historical,
 not a claim that the error is mathematically deterministic. The reason is the
-exception class, at most64 characters; arbitrary exception messages or bodies
+exception class, at most 64 characters; arbitrary exception messages or bodies
 are not persisted. Counts and reason remain after resolution. The history records
 claims, failed processing, quarantine, fixture correction, redrive admission and
-outcome application. The history API returns the latest100 entries, newest first.
+outcome application. The history API returns the latest 100 entries, newest first.
 
 Automatic selection excludes quarantine and exhausted provider budgets, orders
-by nextAt then UUID, and selects20. Each item claim independently increments total
+by nextAt then UUID, and selects 20. Each item claim independently increments total
 `attempts` and gets a new token/5s lease. Selection is not ownership: competing
 replicas can select the same ID, but the conditional claim admits only one.
 
@@ -111,7 +127,7 @@ replicas can select the same ID, but the conditional claim admits only one.
   cannot record quarantine over another owner's work.
 
 The one-second item delay is a small, deterministic study policy. It does not
-replace scenario2's jittered provider deferral. A fleet-wide programming defect
+replace scenario 2's jittered provider deferral. A fleet-wide programming defect
 could fail many items: per-item isolation alone cannot prevent mass quarantine.
 Observe aggregate error signatures and stop rollout/dispatch when warranted.
 
@@ -141,14 +157,14 @@ some SQL defects still interrupt a batch and require investigation.
 
 ## 5. Controlled redrive and ambiguous operator responses
 
-Ordinary reconcile returns409 PAYMENT_QUARANTINED. Redrive is an explicit gated
+Ordinary reconcile returns 409 PAYMENT_QUARANTINED. Redrive is an explicit gated
 control with an Idempotency-Key, validated like existing checkout keys. In the
 **same short transaction** as claim, it locks the payment row, checks the key's
 durable history, requires quarantine, rejects an active lease and enforces a
-lifetime cap of2 admitted redrives. It records the key and increments the cap.
+lifetime cap of 2 admitted redrives. It records the key and increments the cap.
 Only then does the transaction commit and call the provider.
 
-Same payment/key replay returns200 `replayed:true`, with current diagnostics,
+Same payment/key replay returns 200 `replayed:true`, with current diagnostics,
 without another dispatch. Different keys racing serialize on the payment lock;
 an active lease rejects rather than admitting overlapping work. A redrive does
 not reset itemFailures, total attempts, retryStartedAt or retryExhausted. It can
@@ -159,7 +175,7 @@ A provider deferral or another item error therefore cannot silently restart poll
 **Crash boundary:** if the process dies after keyed claim commit, that key is
 still admitted and consumes one redrive. Replaying it discovers the current state,
 but does not execute another attempt, even after lease expiry. Investigate, wait
-for the5s lease to expire, then use a new deliberate key if a cap slot remains.
+for the 5s lease to expire, then use a new deliberate key if a cap slot remains.
 After both slots are spent, a verified immutable callback remains a local resolution
 path. No reset or unlimited hidden operator retry loop is provided.
 
@@ -178,8 +194,8 @@ No external refund or real payment occurs.
 
 ## 6. Run the retained, deterministic experiment
 
-The provider overlay's historical host8123 is currently occupied by URL-shortener
-API C. Scenario3 uses the default simulator and requires no additional port.
+The provider overlay's historical host 8123 is currently occupied by URL-shortener
+API C. Scenario 3 uses the default simulator and requires no additional port.
 Do not start compose.provider.yml while that port is owned elsewhere.
 
 ```powershell
@@ -224,9 +240,9 @@ Import [Postman collection](../postman/poison.postman_collection.json) and
 [environment](../postman/poison.postman_environment.json). The collection creates
 a two-seat event and bad/healthy checkout intents, then enables the bad fixture.
 First tick confirms the healthy item and records UNKNOWN/itemFailures1 for bad.
-Two subsequent ticks after1100ms waits reach quarantine with attempts3. It checks
+Two subsequent ticks after 1100ms waits reach quarantine with attempts 3. It checks
 history and denied ordinary reconcile, fixes the fixture and redrives once.
-Same-key replay leaves attempts4; confirmation audit occurs once.
+Same-key replay leaves attempts 4; confirmation audit occurs once.
 
 Relevant calls, substituting the original payment UUID:
 
@@ -254,26 +270,26 @@ Set IntelliJ breakpoints after claim returns, in afterAcceptance, in failed's
 token-checked update, in admitRedrive, and in apply's final confirmation predicate.
 Inspect SQL rows from another connection after acceptance: one receipt exists,
 payment is unresolved and no inventory lock spans the provider call. Debug pauses
-longer than5s intentionally make the lease stale; the worker then cannot record
+longer than 5s intentionally make the lease stale; the worker then cannot record
 its result. Resume through a fresh lease rather than weakening the fence.
 
 ## 8. Capacity, ownership, rollout and limits
 
 Let h be average healthy item processing time. One sequential worker's theoretical
-healthy completion bound is roughly1/h; a20-item batch costs approximately20h
-before overhead. Production scheduling waits500ms after the prior tick finishes,
-so useful rate is below20/(20h+0.5). Two APIs do not guarantee double capacity:
+healthy completion bound is roughly 1/h; a 20-item batch costs approximately 20h
+before overhead. Production scheduling waits 500ms after the prior tick finishes,
+so useful rate is below 20/(20h+0.5). Two APIs do not guarantee double capacity:
 they can select overlapping IDs and share PostgreSQL. These are equations to
 measure against, not measured throughput. Large backlogs and scan contention need
 partitioned ownership or a broker/outbox in a separate design.
 
-One bad item costs at most3 recorded automatic item failures before quarantine,
-plus at most2 admitted redrives. Crashes before failure recording are not bounded
+One bad item costs at most 3 recorded automatic item failures before quarantine,
+plus at most 2 admitted redrives. Crashes before failure recording are not bounded
 by itemFailures; remote mode retains its separate durable dispatch budget.
 Ordering/deferral provides finite healthy progress in the tested batch. There is
 no starvation-freedom proof under unbounded arrivals or fixed recovery-lag SLO.
 
-Quarantined UNKNOWN still counts toward scenario2's100-unresolved/30s-oldest SQL
+Quarantined UNKNOWN still counts toward scenario 2's100-unresolved/30s-oldest SQL
 admission rule. Excluding it would hide real unresolved liability and admit more
 work than operators can reconcile. The backlog API separately reports quarantined
 count. Expiry frees inventory; it does not resolve payment uncertainty. Test this
@@ -322,12 +338,12 @@ Exercises:
    each commit and say what a crash after that commit leaves behind.
 2. Keep the fixture broken for two redrives. Explain why a third key rejects
    and why changing the payment UUID would be unsafe.
-3. Predict the effect of a10s debugger pause after claim. Show token/lease fencing
+3. Predict the effect of a 10s debugger pause after claim. Show token/lease fencing
    without changing the configured lease.
 4. Compare a provider timeout, a DB outage and PoisonFixtureException. Identify
    which metadata changes and why the outcomes cannot be inferred from the error.
 5. Explain why the old worker cannot be safely left running during V3 rollout,
    and design a deliberate drain/upgrade order for a larger fleet.
 
-Stop after scenario3. Outbox delivery, refund saga, database HA, optimistic seat
+Stop after scenario 3. Outbox delivery, refund saga, database HA, optimistic seat
 versions and a general retry-storm harness remain separate proposals.

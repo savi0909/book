@@ -10,7 +10,7 @@ Java virtual-thread load tester is delivered at implementation commit8f9fd03:
 load-tester-java is a standalone Boot3.5.16/Java21 application using RestClient,
 fixed initial arrivals and finite generic hold/read/mixed workloads. Its own
 Docker group publishes management8135 on loopback.14 tests and Newman8 requests/
-9 assertions passed; two local100-request10 RPS smokes returned100201, SQL
+9 assertions passed; two local100-request 10 RPS smokes returned100201, SQL
 violations0. Preserve the retained Node module and all fixtures/recovery markers.
 
 Read docs/JAVA_LOAD_TESTER_TUTORIAL.md and load-tester-java/docs/VERIFICATION.md.
@@ -134,7 +134,7 @@ SQL-clock expiry, active-seat uniqueness, scoped durable request keys, one
 payment per booking, immutable provider outcomes and late-success refunds.
 Scenario1 adds optional HAProxy8107, readiness/DB health, admission/drain,
 graceful shutdown and gated post-commit response delay; proxy retries disabled.
-Scenario2 adds optional independent Java provider on host8123/container8121,
+Scenario2 adds optional independent Java provider on host8123/container 8121,
 retained provider-data journal, two HTTP slots per API/no waiting queue and two
 actual provider processing slots across both APIs. Faults NORMAL/SLOW/UNAVAILABLE/
 LOSS, bounded1500ms surviving remote work. Connect200ms/request400ms;

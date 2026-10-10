@@ -5,6 +5,18 @@ Runtime exercises below are instructions and predictions, not results from this
 documentation session. Existing execution evidence remains in the linked project
 documents. Reading or passing a test does not establish learner mastery.
 
+> **Running this in this repository (note added 2026-10-08).** This tutorial was
+> written and verified in the original `D:/java-projects/ticket-booking-lab`. Its
+> commands and diagrams keep that lab's addresses as history. In this standalone
+> repository, run from `D:/sd-book-my-show` (Compose project `sd-book-my-show`) and
+> substitute: API A 8105→**8130**, API B 8106→**8131**, gateway 8107→**8132**,
+> provider 8123→**8133** (container port 8121 unchanged), PostgreSQL 5547→**5553**.
+> The full mapping is in [standalone setup](STANDALONE_SETUP.md#separate-local-addresses).
+> `git diff 6c2e57a..main` shows the generic code it uses is unchanged; later
+> commits added only movie code and resource limits.
+> Recommended order: see the [study path](PROJECT_STATUS.md#study-path).
+> Open `D:/sd-book-my-show/pom.xml` in IntelliJ, not the original workspace `pom.xml`.
+
 ## 1. Prepare the study session
 
 Open `D:/java-projects/pom.xml` as a Maven project, use JDK 21 for both the project
@@ -170,6 +182,27 @@ Suspend:Thread and short pauses; use controlled-clock unit tests for longer
 inspection. An additional host process adds connections or namespace participants,
 so its observations are separate from the previously recorded two-replica checks.
 No interactive IntelliJ run is claimed by this documentation session.
+
+## Interview points (added 2026-10-08)
+
+1. Name the **authoritative state** first (PostgreSQL rows), then the lock that
+   protects it (the seat row `FOR UPDATE`), then the atomic boundary (one transaction).
+2. A durable idempotency key turns "retry after a lost reply" into a lookup.
+   Without one, a retry is a second operation.
+3. Expiry is decided with the **database clock** inside the same transaction.
+   Comparing a browser or JVM clock against stored deadlines invites disagreement.
+4. Inventory decisions and payment results are separate state machines. A late
+   payment success can create a refund obligation, but it must never steal a seat.
+5. A debugger changes timing. Pausing while holding a row lock or lease changes
+   the experiment, so prefer thread-only suspension and short pauses.
+
+> **Common misconception.** "`@Transactional` (or `TransactionTemplate`) makes
+> concurrent requests safe." A transaction makes *one* request's writes atomic.
+> Two concurrent holds for seat 7 are serialised because both lock the same seat
+> row first. Remove the lock, and both can read "free". Then only the
+> `one_active_booking_per_seat` unique index (V1) stops the second insert, and the
+> buyer gets a constraint error instead of a clean `409 SEAT_UNAVAILABLE`. The lock
+> gives the clean decision; the index is the last line of defence.
 
 ## Study record
 

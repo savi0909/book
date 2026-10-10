@@ -7,6 +7,12 @@ will run business load on Ankita. Remote measurements remain pending.
 Server shared admission, movie load/payment workflows, live availability and
 100K visitors are separate future deliveries.
 
+> **Current state (2026-10-08):** movie journey load now exists in the *Java*
+> loader (`POST /load/movie-runs`, 2026-10-07). See
+> [advance-booking tutorial, part 6](MOVIE_ADVANCE_BOOKING_TUTORIAL.md#part-6--the-movie-journey-workload).
+> This Node module remains the generic retry-comparison study. Shared admission,
+> live availability and 100K visitors are still future work.
+
 The user subsequently authorized bounded local loader validation. Two small
 actual-stack checks passed; see [evidence](HOLD_LOAD_TEST_VERIFICATION.md).
 The final business comparison remains an Ankita run.
@@ -60,6 +66,11 @@ lab transport choice; its connect cost is part of Ankita's observed latency.
 
 ## Classify responses before retrying
 
+> **Common misconception.** "Jitter reduces the number of retries." It does not:
+> both arms may send the same number of attempts. Jitter spreads them out in time,
+> so retries stop arriving in synchronised waves. Budgets and deadlines are what
+> cap the count.
+
 | Observation | Action |
 | --- | --- |
 | Valid 201/200 with matching buyer, event and seat | RESOLVED; preserve booking ID, creation time and expiry |
@@ -84,7 +95,7 @@ was installed or run on Ankita.
 
 Observed 2026-10-06: Abhishek `100.103.238.2`, Ankita `100.84.247.65` (offline).
 Recheck `tailscale status` before using the committed sample address. Use a literal
-current Tailscale IPv4; the CLI rejects a public/wildcard ingress bind. Port8134 is
+current Tailscale IPv4; the CLI rejects a public/wildcard ingress bind. Port 8134 is
 the proposed dedicated fixture ingress, not an already-running listener.
 
 ```powershell
@@ -133,14 +144,14 @@ node load-test/cli.mjs ingress --fixtures load-test/results/fixtures-01/fixtures
 ```
 
 The ingress forwards only exact POST `/api/holds` payloads/keys from the manifest
-to loopback gateway8132. All other routes, arbitrary fixtures and unauthenticated
+to loopback gateway 8132. All other routes, arbitrary fixtures and unauthenticated
 calls are rejected. Database, replica management and `/api/demo` routes remain
 outside this business ingress. There is no ingress HTTP control API.
 
 Remove `--enable-faults` for a no-fault baseline, with fresh fixtures and output
 paths. Fault-enabled runs deterministically reject the first attempt of every
 third operation with LAB_BUSY/Retry-After1. Every seventh operation's first
-successful upstream 201 is consumed and its downstream socket destroyed. Index0
+successful upstream 201 is consumed and its downstream socket destroyed. Index 0
 therefore exercises both busy and committed-loss handling when it wins the seat.
 Repeated keys share the ingress's attempt/loss state; counters are bounded by the
 fixture operation set and reset only when that scoped process restarts.
@@ -194,9 +205,9 @@ host CPU/memory >90%, or unavailable observation. Normal observer completion
 also writes STOP. Missing/stale (>15s) heartbeat closes ingress; its own finite
 lifetime is a final bound. In-flight upstream work may finish after closure.
 
-Exit0 means both arms finished without a stop condition, not that every hold
-succeeded or uncertainty disappeared. Exit2 means saturation/stops, or unresolved
-discovery; exit1 means configuration/operational error. Keep all artifacts.
+Exit 0 means both arms finished without a stop condition, not that every hold
+succeeded or uncertainty disappeared. Exit 2 means saturation/stops, or unresolved
+discovery; exit 1 means configuration/operational error. Keep all artifacts.
 
 ## Discover uncertain keys after quiescence
 
@@ -214,7 +225,7 @@ phase, with the same canonical identity and jitter/deadline/resource rules.
 The absolute discovery cap is 80 attempts for both full arms. Report recovery
 transmissions separately; never omit them to make amplification look smaller.
 
-A replay200 discovers an existing booking. A discovery201 means this recovery
+A replay 200 discovers an existing booking. A discovery 201 means this recovery
 call created the booking; it does not prove the original timed-out call committed.
 A terminal response after previous uncertainty stays UNRESOLVED. A hard crash
 after journaling but before transmission is also conservatively uncertain.
@@ -242,9 +253,9 @@ Local mode rejects non-loopback targets, >20 operations/arm, >8 concurrent or
 >30s/arm. Output is labelled local-bounded-validation. Normal final/sustained
 runs still require Ankita, tailnet IPv4 and the ingress token.
 
-Delivered local pair:20 bookings from40 offered operations/56 attempts. Second
-tiny check:2 operations/arm,maxAttempts1,busyEvery0,lossEvery1; four lost commits
-remained unresolved until four replay200 discovery calls. Repeating either
+Delivered local pair:20 bookings from 40 offered operations/56 attempts. Second
+tiny check:2 operations/arm,maxAttempts 1,busyEvery 0,lossEvery 1; four lost commits
+remained unresolved until four replay 200 discovery calls. Repeating either
 admitted phase with existing markers was rejected before additional HTTP.
 
 ## Read the reports and audit
@@ -258,9 +269,9 @@ IDs/config; operations can be reconstructed from their index and arm.
 Read logical operations, started operations, transmissions, attempts/operation,
 replays, unresolved count and amplification together. The denominator is offered
 logical operations; NOT_STARTED is explicit. Successful-write percentiles use
-only validated observed201s. Lost201 commits discovered through200 are in replay
-and logical latency, not the observed201 distribution. All-response percentiles
-include fast409s. Per-second status buckets use transmission-start time and may
+only validated observed 201s. Lost 201 commits discovered through 200 are in replay
+and logical latency, not the observed 201 distribution. All-response percentiles
+include fast 409s. Per-second status buckets use transmission-start time and may
 contain gaps with no requests. Empty sample distributions return null percentiles.
 
 Ankita's timings are end-to-end from that generator. The observer provides
@@ -311,17 +322,21 @@ None of those mechanisms is implemented by this client or its fault ingress.
 Five interview points:
 
 1. Idempotency protects identity, while budgets/deadlines/jitter protect capacity.
-2. Timeout is uncertainty; preserve the key and distinguish replay200 from recovery201.
-3. Seat409 is business contention; backoff cannot create inventory.
+2. Timeout is uncertainty; preserve the key and distinguish replay 200 from recovery 201.
+3. Seat 409 is business contention; backoff cannot create inventory.
 4. Fixed arrivals and separate fixtures make a client-policy comparison reviewable; floors, saturation and host order can dominate a tiny sample.
 5. Process caps, shared admission and inventory locking solve different problems; measure the coordinator's cost/failure domain before claiming fleet protection.
 
-Exercise: trace operation0 through LAB_BUSY, a lost committed201 and replay200.
+Exercise: trace operation 0 through LAB_BUSY, a lost committed 201 and replay 200.
 Predict the booking count, attempt count and expiry. Then set a Retry-After floor
 larger than the deadline in the fake policy test: predict why no second request
 is sent and why the DB-failure version stays unresolved.
 
 ## Checkout without an origin
+
+> **Current state (2026-10-08):** origin now exists. On Ankita, run
+> `git clone https://github.com/savi0909/book.git sd-book-my-show` instead of using
+> a bundle. The section below is kept as the 2026-10-06 procedure.
 
 This repository still has no origin. The delivery includes a verified Git bundle
 under `target/` for manual transfer; the final chat gives its exact filename.

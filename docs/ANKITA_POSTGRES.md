@@ -75,6 +75,11 @@ Switch back with `scripts/use-local-db.ps1`.
   `statement_timeout` (3 s) and `lock_timeout` (2 s) are unchanged, so expect
   higher API latency rather than new failures. Very slow links can still time
   out maintainer batches; they retry on the next tick.
+  *Refinement (2026-10-08, estimate from code):* those two timeouts are measured on
+  the server and exclude network time, but the 5 s Spring transaction timeout is
+  measured on the client and includes it. A hold makes about 14 + 2n sequential round
+  trips, so a 10-seat group over a 150 ms DERP path (~5.1 s) would fail. Direct
+  paths are fine. See [tutorial part 8](MOVIE_ADVANCE_BOOKING_TUTORIAL.md#part-8--the-database-on-another-machine).
 - **Availability.** If Ankita sleeps or disconnects, API readiness fails (it
   includes the database). Holds and payments stop until Ankita reconnects. Nothing
   is lost: PostgreSQL stays authoritative, and the APIs reconnect by themselves.

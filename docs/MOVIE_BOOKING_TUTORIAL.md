@@ -2,7 +2,7 @@
 
 This is the current backend domain at `D:/sd-book-my-show`. The inherited generic
 ticketing endpoints/studies remain separately available. The movie expansion is
-new October5 work; it is not backdated into the reconstructed source schedule.
+new October 5 work; it is not backdated into the reconstructed source schedule.
 Read [the movie API reference](MOVIE_API_REFERENCE.md) alongside this walkthrough.
 
 ## Your requirements
@@ -11,20 +11,20 @@ Read [the movie API reference](MOVIE_API_REFERENCE.md) alongside this walkthroug
 | --- | --- |
 |5-100 screens/multiplex | List of uniquely named screens, validated at creation |
 |200-500 seats/screen | Stored capacity and a numbered layout |
-|Two or three categories | Positive A/B/C percentages adding to100 |
+|Two or three categories | Positive A/B/C percentages adding to 100 |
 |A10/B20/C70 roughly | Default layout; rounding remainder goes to the final category |
 |Multiple shows on the same day | Separate show inventory and multiplex-local date listing |
 |Multiple selected seats |1-10 seats, all-or-nothing reservation |
-|95% first call, another4.5% retry,0.5% fail | Stored mock plan; one logical automatic retry |
+|95% first call, another 4.5% retry,0.5% fail | Stored mock plan; one logical automatic retry |
 |Failed payment retains seats | HELD until original expiry; fresh key creates a fresh payment |
 |Thousands of users later | [Saved simulation plan](MOVIE_LOAD_SIMULATION_PLAN.md), not a current benchmark |
 
-A200-seat default screen has20 A,40 B,140 C;500 seats gives50/100/350. For201
-the counts are20/40/141. Concrete seat numbers belong to categories. Two-category
+A200-seat default screen has 20 A,40 B,140 C;500 seats gives 50/100/350. For 201
+the counts are 20/40/141. Concrete seat numbers belong to categories. Two-category
 layouts can explicitly choose A30/C70 or A10/C90; the service does not guess.
 
 Show creation freezes prices. Example A50000, B30000, C15000 minor units mean
-INR500/300/150. Seats1,21,61 in the200-seat map total95000 minor units. These are
+INR 500/300/150. Seats 1,21,61 in the 200-seat map total 95000 minor units. These are
 example business prices. The server calculates the amount; checkout never trusts
 a caller amount. Another show can have different prices for the same screen.
 
@@ -44,14 +44,14 @@ flowchart LR
   Q --> R
 ```
 
-A screen is physical. A show occupies it for one movie and time interval. Seat42
+A screen is physical. A show occupies it for one movie and time interval. Seat 42
 in two shows has two different `(show_id,seat_number)` identities and can be sold
 independently. Scheduling locks the screen row and rejects overlapping runtime
 or turnaround intervals. Different screens may host simultaneous movies.
 
 The show timestamp is an instant; the multiplex stores an IANA zone such as
 Asia/Kolkata. A date query converts that local midnight and next midnight to
-instants, rather than assuming every local day is24 hours. An overnight show
+instants, rather than assuming every local day is 24 hours. An overnight show
 belongs to its start date. New shows must start in the future.
 
 ## IntelliJ reading order
@@ -75,7 +75,7 @@ belongs to its start date. New shows must start in the future.
 
 ## Trace one atomic group
 
-Alice requests61,1,21 with buyer/key identity. The service sorts to1,21,61 and
+Alice requests 61,1,21 with buyer/key identity. The service sorts to 1,21,61 and
 rejects duplicates. A scoped advisory lock serializes her hold key. Replay
 compares show, canonical seat set and TTL; reversed input order is equivalent.
 
@@ -84,7 +84,7 @@ read current owner bookings and database-clock validity. If any member is still
 held/confirmed, reject the entire request. Otherwise insert the booking, snapshot
 each selected category/price and assign all seat-owner pointers, in one commit.
 
-Bob's group2,21,62 conflicts with Alice's21. Neither2 nor62 becomes held. Sorting
+Bob's group 2,21,62 conflicts with Alice's21. Neither 2 nor 62 becomes held. Sorting
 also prevents opposite input orders from taking locks in opposite orders. It does
 not eliminate every timeout or provide fair admission under arbitrary load.
 
@@ -98,15 +98,23 @@ Availability reads treat expired pointers as logically free before the sweeper
 updates old booking state. A new hold replaces them under seat locks. Every
 admission/confirmation uses database time, not a browser clock.
 
+> **Added 2026-10-07:** after locking the seats, `MovieBookingService.hold` makes
+> two date checks before reading ownership. A show that has started returns
+> `409 SHOW_STARTED`. A show whose local date is after today + `movie.booking-window-days`
+> (default 3) returns `409 SHOW_NOT_YET_OPEN`. Both checks use the database clock
+> and the multiplex's zone. Both throw inside the transaction, so the seat locks
+> roll back and no booking row is written. Taught in
+> [advance-booking tutorial, part 4](MOVIE_ADVANCE_BOOKING_TUTORIAL.md#part-4--the-booking-window).
+
 ## Payment percentages and identities
 
-The percentages apply across **all payment attempts**:9500 of10000 plans succeed
-at call1;450 succeed at call2;50 fail call2. Thus90% of the initial5% needing a
-retry succeed on that retry. Applying4.5% to that5% would be a different model.
+The percentages apply across **all payment attempts**:9500 of 10000 plans succeed
+at call 1;450 succeed at call 2;50 fail call 2. Thus 90% of the initial 5% needing a
+retry succeed on that retry. Applying 4.5% to that 5% would be a different model.
 
-A new UUID hashes to a stored bucket0-9999:0-9499 first success,9500-9949 retry
+A new UUID hashes to a stored bucket 0-9999:0-9499 first success,9500-9949 retry
 success,9950-9999 failure. A live random sample fluctuates around these ratios.
-The unit test exhaustively checks the10000 intervals; it does not promise exact
+The unit test exhaustively checks the 10000 intervals; it does not promise exact
 95/4.5/0.5 proportions in every live run. A fresh user attempt has a new plan.
 
 ```mermaid
@@ -122,18 +130,18 @@ stateDiagram-v2
   CONFIRMED --> CANCELLED: cancel / refund obligation
 ```
 
-Automatic retry retains the same payment UUID. Step1 transient failure schedules
-step2 after500ms. Receipt identity is `(payment_id,provider_step)`, persisted in
+Automatic retry retains the same payment UUID. Step 1 transient failure schedules
+step 2 after 500ms. Receipt identity is `(payment_id,provider_step)`, persisted in
 its own transaction. A response/application loss can cause another dispatch,
 which discovers the same logical receipt. Dispatch count may exceed two after
 infrastructure recovery; there are at most two logical provider steps.
 
 After second-call FAILURE, return the group to HELD without changing expiry or
 seat ownership. Same failed key discovers the old attempt and cannot pay again.
-A new key admits payment number2 only while the hold is live and owns all seats.
+A new key admits payment number 2 only while the hold is live and owns all seats.
 Only one unresolved payment is allowed; a partial unique index backs that rule.
 
-Claim commits a5s lease/random token before mock acceptance. Receipt commits
+Claim commits a 5s lease/random token before mock acceptance. Receipt commits
 separately. Apply locks the entire group, verifies current token/unexpired lease,
 stored receipt/current payment and deadline, then updates payment/booking together.
 No inventory lock spans acceptance. Source and mock still share PostgreSQL.
@@ -151,14 +159,23 @@ docker compose -f compose.yml -f compose.failover.yml build api-a api-b
 docker compose -f compose.yml -f compose.failover.yml up -d --wait
 ```
 
-Use A8130/B8131/gateway8132/PostgreSQL5553. Movie mock is in-process; the inherited
+> **Current state (2026-10-08):** base `compose.yml` sets `MOVIE_SCHEDULE_ENABLED=true`
+> on both APIs, so this `up` also starts `MovieScheduleMaintainer`. Against an
+> empty database, its first tick fills today..today+3 for the whole PVR catalog:
+> 40,333 shows and 14.25M seat rows, which took 467.8 s on 2026-10-07 and grew
+> the database to about 1.7 GB. Your own demo shows are purged once their local
+> day has passed. See [PVR catalog](PVR_CATALOG_SCHEDULE.md) and
+> [advance-booking tutorial](MOVIE_ADVANCE_BOOKING_TUTORIAL.md).
+
+Use A 8130/B 8131/gateway 8132/PostgreSQL 5553. Movie mock is in-process; the inherited
 `compose.provider.yml` is for generic ticket studies, not this movie workflow.
-Ordinary checkout uses `{}` and automatically chooses its plan.202 means durable
+Ordinary checkout uses `{}` and automatically chooses its plan. 202 means durable
 intent; poll GET booking to discover the result. If a response is uncertain,
 replay the original key before considering a new payment.
 
 For deterministic learning, the optional overlay enables `testBucket` and manual
-reconcile, and disables both legacy/movie loops on both replicas:
+reconcile, and disables both legacy/movie loops on both replicas (since 2026-10-07
+it also sets `MOVIE_SCHEDULE_ENABLED=false`, so no catalog fill or purge runs):
 
 ```powershell
 docker compose -f compose.yml -f compose.failover.yml -f compose.movie.yml config --quiet
@@ -168,8 +185,8 @@ npx --yes newman@6.2.2 run postman/movie-booking.postman_collection.json -e post
 ```
 
 These runs create retained fixtures. Run them sequentially. The runtime harness
-performs a finite32-request A/B race; the collection walks all three payment
-paths. Neither is a sustained benchmark. Manual controls return404 at gateway.
+performs a finite 32-request A/B race; the collection walks all three payment
+paths. Neither is a sustained benchmark. Manual controls return 404 at gateway.
 
 Restore normal workers by omitting the movie overlay:
 
@@ -177,8 +194,8 @@ Restore normal workers by omitting the movie overlay:
 docker compose -f compose.yml -f compose.failover.yml up -d --wait
 ```
 
-Default `testBucket` input rejects400; manual reconcile returns404. Scheduler
-checks every200ms with batches up to20; this is not a throughput guarantee.
+Default `testBucket` input rejects 400; manual reconcile returns 404. Scheduler
+checks every 200ms with batches up to 20; this is not a throughput guarantee.
 Stop with the same selected Compose files and `stop`; retain all volumes.
 
 ## Debugger and exercises
@@ -187,13 +204,28 @@ Break at `lockSeats`, final hold assignment, payment claim, mock `accept` and
 payment `apply`. Watch sorted seats, show/booking/payment IDs, step, token and
 deadline. Pausing while locks/leases are live changes the experiment.
 
-Exercise1: overlap2,21,62 with1,21,61 and predict rollback. Exercise2: in manual
-mode fail bucket9950, submit a new key with9500, then compare both IDs/deadlines.
-Exercise3: hold the same seat numbers in two shows and explain their independence.
+Exercise 1: overlap 2,21,62 with 1,21,61 and predict rollback. Exercise 2: in manual
+mode fail bucket 9950, submit a new key with 9500, then compare both IDs/deadlines.
+Exercise 3: hold the same seat numbers in two shows and explain their independence.
 
-Interview points: inventory identity is show/seat; sorted locks provide atomic
-groups; automatic retry differs from a fresh user attempt; confirmation checks
-current ownership/deadline; scale claims require measured contention and drain.
+Interview points:
+
+1. Inventory identity is `(show_id, seat_number)`. The same seat number in two
+   shows is two independent items.
+2. Locking every requested seat in ascending order makes a group hold atomic and
+   prevents lock-order deadlocks between overlapping groups.
+3. An automatic retry keeps the same payment UUID. A fresh user attempt needs a
+   new key and creates a new payment, and neither extends the hold's deadline.
+4. Confirmation re-checks current ownership and the deadline. A late success can
+   only create a refund obligation, never take back seats.
+5. Scale claims need measured contention and worker drain, not reasoning alone.
+
+> **Common misconception.** "95% / 4.5% / 0.5% means 4.5% of the retries succeed."
+> The percentages apply to *all* payments: 9,500 of 10,000 succeed on call 1, 450 on
+> call 2 and 50 fail. So 90% of the 5% that need a retry succeed on it.
+
+Continue with the [advance-booking tutorial](MOVIE_ADVANCE_BOOKING_TUTORIAL.md): the
+permanent catalog, rolling window and journey load built on this domain.
 
 No frontend, production auth, real payment/refund, movie notification outbox or
 independent provider HA is delivered. Generic outbox/poison studies remain separate

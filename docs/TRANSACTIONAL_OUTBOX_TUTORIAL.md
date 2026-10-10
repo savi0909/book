@@ -1,6 +1,17 @@
-# Scenario4: preserve delivery work across the commit/publish gap
+# Scenario 4: preserve delivery work across the commit/publish gap
 
-Implemented2026-10-05 after the user continued the completed scenarios1–3.
+> **Running this in this repository (note added 2026-10-08).** This tutorial was
+> written and verified in the original `D:/java-projects/ticket-booking-lab`. Its
+> commands and diagrams keep that lab's addresses as history. In this standalone
+> repository, run from `D:/sd-book-my-show` (Compose project `sd-book-my-show`) and
+> substitute: API A 8105→**8130**, API B 8106→**8131**, gateway 8107→**8132**,
+> provider 8123→**8133** (container port 8121 unchanged), PostgreSQL 5547→**5553**.
+> The full mapping is in [standalone setup](STANDALONE_SETUP.md#separate-local-addresses).
+> `git diff 6c2e57a..main` shows the generic code it uses is unchanged; later
+> commits added only movie code and resource limits.
+> Recommended order: see the [study path](PROJECT_STATUS.md#study-path).
+
+Implemented 2026-10-05 after the user continued the completed scenarios 1–3.
 This lesson adds a transactional outbox, recoverable dispatcher, local inbox,
 notification receipts and a versioned delivery projection. Existing seat/payment
 correctness remains authoritative. [Verification](VERIFICATION.md) records what
@@ -26,6 +37,11 @@ record, notification receipt and projection together. A crash before the dispatc
 acknowledges causes redelivery, so the event ID prevents duplicate local receipts.
 Booking versions stop a stale confirmation from overriding cancellation. This
 proves recoverable local delivery, not exactly-once email across a network.”
+
+> **Common misconception.** "The outbox gives exactly-once delivery." It gives
+> *at-least-once* delivery of work that was committed together with the business
+> change. Duplicates are expected. The inbox's unique receipt makes the *local*
+> effect happen once, but it cannot make an external email or provider call exactly-once.
 
 ## 1. See the two different failure gaps
 
@@ -58,7 +74,7 @@ Duplicate delivery is a normal recovery outcome.
 - Only a successful confirmation transition emits CONFIRMED; late payment SUCCESS
   on an expired/cancelled booking requires refund and emits no false confirmation.
 
-The additive V4 migration starts existing bookings at deliveryVersion0. It does
+The additive V4 migration starts existing bookings at deliveryVersion 0. It does
 **not** backfill historical confirmations or send retrospective notices. A new
 cancellation of an old booking can be its first snapshot, CANCELLED/version1.
 That is a deliberate cutover boundary, not evidence that historical delivery exists.
@@ -90,7 +106,7 @@ an actual transition from HELD/CHECKOUT/CONFIRMED. Repeated cancel simply replay
 Duplicate callbacks find a terminal payment and do not emit another confirmation.
 
 The snapshot contains a stable UUID event ID, booking ID, per-booking version,
-kind CONFIRMED/CANCELLED and schemaVersion1. Payload fields never change through
+kind CONFIRMED/CANCELLED and schemaVersion 1. Payload fields never change through
 the API. Delivery metadata (attempts/lease/nextAt/ack) changes separately. There is
 a unique booking/version constraint. Knowing an event ID permits a local control
 to read its original committed snapshot; controls accept no caller-supplied event
@@ -114,8 +130,8 @@ flowchart LR
 
 ## 4. Dispatcher claims and acknowledgement
 
-The scheduler selects up to20 undelivered due events, ordered nextAt/UUID. Selection
-does not grant ownership. Each conditional UPDATE creates a random token, sets a5s
+The scheduler selects up to 20 undelivered due events, ordered nextAt/UUID. Selection
+does not grant ownership. Each conditional UPDATE creates a random token, sets a 5s
 lease and increments attempts only if no active lease or delivered marker exists.
 This short transaction commits before consumer processing. Both API replicas can
 select the same event, but only an eligible claim proceeds.
@@ -127,9 +143,9 @@ inbox deduplication and event versions protect that separate boundary.
 
 If DB operations fail, the batch aborts without manufacturing delivery success.
 The committed claim remains until lease expiry. Other caught RuntimeExceptions
-defer that item2s, clear its active lease only when token/time still match, and
+defer that item 2s, clear its active lease only when token/time still match, and
 continue later events. This outbox has **no automatic attempt-count exhaustion or
-quarantine policy**; its retained retry process continues while enabled. Scenario3's
+quarantine policy**; its retained retry process continues while enabled. Scenario 3's
 three-failure quarantine applies to payments, not implicitly to this new table.
 A permanently failing delivery needs operator investigation or a separately
 designed outbox dead-letter policy. One DB attempt is bounded by the existing
@@ -143,7 +159,7 @@ lock/statement/transaction timeouts; overall delivery time is not bounded by an 
 - Consumer commit can precede ack; redelivery is required for recovery.
 - Durable retry scheduling and overall retry/retention policy are separate choices.
 
-OutboxWorker runs every500ms after the previous tick, with a1500ms initial delay.
+OutboxWorker runs every 500ms after the previous tick, with a 1500ms initial delay.
 It is enabled only when both maintenance and outbox-dispatch flags are true. The
 AdmissionGate prevents new scheduled ticks during drain; accepted work can finish.
 Spring's default scheduler still shares a thread between scheduled methods here,
@@ -160,13 +176,13 @@ projection and insert one local notification receipt in the **same transaction**
 
 An exception before consumer commit rolls back all three. A failed consumer cannot
 leave an inbox “processed” marker without its local effect. The tests establish this
-with actual PostgreSQL rollback and16 concurrent same-ID consume calls: one original
+with actual PostgreSQL rollback and 16 concurrent same-ID consume calls: one original
 effect, one receipt and sixteen observed deliveries.
 
 | Delivery order | Projection outcome | Local receipt outcome |
 | --- | --- | --- |
-| CONFIRMED1 → CANCELLED2 | CONFIRMED then CANCELLED2 | One receipt for each advancing snapshot |
-| CANCELLED2 → CONFIRMED1 | Remains CANCELLED2 | Cancellation receipt only; stale confirmation ignored |
+| CONFIRMED 1 → CANCELLED 2 | CONFIRMED then CANCELLED 2 | One receipt for each advancing snapshot |
+| CANCELLED 2 → CONFIRMED 1 | Remains CANCELLED 2 | Cancellation receipt only; stale confirmation ignored |
 | Same event twice | Unchanged after first application | One receipt, increased inbox delivery count |
 
 Versions are for **complete state snapshots**. Skipping old snapshots is suitable
@@ -208,17 +224,17 @@ collections sequentially with fresh retained fixtures. No deletion/reset occurs.
 
 The runtime harness first confirms through A without dispatch, SIGKILLs A, and
 delivers the persisted event through B. It restarts A, then delays a second dispatch
-by10000ms **after consumer commit**. waitingEvents plus B's delivery diagnostics
+by 10000ms **after consumer commit**. waitingEvents plus B's delivery diagnostics
 establish that receipt/inbox exist while outbox ack is absent. SIGKILL loses that
 HTTP response. B rejects dispatch while the lease is live, then reclaims after
-expiry and sees the same inbox event. Attempts2/deliveries2/receipts1 demonstrate
+expiry and sees the same inbox event. Attempts 2/deliveries 2/receipts 1 demonstrate
 redelivery without duplicate local effect. It also races A/B claims and delivers
 cancellation before confirmation. Its finally restores A/B/gateway; evidence goes
 to target/outbox-runtime-evidence.json. Check restoration if execution fails.
 
 Default operation uses no delay, regardless of retained fixture flags. Optional
-delay controls are bounded0..10000ms and absent when OUTBOX_CONTROLS_ENABLED=false.
-The shared gateway returns404 for replica-specific outbox controls; use direct A/B.
+delay controls are bounded 0..10000ms and absent when OUTBOX_CONTROLS_ENABLED=false.
+The shared gateway returns 404 for replica-specific outbox controls; use direct A/B.
 Diagnostic GETs remain accessible through the gateway.
 
 Restore normal scheduled operation after study:
@@ -239,8 +255,8 @@ Import [collection](../postman/outbox.postman_collection.json) and
 [environment](../postman/outbox.postman_environment.json). First booking confirms
 with one pending event and no receipt. B dispatches it; repeat dispatch skips it,
 and explicit duplicate consume increments inbox deliveries without another receipt.
-The second booking confirms then cancels. Consume CANCELLED2 first, CONFIRMED1 next:
-expect STALE_IGNORED, projection CANCELLED2 and one cancellation receipt. Tick acks
+The second booking confirms then cancels. Consume CANCELLED 2 first, CONFIRMED 1 next:
+expect STALE_IGNORED, projection CANCELLED 2 and one cancellation receipt. Tick acks
 both original events without reversing projection. Invalid/missing delay and unknown
 event fail without changing source ownership.
 
@@ -263,14 +279,14 @@ Content-Type: application/json
 Set breakpoints at enqueueSnapshot, after the dispatcher claim transaction returns,
 inside consumer transaction before receipt insert, after consume returns, and at ack.
 Use another DB connection to inspect committed work at each boundary. A debugger
-pause longer than5s makes the token's lease stale; acknowledgement must fail. Never
+pause longer than 5s makes the token's lease stale; acknowledgement must fail. Never
 extend/remove fences merely to make an experiment pass. Inspect bookingVersion,
 inbox disposition, delivery count and receipt identity when reordering.
 
 ## 8. Capacity, ownership, migration and failure domains
 
 If one local consume+ack costs c seconds, a sequential worker's ideal completion
-bound is1/c. A20-event batch plus500ms fixed-delay has ideal rate20/(20c+0.5), below
+bound is 1/c. A20-event batch plus 500ms fixed-delay has ideal rate 20/(20c+0.5), below
 which actual throughput falls with SQL contention/other scheduler work. Two APIs
 can overlap selections and share PostgreSQL, so doubling replicas does not prove
 double delivery capacity. Measure arrival rate, drain rate and oldest pending age.
@@ -335,5 +351,5 @@ Exercises:
 5. Design an upgrade order and explicit backfill boundary for historical bookings.
    Identify which guarantees fail if an old writer remains in the fleet.
 
-Stop after scenario4. Durable refund compensation, database HA, optimistic seat
+Stop after scenario 4. Durable refund compensation, database HA, optimistic seat
 versions and a general retry-storm harness remain separate proposals.
