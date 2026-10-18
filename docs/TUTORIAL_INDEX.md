@@ -5,8 +5,12 @@ one linked lesson at a time. [Project status](PROJECT_STATUS.md) records deliver
 work; [worklog](WORKLOG.md) records what actually ran. Neither proves that you
 have learned a topic yet.
 
-Your last saved API lesson is **API 3: GET event**. Resume there if you want to
-continue the original course. The new Order Saga is implemented, but it is a
+Current hands-on learning has just started with **GET /api/events**, the first
+endpoint tried in this session ([short handover](NEXT_SESSION_HANDOVER.md#learning-handover--2026-10-18),
+[existing API 2 guide](API_02_LIST_EVENTS_WALKTHROUGH.md)). Resume its IDE flow;
+advance only when ready. The older saved course point was **API 3: GET event**,
+which is the next proposed endpoint, not completed in this new sequence.
+The new Order Saga is implemented, but it is a
 separate learning track; you do not need to jump to it before you are ready.
 Reading a tutorial or index does not authorize service startup, tests, fault
 experiments, or load. Runtime sections are instructions for a separately selected
@@ -23,6 +27,16 @@ hands-on session. Never run Maven `clean`, delete files, or reset retained data.
 | Operate or repair the new workflow | [Order Saga runbook](ORDER_SAGA_RUNBOOK.md) plus [verification](ORDER_SAGA_VERIFICATION.md) | Read first; execute only selected actions |
 
 ## How to use one study session
+
+Saved format: when you say **API**, show one HTTP method/URL, its parameters,
+relevant headers/body, status code and a short response excerpt when invoked,
+followed by a compact IDE stack: controller class/method -> service class/method
+-> repository or actual store/JDBC method -> SQL/table, with source links. Use
+the actual persistence layer; this project does not always have a repository.
+Pause after that endpoint until you ask to continue.
+Update the linked API walkthrough along the way with this compact note; reuse
+its existing explanations rather than rebuilding the tutorial. Label omitted
+response fields/items and keep observed results distinct from examples.
 
 Allow about 20–35 minutes; spend longer when the code is unfamiliar.
 

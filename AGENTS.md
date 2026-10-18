@@ -1,5 +1,45 @@
 # SD Book My Show agent instructions
 
+## API learning format — 2026-10-18
+
+Current study starts with GET /api/events (first endpoint in this session,
+existing API 2 guide). Resume [learning handover](docs/NEXT_SESSION_HANDOVER.md#learning-handover--2026-10-18)
+and its IDE flow; the earlier saved API 3 point does not imply this lesson is mastered.
+
+When the user says "API" during learning, study one endpoint at a time. For the
+selected endpoint, show its HTTP method/URL, parameters, relevant headers/body,
+status code and a short excerpt of the actual response when invoked, plus a
+short IDE-followable call stack with exact controller class/method, service
+class/method, repository or actual persistence class/method, and SQL/table.
+Link to the relevant source locations. Name intermediate calls when needed;
+do not invent a repository layer where the code uses a store/JdbcTemplate.
+Briefly explain the response, then pause until the user asks to continue.
+Invoke only the selected URL; never run an entire collection or load workload
+from an API-learning request. Do not execute a write endpoint merely to illustrate
+the format. This preference does not advance the saved lesson automatically.
+Reuse and incrementally update the existing API walkthrough instead of rebuilding
+the tutorial or creating a parallel guide. Save a compact request/parameters/
+status/response-excerpt/code-flow note as each endpoint is studied. Clearly label
+omitted response fields/items, illustrative examples and dated observations;
+never invent an observed status. Keep full runtime responses out of study notes.
+
+## Load tests require an explicit request — 2026-10-18
+
+Do not run load tests unless the user explicitly requests that run. Application
+startup, deployment, restart and health checks do not authorize load tests.
+Keep Java/Node load generators out of normal startup commands, including the
+idle Java control service. Historical run permissions do not authorize new runs.
+
+## Sprint smoke selection — 2026-10-18
+
+On an explicit request to run sprint smoke tests, use the fixed **10 individual
+test methods** and PowerShell command in [smoke selection](docs/SPRINT_SMOKE_TESTS.md).
+Do not run automatically at sprint completion/startup, expand to full classes or
+full regression, or start Java/Node load generators. Smoke invocation authorizes
+only these isolated correctness checks, including one real Kafka/copied-gateway
+test; it does not authorize load. Require 10 executed/zero failures/errors/skips
+before claiming success. Selection documented only; not executed on this request.
+
 ## Order outbox/saga — 2026-10-18
 
 Learning entry: [tutorial index](docs/TUTORIAL_INDEX.md). It preserves the saved

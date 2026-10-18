@@ -1,5 +1,44 @@
 # Next-session handover: standalone Book My Show
 
+## Learning handover — 2026-10-18
+
+We have just started API learning. The **first endpoint in this session** is
+the event list (called API 2 in the existing guides); no mastery is assumed.
+
+```http
+GET http://localhost:8132/api/events?limit=3&offset=0
+```
+
+- Parameters: `limit=3` (maximum rows), `offset=0` (skip none).
+  Allowed: limit 1–100, offset 0–10000; defaults 50 and 0.
+- No body or authentication header. Successful status: **200 OK**, JSON array.
+- Earlier invocation returned three events. Small first-item excerpt, with
+  other fields/items omitted: `{"seatCount":1,"priceMinor":5000,"currency":"INR"}`.
+  `5000` paise = ₹50; `seatCount` is total seats, not availability.
+
+```text
+BookingController.events(limit, offset)
+  -> BookingService.events(limit, offset)
+    -> BookingStore.jdbc() -> JdbcTemplate.query(...)
+      -> PostgreSQL events table (ORDER BY created_at DESC, id; LIMIT/OFFSET)
+```
+
+IDE entry points: [controller](../src/main/java/com/example/booking/BookingController.java),
+[service](../src/main/java/com/example/booking/BookingService.java),
+[store](../src/main/java/com/example/booking/BookingStore.java). No separate repository.
+
+Resume the [existing list-events guide](API_02_LIST_EVENTS_WALKTHROUGH.md), then
+ask the learner to trace these calls in IntelliJ. Keep one endpoint per lesson:
+request/parameters/status, small response excerpt, exact method flow. Update that
+guide incrementally. Only when ready, continue to `GET /api/events/{id}` using an
+ID from the list; that endpoint has not been invoked in this study sequence.
+[GET-only Postman collection](../postman/local-get-learning.postman_collection.json).
+Do not start services, collections, tests, load or write requests from this handover.
+
+## Historical operational handover — 2026-10-07
+
+The following runtime/build statements are dated history, not current observations.
+
 Updated2026-10-07. Resume `D:/sd-book-my-show`, not the original ticket workspace.
 Read [current project status](PROJECT_STATUS.md), [context](../PROJECT_CONTEXT.md),
 [agent instructions](../AGENTS.md) and [worklog](WORKLOG.md) first.

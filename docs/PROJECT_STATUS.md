@@ -1,5 +1,25 @@
 # Book My Show project status
 
+## Explicit sprint smoke selection — 2026-10-18
+
+[Ten selected test methods and invocation](SPRINT_SMOKE_TESTS.md) are saved for
+explicit sprint-smoke requests. No automatic run at sprint completion/startup;
+no load tests. The selection has not been executed. The Java load-tester control
+container was stopped at the user's request and its exit verified; booking
+services remained running. Earlier idle-loader descriptions are historical.
+
+## Local Docker deployment — 2026-10-18
+
+Subsequent user request selected local deployment. PostgreSQL, both APIs,
+HAProxy, Kafka, copied payment gateway and legacy provider are running; Java
+load-tester control service is idle with a STOP guard. Topic initialization
+completed, Kafka has two Stable-group consumers, V8/V069 migrations succeeded,
+and HTTP health/read-only auth/routing checks passed. No booking/load run or
+new Maven test execution. The retained booking volume was reused and backed up
+before migration; normal rolling movie maintenance is enabled.
+[Deployment record and commands](LOCAL_DOCKER_DEPLOYMENT_2026-10-18.md).
+Earlier non-deployment statements retain their historical scope.
+
 ## Order saga — 2026-10-18
 
 Implemented on `feature/order-outbox-saga`: default-off `/api/orders`, durable

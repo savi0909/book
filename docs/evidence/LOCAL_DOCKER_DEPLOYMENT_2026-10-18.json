@@ -1,0 +1,429 @@
+{
+  "observedAt": "2026-10-18T14:11:31.1679947+05:30",
+  "scope": "Local Docker deployment with read-only checks; no business/load run",
+  "gitCommit": "343e250541922fb5086c31f2e2022d765d8b7c9c",
+  "workingTreeChanges": "Gateway Dockerfile build optimization and deployment documentation",
+  "containers": [
+    {
+      "name": "sd-book-my-show-postgres-1",
+      "state": "running",
+      "health": "healthy",
+      "exitCode": 0,
+      "imageId": "sha256:721873c34ceb9f8d8fc265984940dc982404c105f19ad51be9fdc5970a6080ea",
+      "memoryBytes": 3221225472,
+      "nanoCpus": 2000000000,
+      "ports": {
+        "5432/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "5553"
+          }
+        ]
+      },
+      "mounts": [
+        {
+          "Type": "volume",
+          "Name": "sd-book-my-show_booking-data",
+          "Destination": "/var/lib/postgresql/data"
+        }
+      ]
+    },
+    {
+      "name": "sd-book-my-show-api-a-1",
+      "state": "running",
+      "health": "healthy",
+      "exitCode": 0,
+      "imageId": "sha256:0f7341827858546ef4295c08a4281419f83afe4024ed5b687ee67d6f4850a0a4",
+      "memoryBytes": 536870912,
+      "nanoCpus": 1000000000,
+      "ports": {
+        "8105/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "8130"
+          }
+        ]
+      },
+      "mounts": []
+    },
+    {
+      "name": "sd-book-my-show-api-b-1",
+      "state": "running",
+      "health": "healthy",
+      "exitCode": 0,
+      "imageId": "sha256:1964659302fd5baf0d2444b8754ff3b7631d125ca4567f7b2931952b8fe35396",
+      "memoryBytes": 536870912,
+      "nanoCpus": 1000000000,
+      "ports": {
+        "8105/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "8131"
+          }
+        ]
+      },
+      "mounts": []
+    },
+    {
+      "name": "sd-book-my-show-gateway-1",
+      "state": "running",
+      "health": null,
+      "exitCode": 0,
+      "imageId": "sha256:5d97434a423c2533cfeb42874d45cf6d69a840b60334582dfbfd5008e94c80be",
+      "memoryBytes": 100663296,
+      "nanoCpus": 500000000,
+      "ports": {
+        "8080/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "8132"
+          }
+        ]
+      },
+      "mounts": [
+        {
+          "Type": "bind",
+          "Name": null,
+          "Destination": "/usr/local/etc/haproxy/haproxy.cfg"
+        }
+      ]
+    },
+    {
+      "name": "sd-book-my-show-provider-1",
+      "state": "running",
+      "health": "healthy",
+      "exitCode": 0,
+      "imageId": "sha256:53f1c453548bb30610298568144a0989e44849c4a309f6229bfea625daceadfd",
+      "memoryBytes": 134217728,
+      "nanoCpus": 0,
+      "ports": {
+        "8121/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "8133"
+          }
+        ]
+      },
+      "mounts": [
+        {
+          "Type": "volume",
+          "Name": "sd-book-my-show_provider-data",
+          "Destination": "/data"
+        }
+      ]
+    },
+    {
+      "name": "sd-book-my-show-kafka-1",
+      "state": "running",
+      "health": "healthy",
+      "exitCode": 0,
+      "imageId": "sha256:4ceccc577f03f51f6af8dbfda55194d0d892f4fa7913ffbded567ce3895622ed",
+      "memoryBytes": 805306368,
+      "nanoCpus": 1000000000,
+      "ports": {
+        "9094/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "9094"
+          }
+        ]
+      },
+      "mounts": [
+        {
+          "Type": "volume",
+          "Name": "sd-book-my-show_order-kafka-data",
+          "Destination": "/var/lib/kafka/data"
+        },
+        {
+          "Type": "volume",
+          "Name": "87f68df97bcb0a30eedce73dde67d794186cf825d2a18046bf06883c0b880aba",
+          "Destination": "/etc/kafka/secrets"
+        },
+        {
+          "Type": "volume",
+          "Name": "70a2b1c15b7ce278632f00599a8339d8bcad98e648305f2ef98678670d872f26",
+          "Destination": "/mnt/shared/config"
+        }
+      ]
+    },
+    {
+      "name": "sd-book-my-show-mock-payment-gateway-1",
+      "state": "running",
+      "health": "healthy",
+      "exitCode": 0,
+      "imageId": "sha256:e5d80a55bb1ec9ab4f7b08b6de3427215fb8f5f168e83214ae8cb6ab03ca5cad",
+      "memoryBytes": 402653184,
+      "nanoCpus": 500000000,
+      "ports": {
+        "8095/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "8136"
+          }
+        ]
+      },
+      "mounts": []
+    },
+    {
+      "name": "sd-book-my-show-java-load-test-load-tester-1",
+      "state": "running",
+      "health": null,
+      "exitCode": 0,
+      "imageId": "sha256:776b8fcfc25ea83dd65421daef17d7b22b3808dfe91de414914d5c235a5c340f",
+      "memoryBytes": 402653184,
+      "nanoCpus": 1000000000,
+      "ports": {
+        "8135/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "8135"
+          }
+        ]
+      },
+      "mounts": [
+        {
+          "Type": "bind",
+          "Name": null,
+          "Destination": "/results"
+        }
+      ]
+    },
+    {
+      "name": "sd-book-my-show-kafka-topics-1",
+      "state": "exited",
+      "health": null,
+      "exitCode": 0,
+      "imageId": "sha256:4ceccc577f03f51f6af8dbfda55194d0d892f4fa7913ffbded567ce3895622ed",
+      "memoryBytes": 268435456,
+      "nanoCpus": 0,
+      "ports": {},
+      "mounts": [
+        {
+          "Type": "volume",
+          "Name": "947912c213d7dfbdde722874adce3e28ec02e2a0fdd00101297e14190f65f8cd",
+          "Destination": "/mnt/shared/config"
+        },
+        {
+          "Type": "volume",
+          "Name": "41ec0bd84e1c704cf7d7c35c7ad6e66b677cb03c48d8a712fa41ffd0e834f911",
+          "Destination": "/var/lib/kafka/data"
+        },
+        {
+          "Type": "volume",
+          "Name": "0c6878e55669223d81dff04aaf832b2085b0160fc39d6b5bce630189e347a821",
+          "Destination": "/etc/kafka/secrets"
+        }
+      ]
+    }
+  ],
+  "database": {
+    "publicMigrations": [
+      {
+        "version": "1",
+        "success": true
+      },
+      {
+        "version": "2",
+        "success": true
+      },
+      {
+        "version": "3",
+        "success": true
+      },
+      {
+        "version": "4",
+        "success": true
+      },
+      {
+        "version": "5",
+        "success": true
+      },
+      {
+        "version": "6",
+        "success": true
+      },
+      {
+        "version": "7",
+        "success": true
+      },
+      {
+        "version": "8",
+        "success": true
+      }
+    ],
+    "providerMigrations": [
+      {
+        "version": null,
+        "success": true
+      },
+      {
+        "version": "066",
+        "success": true
+      },
+      {
+        "version": "068",
+        "success": true
+      },
+      {
+        "version": "069",
+        "success": true
+      }
+    ],
+    "orders": 0,
+    "providerOperations": 0
+  },
+  "kafkaGroupState": [
+    "",
+    "GROUP                     COORDINATOR (ID)          ASSIGNMENT-STRATEGY  STATE           #MEMBERS",
+    "booking-saga-v1           kafka:9092  (1)           range                Stable          2"
+  ],
+  "kafkaTopics": [
+    "Topic: booking.payment.commands.v1\tTopicId: XvbFxu4cTfCcgNO9vEwOeA\tPartitionCount: 3\tReplicationFactor: 1\tConfigs: retention.ms=1209600000",
+    "\tTopic: booking.payment.commands.v1\tPartition: 0\tLeader: 1\tReplicas: 1\tIsr: 1\tElr: \tLastKnownElr: ",
+    "\tTopic: booking.payment.commands.v1\tPartition: 1\tLeader: 1\tReplicas: 1\tIsr: 1\tElr: \tLastKnownElr: ",
+    "\tTopic: booking.payment.commands.v1\tPartition: 2\tLeader: 1\tReplicas: 1\tIsr: 1\tElr: \tLastKnownElr: ",
+    "Topic: booking.inventory.commands.v1\tTopicId: KpGDiX4EQa-MTeYnVEzTEQ\tPartitionCount: 3\tReplicationFactor: 1\tConfigs: retention.ms=1209600000",
+    "\tTopic: booking.inventory.commands.v1\tPartition: 0\tLeader: 1\tReplicas: 1\tIsr: 1\tElr: \tLastKnownElr: ",
+    "\tTopic: booking.inventory.commands.v1\tPartition: 1\tLeader: 1\tReplicas: 1\tIsr: 1\tElr: \tLastKnownElr: ",
+    "\tTopic: booking.inventory.commands.v1\tPartition: 2\tLeader: 1\tReplicas: 1\tIsr: 1\tElr: \tLastKnownElr: ",
+    "Topic: booking.order.events.v1\tTopicId: CLO94llfQZGRJHz9_HNHBQ\tPartitionCount: 3\tReplicationFactor: 1\tConfigs: retention.ms=1209600000",
+    "\tTopic: booking.order.events.v1\tPartition: 0\tLeader: 1\tReplicas: 1\tIsr: 1\tElr: \tLastKnownElr: ",
+    "\tTopic: booking.order.events.v1\tPartition: 1\tLeader: 1\tReplicas: 1\tIsr: 1\tElr: \tLastKnownElr: ",
+    "\tTopic: booking.order.events.v1\tPartition: 2\tLeader: 1\tReplicas: 1\tIsr: 1\tElr: \tLastKnownElr: ",
+    "Topic: booking.order.replies.v1\tTopicId: BiSOoM6zQl-hQGGsmrqOdQ\tPartitionCount: 3\tReplicationFactor: 1\tConfigs: retention.ms=1209600000",
+    "\tTopic: booking.order.replies.v1\tPartition: 0\tLeader: 1\tReplicas: 1\tIsr: 1\tElr: \tLastKnownElr: ",
+    "\tTopic: booking.order.replies.v1\tPartition: 1\tLeader: 1\tReplicas: 1\tIsr: 1\tElr: \tLastKnownElr: ",
+    "\tTopic: booking.order.replies.v1\tPartition: 2\tLeader: 1\tReplicas: 1\tIsr: 1\tElr: \tLastKnownElr: ",
+    "Topic: __consumer_offsets\tTopicId: p9CYoA6yR4-hMJ3ZMIDWnw\tPartitionCount: 50\tReplicationFactor: 1\tConfigs: compression.type=producer,cleanup.policy=compact,segment.bytes=104857600",
+    "\tTopic: __consumer_offsets\tPartition: 0\tLeader: 1\tReplicas: 1\tIsr: 1\tElr: \tLastKnownElr: ",
+    "\tTopic: __consumer_offsets\tPartition: 1\tLeader: 1\tReplicas: 1\tIsr: 1\tElr: \tLastKnownElr: ",
+    "\tTopic: __consumer_offsets\tPartition: 2\tLeader: 1\tReplicas: 1\tIsr: 1\tElr: \tLastKnownElr: ",
+    "\tTopic: __consumer_offsets\tPartition: 3\tLeader: 1\tReplicas: 1\tIsr: 1\tElr: \tLastKnownElr: ",
+    "\tTopic: __consumer_offsets\tPartition: 4\tLeader: 1\tReplicas: 1\tIsr: 1\tElr: \tLastKnownElr: ",
+    "\tTopic: __consumer_offsets\tPartition: 5\tLeader: 1\tReplicas: 1\tIsr: 1\tElr: \tLastKnownElr: ",
+    "\tTopic: __consumer_offsets\tPartition: 6\tLeader: 1\tReplicas: 1\tIsr: 1\tElr: \tLastKnownElr: ",
+    "\tTopic: __consumer_offsets\tPartition: 7\tLeader: 1\tReplicas: 1\tIsr: 1\tElr: \tLastKnownElr: ",
+    "\tTopic: __consumer_offsets\tPartition: 8\tLeader: 1\tReplicas: 1\tIsr: 1\tElr: \tLastKnownElr: ",
+    "\tTopic: __consumer_offsets\tPartition: 9\tLeader: 1\tReplicas: 1\tIsr: 1\tElr: \tLastKnownElr: ",
+    "\tTopic: __consumer_offsets\tPartition: 10\tLeader: 1\tReplicas: 1\tIsr: 1\tElr: \tLastKnownElr: ",
+    "\tTopic: __consumer_offsets\tPartition: 11\tLeader: 1\tReplicas: 1\tIsr: 1\tElr: \tLastKnownElr: ",
+    "\tTopic: __consumer_offsets\tPartition: 12\tLeader: 1\tReplicas: 1\tIsr: 1\tElr: \tLastKnownElr: ",
+    "\tTopic: __consumer_offsets\tPartition: 13\tLeader: 1\tReplicas: 1\tIsr: 1\tElr: \tLastKnownElr: ",
+    "\tTopic: __consumer_offsets\tPartition: 14\tLeader: 1\tReplicas: 1\tIsr: 1\tElr: \tLastKnownElr: ",
+    "\tTopic: __consumer_offsets\tPartition: 15\tLeader: 1\tReplicas: 1\tIsr: 1\tElr: \tLastKnownElr: ",
+    "\tTopic: __consumer_offsets\tPartition: 16\tLeader: 1\tReplicas: 1\tIsr: 1\tElr: \tLastKnownElr: ",
+    "\tTopic: __consumer_offsets\tPartition: 17\tLeader: 1\tReplicas: 1\tIsr: 1\tElr: \tLastKnownElr: ",
+    "\tTopic: __consumer_offsets\tPartition: 18\tLeader: 1\tReplicas: 1\tIsr: 1\tElr: \tLastKnownElr: ",
+    "\tTopic: __consumer_offsets\tPartition: 19\tLeader: 1\tReplicas: 1\tIsr: 1\tElr: \tLastKnownElr: ",
+    "\tTopic: __consumer_offsets\tPartition: 20\tLeader: 1\tReplicas: 1\tIsr: 1\tElr: \tLastKnownElr: ",
+    "\tTopic: __consumer_offsets\tPartition: 21\tLeader: 1\tReplicas: 1\tIsr: 1\tElr: \tLastKnownElr: ",
+    "\tTopic: __consumer_offsets\tPartition: 22\tLeader: 1\tReplicas: 1\tIsr: 1\tElr: \tLastKnownElr: ",
+    "\tTopic: __consumer_offsets\tPartition: 23\tLeader: 1\tReplicas: 1\tIsr: 1\tElr: \tLastKnownElr: ",
+    "\tTopic: __consumer_offsets\tPartition: 24\tLeader: 1\tReplicas: 1\tIsr: 1\tElr: \tLastKnownElr: ",
+    "\tTopic: __consumer_offsets\tPartition: 25\tLeader: 1\tReplicas: 1\tIsr: 1\tElr: \tLastKnownElr: ",
+    "\tTopic: __consumer_offsets\tPartition: 26\tLeader: 1\tReplicas: 1\tIsr: 1\tElr: \tLastKnownElr: ",
+    "\tTopic: __consumer_offsets\tPartition: 27\tLeader: 1\tReplicas: 1\tIsr: 1\tElr: \tLastKnownElr: ",
+    "\tTopic: __consumer_offsets\tPartition: 28\tLeader: 1\tReplicas: 1\tIsr: 1\tElr: \tLastKnownElr: ",
+    "\tTopic: __consumer_offsets\tPartition: 29\tLeader: 1\tReplicas: 1\tIsr: 1\tElr: \tLastKnownElr: ",
+    "\tTopic: __consumer_offsets\tPartition: 30\tLeader: 1\tReplicas: 1\tIsr: 1\tElr: \tLastKnownElr: ",
+    "\tTopic: __consumer_offsets\tPartition: 31\tLeader: 1\tReplicas: 1\tIsr: 1\tElr: \tLastKnownElr: ",
+    "\tTopic: __consumer_offsets\tPartition: 32\tLeader: 1\tReplicas: 1\tIsr: 1\tElr: \tLastKnownElr: ",
+    "\tTopic: __consumer_offsets\tPartition: 33\tLeader: 1\tReplicas: 1\tIsr: 1\tElr: \tLastKnownElr: ",
+    "\tTopic: __consumer_offsets\tPartition: 34\tLeader: 1\tReplicas: 1\tIsr: 1\tElr: \tLastKnownElr: ",
+    "\tTopic: __consumer_offsets\tPartition: 35\tLeader: 1\tReplicas: 1\tIsr: 1\tElr: \tLastKnownElr: ",
+    "\tTopic: __consumer_offsets\tPartition: 36\tLeader: 1\tReplicas: 1\tIsr: 1\tElr: \tLastKnownElr: ",
+    "\tTopic: __consumer_offsets\tPartition: 37\tLeader: 1\tReplicas: 1\tIsr: 1\tElr: \tLastKnownElr: ",
+    "\tTopic: __consumer_offsets\tPartition: 38\tLeader: 1\tReplicas: 1\tIsr: 1\tElr: \tLastKnownElr: ",
+    "\tTopic: __consumer_offsets\tPartition: 39\tLeader: 1\tReplicas: 1\tIsr: 1\tElr: \tLastKnownElr: ",
+    "\tTopic: __consumer_offsets\tPartition: 40\tLeader: 1\tReplicas: 1\tIsr: 1\tElr: \tLastKnownElr: ",
+    "\tTopic: __consumer_offsets\tPartition: 41\tLeader: 1\tReplicas: 1\tIsr: 1\tElr: \tLastKnownElr: ",
+    "\tTopic: __consumer_offsets\tPartition: 42\tLeader: 1\tReplicas: 1\tIsr: 1\tElr: \tLastKnownElr: ",
+    "\tTopic: __consumer_offsets\tPartition: 43\tLeader: 1\tReplicas: 1\tIsr: 1\tElr: \tLastKnownElr: ",
+    "\tTopic: __consumer_offsets\tPartition: 44\tLeader: 1\tReplicas: 1\tIsr: 1\tElr: \tLastKnownElr: ",
+    "\tTopic: __consumer_offsets\tPartition: 45\tLeader: 1\tReplicas: 1\tIsr: 1\tElr: \tLastKnownElr: ",
+    "\tTopic: __consumer_offsets\tPartition: 46\tLeader: 1\tReplicas: 1\tIsr: 1\tElr: \tLastKnownElr: ",
+    "\tTopic: __consumer_offsets\tPartition: 47\tLeader: 1\tReplicas: 1\tIsr: 1\tElr: \tLastKnownElr: ",
+    "\tTopic: __consumer_offsets\tPartition: 48\tLeader: 1\tReplicas: 1\tIsr: 1\tElr: \tLastKnownElr: ",
+    "\tTopic: __consumer_offsets\tPartition: 49\tLeader: 1\tReplicas: 1\tIsr: 1\tElr: \tLastKnownElr: "
+  ],
+  "httpChecks": [
+    {
+      "url": "http://127.0.0.1:8130/actuator/health/readiness",
+      "status": 200,
+      "body": {
+        "status": "UP"
+      }
+    },
+    {
+      "url": "http://127.0.0.1:8131/actuator/health/readiness",
+      "status": 200,
+      "body": {
+        "status": "UP"
+      }
+    },
+    {
+      "url": "http://127.0.0.1:8132/actuator/health/readiness",
+      "status": 200,
+      "body": {
+        "status": "UP"
+      }
+    },
+    {
+      "url": "http://127.0.0.1:8135/actuator/health",
+      "status": 200,
+      "body": {
+        "status": "UP"
+      }
+    },
+    {
+      "url": "http://127.0.0.1:8136/mock-pg/health",
+      "status": 200,
+      "body": {
+        "status": "UP"
+      }
+    },
+    {
+      "url": "http://127.0.0.1:8133/health",
+      "status": 200,
+      "body": "up"
+    },
+    {
+      "check": "order_read_valid_token_False",
+      "status": 401
+    },
+    {
+      "check": "order_read_valid_token_True",
+      "status": 404
+    },
+    {
+      "check": "gateway_replicas",
+      "instances": [
+        "api-b",
+        "api-a",
+        "api-b",
+        "api-a",
+        "api-b",
+        "api-a"
+      ]
+    },
+    {
+      "check": "now_showing",
+      "count": 20
+    }
+  ],
+  "providerAuthGetChecks": {
+    "validCredentialsMissingOperation": 404,
+    "missingCredentials": 401
+  },
+  "backup": {
+    "restorePerformed": false,
+    "sha256": "A325A9260BE0DE9D4E27F7FC2A58BF4DA74E514F5BD40DECF4AD9B5FD0DE14BF",
+    "bytes": 39559776,
+    "archiveContentsListed": true,
+    "path": "target/local-docker/booking-pre-deploy-20261018-140423.dump"
+  },
+  "credentials": "Separate local API/provider secrets in ignored target/local-docker/order-saga.env; values omitted",
+  "loadTester": "Idle control service, deliberate observer STOP marker; Node and one-off workloads stopped",
+  "testsExecuted": false,
+  "manualBusinessWrites": false
+}
