@@ -10,10 +10,9 @@ FROM maven:3.9-eclipse-temurin-21 AS builder
 
 WORKDIR /build
 
-# Copy POM first for dependency caching
+# Package resolves project dependencies into the persistent Maven cache below.
+# Avoid dependency:go-offline, which also resolves unrelated Maven plugin dependencies.
 COPY pom.xml ./pom.xml
-RUN --mount=type=cache,target=/root/.m2 \
-    mvn dependency:go-offline -B 2>/dev/null || true
 
 # Copy source
 COPY src ./src
