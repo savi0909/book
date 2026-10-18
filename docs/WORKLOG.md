@@ -4,6 +4,36 @@ Actual delivery record. Reconstructed sprint dates are described in
 [provenance](../TIMELINE_PROVENANCE.md), not treated as actual work dates here.
 Current resume entry: [project context](../PROJECT_CONTEXT.md).
 
+## 2026-10-18: Kafka order saga, copied gateway and learning index
+
+User selected the order outbox/saga brief, required Kafka as the only messaging
+system, and requested a copy of `D:/customer-api/mock-payment-gateway` in this repo.
+Added default-off `/api/orders`, V8 durable saga/outbox/inbox/commands, cancellation
+tombstones, payment operations, compensation and audited recovery. The copied
+standalone gateway adds V069 immutable same-ID capture/refund lookup and normalized
+route authentication; original source remains untouched. Legacy movie checkout/
+cancel rejects saga-owned bookings under lock, and catalog purge preserves their
+reconciliation evidence. No existing migration was rewritten.
+
+Independent review findings were reproduced and fixed, including cross-replica
+request hash ordering, normalized-path token enforcement, durable manual-review
+stop intent, null Kafka quarantine and bounded customer-action recovery.
+Full root verification: **101 tests**, zero failures/errors/skips, Maven verify
+and packaging passed at 13:48:38 IST. Copied gateway: **21 tests**, zero failures/
+errors/skips, passed at 13:45:34 IST. Real Kafka plus a separate gateway process
+was exercised in isolated integration fixtures. Optional Compose configuration
+validated; retained stack not deployed. No sustained load, data reset, file
+deletion or Maven clean. See [verification](ORDER_SAGA_VERIFICATION.md).
+
+User additionally requested updated tutorial guides and a tutorial index for
+learning. Created [learning index](TUTORIAL_INDEX.md) with saved API 3 resume point,
+prerequisites, one-session checkpoints, source entry points, separate generic/
+movie/saga tracks and optional performance study. Refreshed 20 guide navigation
+entries, standalone IntelliJ setup, saga review lessons, movie retention scope
+and interview practice. Added [saga tutorial](ORDER_SAGA_TUTORIAL.md) and
+[recovery runbook](ORDER_SAGA_RUNBOOK.md). This records delivered explanations and
+executed verification, not learner mastery or permission for a new runtime session.
+
 ## 2026-10-05: independent repository and movie backend
 
 Created `D:/sd-book-my-show` with fresh Git init, as requested. Imported 14 actual

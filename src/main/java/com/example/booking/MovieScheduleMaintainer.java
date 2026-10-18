@@ -164,6 +164,7 @@ public class MovieScheduleMaintainer {
                   SELECT sh.id FROM movie_shows sh JOIN movie_screens s ON s.id=sh.screen_id
                   JOIN movie_multiplexes mx ON mx.id=s.multiplex_id
                   WHERE sh.starts_at<(clock_timestamp() AT TIME ZONE mx.zone_id)::date::timestamp AT TIME ZONE mx.zone_id
+                    AND NOT EXISTS (SELECT 1 FROM order_inventory i JOIN movie_bookings b ON b.id=i.booking_id WHERE b.show_id=sh.id)
                     AND NOT EXISTS (SELECT 1 FROM movie_bookings b JOIN movie_payments p ON p.booking_id=b.id
                       WHERE b.show_id=sh.id AND p.state IN ('PENDING','RETRY_PENDING'))
                   ORDER BY sh.starts_at,sh.id LIMIT ?

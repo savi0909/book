@@ -1,5 +1,7 @@
 # Spring Boot virtual-thread load tester for Book My Show
 
+[Tutorial index and learning guide](TUTORIAL_INDEX.md) · One lesson at a time; runtime exercises require a selected hands-on session.
+
 Selected 2026-10-06: user requested the same Java/Spring Boot approach as the
 earlier URL-shortener generator. Implemented in [load-tester-java](../load-tester-java/README.md),
 a standalone app inside this repository, with its own Docker group. Earlier

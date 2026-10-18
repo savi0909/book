@@ -1,5 +1,7 @@
 # API 3: get one event by ID
 
+[Tutorial index and learning guide](TUTORIAL_INDEX.md) · One lesson at a time; runtime exercises require a selected hands-on session.
+
 Today's API is **`GET /api/events/{id}`**. It reads one existing event. Stay with this endpoint; read one step at a time in IntelliJ.
 
 ## 1. Understand the request

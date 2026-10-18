@@ -1,5 +1,15 @@
 # Book My Show project status
 
+## Order saga — 2026-10-18
+
+Implemented on `feature/order-outbox-saga`: default-off `/api/orders`, durable
+orchestrated saga, Kafka-only messaging, transactional outbox/inbox, Inventory
+participant and separate copied mock gateway for idempotent capture/refund.
+[Tutorial](ORDER_SAGA_TUTORIAL.md), [plan](ORDER_SAGA_PLAN.md),
+[operations](ORDER_SAGA_RUNBOOK.md), [verification](ORDER_SAGA_VERIFICATION.md).
+The original gateway source and retained application stack were not changed.
+No deployment or sustained load was performed. Prior sections are dated history.
+
 Updated **2026-10-08** (documentation review). Repository: `D:/sd-book-my-show`,
 origin `https://github.com/savi0909/book` (main). The 2026-10-07 work (PVR catalog,
 rolling window, movie journeys, Ankita scripts) landed on main as `834c23b` via PR.
@@ -33,6 +43,12 @@ or container operations were run.
 
 ## Study path
 
+Use the [tutorial index and learning guide](TUTORIAL_INDEX.md) for the expanded
+route map, prerequisites, source entry points and pause checkpoints. The compact
+table below is a reference; it does not advance the saved API 3 lesson or select
+runtime exercises. The Order Saga track can follow local outbox + movie booking
+without completing load-testing lessons first.
+
 Recommended order through the tutorials (added 2026-10-08). Each builds on the
 ones before it. Take one part per sitting and stop at its pause points.
 
@@ -49,7 +65,8 @@ ones before it. Take one part per sitting and stop at its pause points.
 | 9 | [Docker 10 RPS smoke](DOCKER_LOAD_TEST_TUTORIAL.md) | A separate Compose group; resource isolation is not a failure domain |
 | 10 | [Java virtual-thread loader](JAVA_LOAD_TESTER_TUTORIAL.md) | Fixed arrivals, virtual threads vs bounded concurrency, retry policies |
 | 11 | [Movie advance booking](MOVIE_ADVANCE_BOOKING_TUTORIAL.md) | PVR catalog, rolling window, purge, booking window, JIT case study, journeys, sizing, remote PostgreSQL |
-| 12 | [Interview guide](INTERVIEW_GUIDE.md) | Spoken practice across every track |
+| 12 | [Order Saga + Kafka](ORDER_SAGA_TUTORIAL.md) | Durable orchestration, Kafka outbox/inbox, participant operations, capture/refund reconciliation, cancellation tombstones and manual recovery |
+| 13 | [Interview guide](INTERVIEW_GUIDE.md) | Spoken practice across every track |
 
 Tutorials 3–6 were written in the original lab. Each has a note mapping its ports
 to this repository. Links into `D:/AA-SYSTEM-DESIGN-ARCHITECTURE/...` point to the

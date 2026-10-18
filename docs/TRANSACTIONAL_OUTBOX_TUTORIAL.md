@@ -1,5 +1,7 @@
 # Scenario 4: preserve delivery work across the commit/publish gap
 
+[Tutorial index and learning guide](TUTORIAL_INDEX.md) · One lesson at a time; runtime exercises require a selected hands-on session.
+
 > **Running this in this repository (note added 2026-10-08).** This tutorial was
 > written and verified in the original `D:/java-projects/ticket-booking-lab`. Its
 > commands and diagrams keep that lab's addresses as history. In this standalone
@@ -351,5 +353,9 @@ Exercises:
 5. Design an upgrade order and explicit backfill boundary for historical bookings.
    Identify which guarantees fail if an old writer remains in the fleet.
 
-Stop after scenario 4. Durable refund compensation, database HA, optimistic seat
-versions and a general retry-storm harness remain separate proposals.
+Stop after scenario 4 for this lesson. The separately implemented
+[Order Saga + Kafka tutorial](ORDER_SAGA_TUTORIAL.md) adds durable simulated
+refund compensation to `/api/orders`; it does not convert this generic local
+notification outbox into Kafka. Database HA and optimistic seat versions remain
+future work. Existing controlled retry clients have their own
+[learning track](TUTORIAL_INDEX.md#route-e--optional-load-generators-and-performance-study).

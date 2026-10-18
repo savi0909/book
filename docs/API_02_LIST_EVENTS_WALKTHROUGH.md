@@ -1,5 +1,7 @@
 # API 2: list events
 
+[Tutorial index and learning guide](TUTORIAL_INDEX.md) · One lesson at a time; runtime exercises require a selected hands-on session.
+
 Today's API is **`GET /api/events`**. It reads existing events without creating a fixture. Your goal is to explain how URL parameters become a SQL query and then a JSON array.
 
 Read one step at a time in IntelliJ. Stop after step 3; the Postman practice is optional.

@@ -48,3 +48,26 @@ movie:
   booking-window-days: ${MOVIE_BOOKING_WINDOW_DAYS:3}
   schedule-enabled: ${MOVIE_SCHEDULE_ENABLED:false}
   schedule-interval-ms: ${MOVIE_SCHEDULE_INTERVAL_MS:900000}
+order:
+  controls-enabled: ${ORDER_CONTROLS_ENABLED:false}
+  operator-token: ${ORDER_OPERATOR_TOKEN:}
+  enabled: ${ORDER_SAGA_ENABLED:false}
+  worker-enabled: ${ORDER_SAGA_WORKER_ENABLED:true}
+  kafka-enabled: ${ORDER_KAFKA_ENABLED:true}
+  kafka-bootstrap: ${ORDER_KAFKA_BOOTSTRAP:localhost:9094}
+  kafka-group: ${ORDER_KAFKA_GROUP:booking-saga-v1}
+  api-token: ${ORDER_API_TOKEN:}
+  provider-url: ${ORDER_PROVIDER_URL:http://localhost:8136}
+  provider-token: ${ORDER_PROVIDER_TOKEN:}
+  poll-ms: ${ORDER_POLL_MS:500}
+  batch-size: ${ORDER_BATCH_SIZE:20}
+  publish-concurrency: ${ORDER_PUBLISH_CONCURRENCY:10}
+  lease-seconds: ${ORDER_LEASE_SECONDS:30}
+  broker-timeout-ms: ${ORDER_BROKER_TIMEOUT_MS:5000}
+  max-claims: ${ORDER_MAX_CLAIMS:10}
+  backoff-base-ms: ${ORDER_BACKOFF_BASE_MS:1000}
+  backoff-cap-ms: ${ORDER_BACKOFF_CAP_MS:300000}
+  deadline-seconds: ${ORDER_DEADLINE_SECONDS:120}
+  step-seconds: ${ORDER_STEP_SECONDS:10}
+  max-recovery: ${ORDER_MAX_RECOVERY:10}
+  max-payment-attempts: ${ORDER_MAX_PAYMENT_ATTEMPTS:10}

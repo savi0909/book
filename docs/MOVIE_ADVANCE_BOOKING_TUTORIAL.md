@@ -1,5 +1,7 @@
 # Movie advance booking: catalog, rolling window, journeys and sizing
 
+[Tutorial index and learning guide](TUTORIAL_INDEX.md) · One lesson at a time; runtime exercises require a selected hands-on session.
+
 Written 2026-10-08 for the work delivered on 2026-10-07 (main commit `834c23b`
 and PRs #1–#3). It teaches what the reference docs only list:
 [PVR catalog](PVR_CATALOG_SCHEDULE.md), [Ankita PostgreSQL](ANKITA_POSTGRES.md),
@@ -255,9 +257,17 @@ so B skips the rest of its tick; (b) the second replica's batches all hit
 
 ### The idea
 
-Every tick first deletes every show that started before **today's local midnight**,
-together with everything that depends on it. This keeps the database close to a
-steady 4-day size. The user chose whole-day deletion, including bookings and payments.
+Every tick first selects eligible shows that started before **today's local
+midnight**, then removes their dependent rows under the guards below. The user
+chose whole-day deletion for ordinary movie bookings and payments.
+
+**2026-10-18 retention update:** shows referenced by `order_inventory` are now
+excluded from `purgeBatch`, including terminal saga bookings. Their reservation
+rows have a foreign key to movie bookings, and their recovery evidence must be
+preserved. Ordinary catalog inventory still follows the rolling window; saga
+history can outlive four days. There is no automatic saga cleanup. Read
+[saga retention](ORDER_SAGA_RUNBOOK.md#pause-rollback-and-retention) before planning
+any future cleanup. Earlier October measurements below predate this exception.
 
 The dependency graph (from V5) contains a cycle:
 

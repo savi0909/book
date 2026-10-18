@@ -1,5 +1,7 @@
 # Scenario 3: one bad payment must not block healthy recovery
 
+[Tutorial index and learning guide](TUTORIAL_INDEX.md) · One lesson at a time; runtime exercises require a selected hands-on session.
+
 > **Running this in this repository (note added 2026-10-08).** This tutorial was
 > written and verified in the original `D:/java-projects/ticket-booking-lab`. Its
 > commands and diagrams keep that lab's addresses as history. In this standalone

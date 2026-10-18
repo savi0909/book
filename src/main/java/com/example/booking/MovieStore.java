@@ -10,6 +10,10 @@ public class MovieStore {
     private final BookingStore db;
     MovieStore(BookingStore db) { this.db=db; }
     public BookingStore db() { return db; }
+    void requireLegacyBooking(UUID id) {
+        if(Boolean.TRUE.equals(db.jdbc().queryForObject("SELECT EXISTS(SELECT 1 FROM order_inventory WHERE booking_id=?)",Boolean.class,id)))
+            throw ApiException.conflict("SAGA_OWNED_BOOKING","Use the Order API for saga bookings");
+    }
     static final RowMapper<BookingRow> BOOKING=(rs,n)->new BookingRow(rs.getObject("id",UUID.class),
         rs.getObject("show_id",UUID.class),rs.getString("buyer_id"),rs.getString("state"),
         BookingStore.instant(rs,"expires_at"),rs.getLong("amount_minor"),rs.getString("hold_key"),

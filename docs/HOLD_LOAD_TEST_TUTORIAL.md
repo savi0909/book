@@ -1,5 +1,7 @@
 # Build here, run the hold comparison on Ankita
 
+[Tutorial index and learning guide](TUTORIAL_INDEX.md) · One lesson at a time; runtime exercises require a selected hands-on session.
+
 Delivered 2026-10-06 after the user selected a checkoutable load-test module.
 This implements the **generic hold client comparison** portion of the
 [handover](HANDOVER_HOLD_RETRY_BUILD.md). Abhishek hosts services; the learner

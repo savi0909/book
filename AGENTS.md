@@ -1,5 +1,25 @@
 # SD Book My Show agent instructions
 
+## Order outbox/saga — 2026-10-18
+
+Learning entry: [tutorial index](docs/TUTORIAL_INDEX.md). It preserves the saved
+API 3 lesson and adds prerequisite paths into the saga. Update this index when
+adding study guides; implementation/test completion is not learner mastery.
+
+User explicitly selected [the brief](docs/ORDER_SAGA_BRIEF.md). **Always use Kafka
+for messaging; do not substitute another broker.** Copied mock payment gateway
+is under `mock-payment-gateway/`; do not modify its original in `D:/customer-api`.
+Read [plan](docs/ORDER_SAGA_PLAN.md), [tutorial](docs/ORDER_SAGA_TUTORIAL.md),
+[runbook](docs/ORDER_SAGA_RUNBOOK.md), [verification](docs/ORDER_SAGA_VERIFICATION.md).
+V8/default-off `/api/orders` owns a separate durable workflow; legacy bookings
+stay separate. Gateway V069 provides persistent capture/refund identity/lookup.
+Do not route saga-owned bookings through legacy checkout/cancel, purge their
+shows, invent provider keys, mark confirmed from outbox status, or erase evidence.
+This implementation request selected isolated correctness tests, not sustained
+load, retained-stack deployment or unrelated pending work. Earlier test/load
+restrictions continue outside explicitly selected verification. Never delete
+files/directories or run Maven clean without explicit permission.
+
 ## Tutorial review and advance-booking tutorial — 2026-10-08
 
 Start studying from the [study path](docs/PROJECT_STATUS.md#study-path). The new

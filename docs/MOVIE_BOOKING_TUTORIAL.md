@@ -1,11 +1,20 @@
 # Movie booking: shows, atomic seat groups and payment retries
 
+[Tutorial index and learning guide](TUTORIAL_INDEX.md) · One lesson at a time; runtime exercises require a selected hands-on session.
+
 This is the current backend domain at `D:/sd-book-my-show`. The inherited generic
 ticketing endpoints/studies remain separately available. The movie expansion is
 new October 5 work; it is not backdated into the reconstructed source schedule.
 Read [the movie API reference](MOVIE_API_REFERENCE.md) alongside this walkthrough.
 
 ## Your requirements
+
+**2026-10-18 scope note:** this guide teaches the existing `/api/movie` group
+workflow and in-process payment mock. The optional
+[Order Saga](ORDER_SAGA_TUTORIAL.md) reuses its seat locks but owns separate
+payment/recovery state and executes simulated refunds through the copied gateway.
+Saga-owned bookings reject legacy checkout/cancel under the booking lock; use
+`/api/orders` for them. Existing movie loaders still use this legacy movie API.
 
 | Requirement | Implementation |
 | --- | --- |

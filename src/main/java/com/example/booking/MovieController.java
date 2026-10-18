@@ -15,8 +15,13 @@ public class MovieController {
     private final MovieCatalog catalog;
     private final MovieBookingService bookings;
     private final MoviePaymentService payments;
-    public MovieController(MovieCatalog catalog,MovieBookingService bookings,MoviePaymentService payments) {
-        this.catalog=catalog;this.bookings=bookings;this.payments=payments;
+    private final MovieStore store;
+    public MovieController(MovieCatalog catalog,MovieBookingService bookings,MoviePaymentService payments,MovieStore store) {
+        this.catalog=catalog;this.bookings=bookings;this.payments=payments;this.store=store;
+    }
+    private void legacyOnly(UUID id) {
+        if(Boolean.TRUE.equals(store.db().jdbc().queryForObject("SELECT EXISTS(SELECT 1 FROM order_inventory WHERE booking_id=?)",Boolean.class,id)))
+            throw ApiException.conflict("SAGA_OWNED_BOOKING","Use the Order API for saga bookings");
     }
     @PostMapping("/api/demo/movie/multiplexes") ResponseEntity<Multiplex> multiplex(@Valid @RequestBody MultiplexRequest r) { return ResponseEntity.status(201).body(catalog.createMultiplex(r)); }
     @GetMapping("/api/movie/multiplexes/{id}") Multiplex multiplex(@PathVariable UUID id) { return catalog.multiplex(id); }
@@ -33,11 +38,11 @@ public class MovieController {
         var result=bookings.hold(r,key); return ResponseEntity.status(result.replayed()?200:201).body(result);
     }
     @GetMapping("/api/movie/bookings/{id}") Booking booking(@PathVariable UUID id) { return bookings.get(id); }
-    @PostMapping("/api/movie/bookings/{id}/cancel") Booking cancel(@PathVariable UUID id) { return bookings.cancel(id); }
+    @PostMapping("/api/movie/bookings/{id}/cancel") Booking cancel(@PathVariable UUID id) { legacyOnly(id);return bookings.cancel(id); }
     @GetMapping("/api/movie/bookings/{id}/audit") List<Map<String,Object>> audit(@PathVariable UUID id) { return bookings.audit(id); }
     @PostMapping("/api/movie/bookings/{id}/checkout") ResponseEntity<Checkout> checkout(@PathVariable UUID id,
             @Valid @RequestBody CheckoutRequest r,@RequestHeader("Idempotency-Key") String key) {
-        var result=payments.checkout(id,key,r); return ResponseEntity.status(result.replayed()?200:202).body(result);
+        legacyOnly(id);var result=payments.checkout(id,key,r); return ResponseEntity.status(result.replayed()?200:202).body(result);
     }
     @GetMapping("/api/movie/bookings/{id}/payments") List<Payment> history(@PathVariable UUID id) { return payments.history(id); }
     @GetMapping("/api/movie/payments/{id}") Payment payment(@PathVariable UUID id) { return payments.get(id); }

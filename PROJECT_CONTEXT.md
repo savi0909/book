@@ -1,5 +1,37 @@
 # SD Book My Show project context
 
+## Order saga delivery — 2026-10-18
+
+User requested refreshed guides and a unified learning entry:
+[tutorial index](docs/TUTORIAL_INDEX.md), with the saved API 3 resume point,
+one-lesson sessions, code entry methods, checkpoints and interview practice.
+
+User selected the [order brief](docs/ORDER_SAGA_BRIEF.md), with **Kafka only**
+for messaging and a copy of `D:/customer-api/mock-payment-gateway` in this repo.
+[Plan](docs/ORDER_SAGA_PLAN.md), [tutorial](docs/ORDER_SAGA_TUTORIAL.md),
+[recovery runbook](docs/ORDER_SAGA_RUNBOOK.md), [verification](docs/ORDER_SAGA_VERIFICATION.md).
+New `/api/orders` workflow and workers default off. V8 adds durable orders,
+sagas, command correlation, leased outbox, inbox, quarantine, participant state
+and operator audit. Reserve → capture → inventory commit → confirm; pending
+cancellation persists stop intent, releases/cancels inventory and refunds capture.
+Only settled funds plus cleared inventory permit CANCELLED/FAILED; unresolved
+work becomes MANUAL_REVIEW. Confirmed cancellation remains explicitly unsupported.
+
+The copied standalone gateway retains Java 21/Boot 3.5.5, adds V069 durable
+idempotent capture/refund lookup; the booking app stays Boot 3.5.16. Original
+`D:/customer-api` is untouched. Provider RPC runs outside booking transactions;
+Kafka offsets follow inbox/effect commits. Participants share booking PostgreSQL
+and API processes; gateway has its own process/schema. No distributed exactly-once,
+real-payment integration, production customer authentication or HA claim.
+
+Saga-owned movie bookings cannot use legacy checkout/cancel, and their shows
+are excluded from catalog purge to preserve recovery evidence. No automatic
+saga retention deletion is implemented. Optional `compose.order-saga.yml`
+adds a retained Kafka volume and gateway port 8136. Local integration tests
+were explicitly selected by this brief; no sustained load, retained-stack
+deployment, Ankita work or Redis work was selected. Earlier runtime observations
+below retain their original dates. Work uses a feature branch/PR, never a local merge.
+
 Updated 2026-10-07. Start with [current project status](docs/PROJECT_STATUS.md), then read
 [AGENTS.md](AGENTS.md), [worklog](docs/WORKLOG.md),
 [movie tutorial](docs/MOVIE_BOOKING_TUTORIAL.md) and

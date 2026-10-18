@@ -1,5 +1,7 @@
 # Study scenario 2: keep a provider incident from exhausting booking capacity
 
+[Tutorial index and learning guide](TUTORIAL_INDEX.md) · One lesson at a time; runtime exercises require a selected hands-on session.
+
 Study session, 2026-10-06. Read this first, then the
 [detailed provider tutorial](PROVIDER_ISOLATION_TUTORIAL.md) for each mechanism's
 interview points and historical experiments. This lesson inspects existing code;

@@ -1,5 +1,7 @@
 # Local 10 requests/second in a separate Docker group
 
+[Tutorial index and learning guide](TUTORIAL_INDEX.md) · One lesson at a time; runtime exercises require a selected hands-on session.
+
 User-selected 2026-10-06: run the small test on this machine, isolate the loader in
 its own Docker group, increase PostgreSQL to 1 GiB, and defer Redis to phase 3.
 
