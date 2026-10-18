@@ -1,5 +1,15 @@
 # SD Book My Show
 
+**Learning start:** [Tutorial index and learning guide](docs/TUTORIAL_INDEX.md)
+has the recommended order, saved API 3 resume point, code entry methods,
+checkpoints and the new Kafka saga track. Study one lesson at a time.
+
+[Order saga + Kafka](docs/ORDER_SAGA_TUTORIAL.md) (2026-10-18): optional durable
+reserve → capture → commit workflow, cancellation/refund recovery and copied
+[mock payment gateway](mock-payment-gateway/README.md). Disabled by default.
+[Plan](docs/ORDER_SAGA_PLAN.md), [runbook](docs/ORDER_SAGA_RUNBOOK.md),
+[verification](docs/ORDER_SAGA_VERIFICATION.md). Existing booking APIs remain available.
+
 [Current project status — 2026-10-07](docs/PROJECT_STATUS.md): Java loader delivered
 and locally verified; services currently stopped with data retained. Ankita run
 pending; Redis availability remains deferred to phase 3.

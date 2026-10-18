@@ -1,0 +1,99 @@
+{
+  "info": {
+    "name": "Book My Show - Local GET learning",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Import and select No environment. Send requests individually in numbered order. All requests are GETs against the deployed local gateway; no fixtures, holds or payments are created. List requests save the first returned ID into collection variables. Empty lists are valid: dependent detail requests require an existing ID. Start with requests 2 and 3 for the saved API 3 lesson."
+  },
+  "variable": [
+    { "key": "learningBaseUrl", "value": "http://localhost:8132", "type": "string" },
+    { "key": "learningEventId", "value": "", "type": "string" },
+    { "key": "learningMultiplexId", "value": "", "type": "string" },
+    { "key": "learningShowId", "value": "", "type": "string" },
+    { "key": "learningShowDate", "value": "", "type": "string" }
+  ],
+  "item": [
+    {
+      "name": "1 - Health and serving replica",
+      "request": {
+        "method": "GET", "header": [],
+        "url": "{{learningBaseUrl}}/health",
+        "description": "Observe status and instance. Repeated sends through HAProxy can reach different replicas. For database-aware readiness, use /actuator/health/readiness."
+      }
+    },
+    {
+      "name": "2 - List events and save an ID",
+      "request": {
+        "method": "GET", "header": [],
+        "url": "{{learningBaseUrl}}/api/events?limit=3&offset=0",
+        "description": "Learn pagination and JSON arrays. Saves the first event ID for request 3; an empty array means no retained events exist."
+      },
+      "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+        "if (pm.response.code === 200) {",
+        "  const rows = pm.response.json();",
+        "  pm.collectionVariables.set('learningEventId', rows.length ? rows[0].id : '');",
+        "}"
+      ] } }]
+    },
+    {
+      "name": "3 - Get one event (API 3 lesson)",
+      "request": {
+        "method": "GET", "header": [],
+        "url": "{{learningBaseUrl}}/api/events/{{learningEventId}}",
+        "description": "Send request 2 first. Compare this single object with the list response. Follow BookingController.event -> BookingService.event -> SELECT by primary key."
+      }
+    },
+    {
+      "name": "4 - Browse now-showing films",
+      "request": {
+        "method": "GET", "header": [],
+        "url": "{{learningBaseUrl}}/api/movie/now-showing",
+        "description": "Read the movie slate. Movie catalog data is separate from the generic event APIs above."
+      }
+    },
+    {
+      "name": "5 - Browse Mumbai cinemas and save an ID",
+      "request": {
+        "method": "GET", "header": [],
+        "url": "{{learningBaseUrl}}/api/movie/multiplexes?city=Mumbai",
+        "description": "Learn query filtering. Saves the first multiplex ID and clears any previously selected show. Change the city query parameter to explore another city."
+      },
+      "event": [{ "listen": "test", "script": { "type": "text/javascript", "exec": [
+        "if (pm.response.code === 200) {",
+        "  const rows = pm.response.json();",
+        "  pm.collectionVariables.set('learningMultiplexId', rows.length ? rows[0].id : '');",
+        "  pm.collectionVariables.set('learningShowId', '');",
+        "}"
+      ] } }]
+    },
+    {
+      "name": "6 - List tomorrow's shows and save an ID",
+      "request": {
+        "method": "GET", "header": [],
+        "url": "{{learningBaseUrl}}/api/movie/shows?multiplexId={{learningMultiplexId}}&date={{learningShowDate}}&limit=3&offset=0",
+        "description": "Send request 5 first. Defaults the date to tomorrow in India; set learningShowDate to override it (YYYY-MM-DD, within today..today+3). Saves the first show ID. An empty result may mean the rolling scheduler has not filled that cinema/date yet."
+      },
+      "event": [
+        { "listen": "prerequest", "script": { "type": "text/javascript", "exec": [
+          "if (!pm.variables.get('learningShowDate')) {",
+          "  const tomorrowIST = new Date(Date.now() + (24 * 60 + 330) * 60000).toISOString().slice(0, 10);",
+          "  pm.variables.set('learningShowDate', tomorrowIST);",
+          "}"
+        ] } },
+        { "listen": "test", "script": { "type": "text/javascript", "exec": [
+          "if (pm.response.code === 200) {",
+          "  const rows = pm.response.json();",
+          "  pm.collectionVariables.set('learningShowId', rows.length ? rows[0].id : '');",
+          "}"
+        ] } }
+      ]
+    },
+    {
+      "name": "7 - Read the show's seat map",
+      "request": {
+        "method": "GET", "header": [],
+        "url": "{{learningBaseUrl}}/api/movie/shows/{{learningShowId}}/seats",
+        "description": "Send request 6 first. Read seatNumber, category, priceMinor and availability. Prices are in paise. Reading availability does not reserve seats."
+      }
+    }
+  ]
+}

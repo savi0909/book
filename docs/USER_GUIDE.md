@@ -1,5 +1,7 @@
 # User guide
 
+[Tutorial index and learning guide](TUTORIAL_INDEX.md) · One lesson at a time; runtime exercises require a selected hands-on session.
+
 Follow [the Abhishek/Ankita load-test runbook](HOLD_LOAD_TEST_TUTORIAL.md) for the
 separately selected client module: fixtures, ingress, observer, run, discovery,
 audit and checkout. Business load belongs on Ankita; movie flows stay separate.

@@ -1,5 +1,21 @@
 @AGENTS.md
 
+Learning resume (2026-10-18): just started GET /api/events, first endpoint in this
+session; resume [short handover](docs/NEXT_SESSION_HANDOVER.md#learning-handover--2026-10-18)
+and existing API 2 guide. Review its IDE flow before advancing; no mastery assumed.
+
+API learning preference (2026-10-18): one endpoint at a time; exact request and
+parameters, relevant headers/body, status code, small labeled response excerpt,
+and IDE flow with actual controller/service/store-or-repository methods. Update
+the existing walkthrough as learning proceeds; do not rebuild tutorials or copy
+entire responses. Pause before advancing; API study never selects load tests.
+
+Latest (2026-10-18): [sprint smoke selection](docs/SPRINT_SMOKE_TESTS.md) contains
+10 exact JUnit methods. Run only on explicit smoke invocation, never automatically
+at sprint completion/startup. No load tests or loader startup without a separate
+explicit request. Java loader was stopped and its exit verified on 2026-10-18;
+booking services remained running. Selection documented, not executed.
+
 Latest (2026-10-08): tutorials reviewed and the [study path](docs/PROJECT_STATUS.md#study-path)
 added; new [movie advance-booking tutorial](docs/MOVIE_ADVANCE_BOOKING_TUTORIAL.md);
 [review findings](docs/TUTORIAL_REVIEW_2026-10-08.md). Origin exists (savi0909/book).

@@ -1,5 +1,7 @@
 # Scenario 2: a payment-provider outage without exhausting booking capacity
 
+[Tutorial index and learning guide](TUTORIAL_INDEX.md) · One lesson at a time; runtime exercises require a selected hands-on session.
+
 For the 2026-10-06 study session, start with the
 [protection reading guide](SCENARIO_02_PROTECTION_STUDY.md): one request trace,
 source checkpoints and prediction exercises before the future hold-retry comparison.

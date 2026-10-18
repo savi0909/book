@@ -28,6 +28,7 @@ public class MoviePaymentService {
         if(r.testBucket()!=null && !controls) throw new ApiException(400,"PAYMENT_FIXTURES_DISABLED","testBucket is a disabled local study control");
         return store.db().tx(()-> {
             store.locked(booking);
+            store.requireLegacyBooking(booking);
             var existing=store.db().jdbc().query("SELECT * FROM movie_payments WHERE booking_id=? AND checkout_key=?",MovieStore.PAYMENT,booking,key);
             if(!existing.isEmpty()) {
                 var p=existing.getFirst();

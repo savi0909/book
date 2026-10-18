@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Result — Mock Payment Gateway</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 16px;
+        }
+        .card {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+            width: 100%;
+            max-width: 400px;
+            padding: 40px 32px;
+            text-align: center;
+        }
+        .icon { font-size: 64px; margin-bottom: 16px; }
+        h1 { font-size: 24px; margin-bottom: 8px; }
+        .success h1 { color: #27ae60; }
+        .failure h1 { color: #e74c3c; }
+        .message { color: #666; font-size: 14px; margin-bottom: 24px; }
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 13px;
+        }
+        .detail-row:last-of-type { border-bottom: none; }
+        .label { color: #888; }
+        .value { color: #333; font-weight: 500; font-family: monospace; font-size: 12px; word-break: break-all; }
+        .details { background: #f8f9fa; border-radius: 8px; padding: 12px 16px; margin: 16px 0; text-align: left; }
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 8px;
+        }
+        .badge-success { background: #d4edda; color: #155724; }
+        .badge-failure { background: #f8d7da; color: #721c24; }
+        .footer-note { font-size: 11px; color: #aaa; margin-top: 20px; }
+    </style>
+</head>
+<body>
+<div class="card" th:classappend="${success} ? 'success' : 'failure'">
+    <div class="icon" th:text="${success} ? '✅' : '❌'"></div>
+    <h1 th:text="${success} ? 'Payment Successful' : 'Payment Failed'"></h1>
+    <p class="message" th:text="${success} ? 'Your payment has been processed.' : 'The payment could not be completed.'"></p>
+
+    <span class="badge"
+          th:classappend="${success} ? 'badge-success' : 'badge-failure'"
+          th:text="${status}">captured</span>
+
+    <div class="details" th:if="${paymentId != null}">
+        <div class="detail-row">
+            <span class="label">Payment ID</span>
+            <span class="value" th:text="${paymentId}">pay_xxx</span>
+        </div>
+        <div class="detail-row">
+            <span class="label">Order ID</span>
+            <span class="value" th:text="${orderId}">order_xxx</span>
+        </div>
+        <div class="detail-row" th:if="${signature != null}">
+            <span class="label">Signature</span>
+            <span class="value" th:text="${#strings.substring(signature, 0, 20) + '...'}">abc123...</span>
+        </div>
+    </div>
+
+    <p class="footer-note">Mock Payment Gateway — Dev/Test Environment Only</p>
+</div>
+</body>
+</html>

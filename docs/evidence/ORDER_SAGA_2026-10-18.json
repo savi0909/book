@@ -1,0 +1,126 @@
+{
+  "date": "2026-10-18",
+  "timezone": "Asia/Calcutta",
+  "branch": "feature/order-outbox-saga",
+  "messaging": "Kafka only",
+  "projects": {
+    "booking": {
+      "totals": {
+        "tests": 101,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "suites": [
+        {
+          "suite": "com.example.booking.BookingIntegrationTest",
+          "tests": 22,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        {
+          "suite": "com.example.booking.FailoverIntegrationTest",
+          "tests": 4,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        {
+          "suite": "com.example.booking.HoldLoadClientIntegrationTest",
+          "tests": 1,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        {
+          "suite": "com.example.booking.MovieBookingIntegrationTest",
+          "tests": 13,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        {
+          "suite": "com.example.booking.MoviePaymentMockTest",
+          "tests": 2,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        {
+          "suite": "com.example.booking.MovieScheduleIntegrationTest",
+          "tests": 6,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        {
+          "suite": "com.example.booking.OrderKafkaIntegrationTest",
+          "tests": 2,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        {
+          "suite": "com.example.booking.OrderSagaIntegrationTest",
+          "tests": 24,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        {
+          "suite": "com.example.booking.OutboxIntegrationTest",
+          "tests": 11,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        {
+          "suite": "com.example.booking.PoisonIsolationIntegrationTest",
+          "tests": 12,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        {
+          "suite": "com.example.booking.ProviderIsolationIntegrationTest",
+          "tests": 4,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        }
+      ]
+    },
+    "mockPaymentGateway": {
+      "totals": {
+        "tests": 21,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "suites": [
+        {
+          "suite": "com.aaztra.mockpg.SagaOperationIntegrationTest",
+          "tests": 19,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        {
+          "suite": "com.aaztra.mockpg.SagaTokenFilterTest",
+          "tests": 2,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        }
+      ]
+    }
+  },
+  "retainedStackDeployed": false,
+  "sustainedLoadRun": false,
+  "notes": [
+    "Isolated PostgreSQL and Kafka Testcontainers; copied gateway separate Java test process",
+    "Root full verify builds and packages both applications; provider tests verified independently",
+    "EXPLAIN fixture has 5000 retained published outbox rows; not a capacity benchmark"
+  ]
+}

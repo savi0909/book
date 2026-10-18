@@ -1,6 +1,31 @@
 # Ticket booking interview practice
 
+[Tutorial index and learning guide](TUTORIAL_INDEX.md) · One lesson at a time; runtime exercises require a selected hands-on session.
+
 Recommended order through the tutorials: [study path](PROJECT_STATUS.md#study-path).
+
+## Order Saga and Kafka track
+
+Read [Order Saga](ORDER_SAGA_TUTORIAL.md), one pass at a time. Use one seat-group
+example and name the durable rows in each answer.
+
+1. Senior: a POST returns 202, then the API dies. Which records prove that the
+   request was accepted and Inventory still has work? Why must request hashing
+   be stable across two JVMs?
+2. Senior: Kafka acknowledges a capture command. Can the order be confirmed?
+   Distinguish PUBLISHED, captured funds and committed inventory.
+3. Staff: a payment provider commits, but its HTTP response is lost. Explain the
+   stable operation UUID, GET reconciliation, same-ID retry and refund identity.
+4. Staff: cancellation reaches Inventory before reserve, then capture succeeds
+   late. Trace both tombstones and the independent funds/inventory obligations.
+5. Principal: manual review queues compensation, then an operator resumes before
+   old commit replies arrive. Show why persisted failure intent and participant
+   versions prevent false confirmation. Include authentication of normalized
+   provider paths as a separate trust-boundary concern.
+
+Check your answers against the [verification record](ORDER_SAGA_VERIFICATION.md).
+Passing tests establish executed cases, not production HA, real billing or
+learner mastery.
 
 ## Movie advance-booking track
 

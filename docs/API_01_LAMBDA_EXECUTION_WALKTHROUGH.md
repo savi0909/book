@@ -1,5 +1,7 @@
 # API 1: how the two lambdas execute
 
+[Tutorial index and learning guide](TUTORIAL_INDEX.md) · One lesson at a time; runtime exercises require a selected hands-on session.
+
 Stay with `createEvent()` for this lesson. The key line is **`work.get()`**: it runs the lambda you passed to `store.tx(...)`.
 
 Read sections 1 and 2 first. The expanded Java and debugger steps can wait.

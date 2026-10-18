@@ -1,5 +1,97 @@
 # SD Book My Show project context
 
+## Saved API learning preference — 2026-10-18
+
+Current learning resume: just started with `GET /api/events?limit=3&offset=0`,
+the first endpoint in this session (the existing API 2 guide). Follow its IDE
+flow before advancing; no mastery is assumed. [Short handover](docs/NEXT_SESSION_HANDOVER.md#learning-handover--2026-10-18).
+
+When the user says "API", provide one endpoint, request parameters, relevant
+headers/body, status code and a short response excerpt when invoked,
+plus a concise IDE call stack: controller class/method -> service class/method
+-> repository or actual store/JDBC class/method -> SQL/table, with source links.
+Use real code names, explain the response briefly and wait before advancing.
+Only invoke the selected URL; API study does not authorize collection/load runs
+or incidental write requests. This records a preference, not learner mastery.
+Update the existing API guide incrementally with these compact notes rather
+than rebuilding tutorials or copying entire responses. Label omitted fields/items
+and distinguish observed responses/statuses from illustrative examples.
+
+## Sprint smoke selection and loader stop — 2026-10-18
+
+User requested a small sprint smoke selection (maximum 10 tests) and saved memory.
+[Selected exactly 10 existing methods](docs/SPRINT_SMOKE_TESTS.md): generic payment
+success/expired replay; movie atomic groups, payment failure/history and late
+success; outbox rollback; order API replay/ownership, saga success/duplicates and
+refund compensation; real Kafka/copied-gateway confirmation and cancellation.
+Run only when explicitly invoked, not automatically at sprint completion/startup.
+No load generators, full-suite expansion or retained-stack business requests.
+This selection was not executed; this request is documentation/source review only.
+
+Earlier in this session, the user requested stopping the current loader.
+`sd-book-my-show-java-load-test-load-tester-1` was stopped and verified Exited (143);
+booking services remained running. This supersedes the earlier idle-loader state
+below without changing that deployment's historical evidence.
+
+## Load-test startup restriction — 2026-10-18
+
+User explicitly requires load tests to run only on request, never automatically
+at startup. Normal deployment/restart commands exclude Java/Node load generators,
+including the idle Java control service. Earlier deployment/run permissions do
+not authorize future load runs. This clarification changed documentation only;
+no workload, test suite or service operation was executed.
+
+## Local Docker deployment — 2026-10-18
+
+User subsequently selected deployment of all local components. Base + failover +
+provider + order-saga now runs with the existing PostgreSQL container/volume,
+both updated APIs, HAProxy, Kafka and copied mock payment gateway. V8 and gateway
+V069 applied successfully; read-only health/auth/routing checks passed and Kafka
+has two Stable-group consumers. The Java control service is running idle with
+an observer STOP marker; Node workload/one-off containers remain stopped.
+No business/load run or Maven test suite was executed for deployment.
+Pre-migration database backup and private token env file are under ignored
+`target/local-docker/`. Normal movie rolling maintenance is enabled.
+See [deployment record](docs/LOCAL_DOCKER_DEPLOYMENT_2026-10-18.md) for endpoints,
+evidence, build adjustment and restart/pause commands. Earlier non-deployment
+statements below describe the preceding implementation session.
+
+Postman follow-up: [GET learning collection](postman/local-get-learning.postman_collection.json)
+targets the deployed gateway, includes seven read-only requests and saves list
+IDs for detail requests. Start with its event list/detail for the API 3 lesson.
+
+## Order saga delivery — 2026-10-18
+
+User requested refreshed guides and a unified learning entry:
+[tutorial index](docs/TUTORIAL_INDEX.md), with the saved API 3 resume point,
+one-lesson sessions, code entry methods, checkpoints and interview practice.
+
+User selected the [order brief](docs/ORDER_SAGA_BRIEF.md), with **Kafka only**
+for messaging and a copy of `D:/customer-api/mock-payment-gateway` in this repo.
+[Plan](docs/ORDER_SAGA_PLAN.md), [tutorial](docs/ORDER_SAGA_TUTORIAL.md),
+[recovery runbook](docs/ORDER_SAGA_RUNBOOK.md), [verification](docs/ORDER_SAGA_VERIFICATION.md).
+New `/api/orders` workflow and workers default off. V8 adds durable orders,
+sagas, command correlation, leased outbox, inbox, quarantine, participant state
+and operator audit. Reserve → capture → inventory commit → confirm; pending
+cancellation persists stop intent, releases/cancels inventory and refunds capture.
+Only settled funds plus cleared inventory permit CANCELLED/FAILED; unresolved
+work becomes MANUAL_REVIEW. Confirmed cancellation remains explicitly unsupported.
+
+The copied standalone gateway retains Java 21/Boot 3.5.5, adds V069 durable
+idempotent capture/refund lookup; the booking app stays Boot 3.5.16. Original
+`D:/customer-api` is untouched. Provider RPC runs outside booking transactions;
+Kafka offsets follow inbox/effect commits. Participants share booking PostgreSQL
+and API processes; gateway has its own process/schema. No distributed exactly-once,
+real-payment integration, production customer authentication or HA claim.
+
+Saga-owned movie bookings cannot use legacy checkout/cancel, and their shows
+are excluded from catalog purge to preserve recovery evidence. No automatic
+saga retention deletion is implemented. Optional `compose.order-saga.yml`
+adds a retained Kafka volume and gateway port 8136. Local integration tests
+were explicitly selected by this brief; no sustained load, retained-stack
+deployment, Ankita work or Redis work was selected. Earlier runtime observations
+below retain their original dates. Work uses a feature branch/PR, never a local merge.
+
 Updated 2026-10-07. Start with [current project status](docs/PROJECT_STATUS.md), then read
 [AGENTS.md](AGENTS.md), [worklog](docs/WORKLOG.md),
 [movie tutorial](docs/MOVIE_BOOKING_TUTORIAL.md) and

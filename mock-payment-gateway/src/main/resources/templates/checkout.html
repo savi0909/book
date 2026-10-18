@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mock Payment Gateway — Checkout</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 16px;
+        }
+        .card {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+            width: 100%;
+            max-width: 440px;
+            overflow: hidden;
+        }
+        .header {
+            background: #3498db;
+            color: #fff;
+            padding: 24px;
+            text-align: center;
+        }
+        .header .badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            border-radius: 20px;
+            padding: 4px 12px;
+            font-size: 11px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+        .header h1 { font-size: 22px; font-weight: 600; margin-bottom: 4px; }
+        .header .amount { font-size: 32px; font-weight: 700; }
+        .header .desc { font-size: 13px; opacity: 0.8; margin-top: 4px; }
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #e0e0e0;
+            background: #fafafa;
+        }
+        .tab-btn {
+            flex: 1;
+            padding: 12px 8px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-size: 13px;
+            color: #666;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+        .tab-btn.active {
+            color: #3498db;
+            border-bottom-color: #3498db;
+            font-weight: 600;
+        }
+        .tab-btn:hover { background: #f0f0f0; }
+        .body { padding: 24px; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+        .form-group { margin-bottom: 16px; }
+        label { display: block; font-size: 13px; color: #555; margin-bottom: 6px; font-weight: 500; }
+        input[type=text], input[type=email], input[type=tel], select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+        input:focus, select:focus { outline: none; border-color: #3498db; }
+        .row { display: flex; gap: 12px; }
+        .row .form-group { flex: 1; }
+        .card-row { display: flex; gap: 8px; }
+        .magic-hint {
+            background: #fff8e1;
+            border: 1px solid #ffc107;
+            border-radius: 8px;
+            padding: 12px;
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 16px;
+        }
+        .magic-hint strong { color: #333; }
+        .magic-hint ul { margin-left: 16px; margin-top: 4px; }
+        .pay-btn {
+            width: 100%;
+            padding: 14px;
+            background: #3498db;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .pay-btn:hover { background: #2980b9; }
+        .secure { text-align: center; font-size: 11px; color: #999; margin-top: 12px; }
+        .order-info { background: #f8f9fa; border-radius: 8px; padding: 12px; margin-bottom: 16px; font-size: 13px; }
+        .order-info span { color: #666; }
+        .order-info strong { color: #333; float: right; }
+    </style>
+</head>
+<body>
+<div class="card">
+    <div class="header">
+        <div class="badge">Mock Payment Gateway</div>
+        <h1>Secure Checkout</h1>
+        <div class="amount">₹<span th:text="${amountInRupees}">0.00</span></div>
+        <div class="desc" th:text="${description}">Payment</div>
+    </div>
+
+    <div class="order-info" style="margin: 12px 16px 0;">
+        <span>Order ID</span>
+        <strong th:text="${orderId}">order_xxx</strong>
+    </div>
+
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('wallet')">Wallet</button>
+        <button class="tab-btn" onclick="switchTab('upi')">UPI</button>
+        <button class="tab-btn" onclick="switchTab('card')">Card</button>
+        <button class="tab-btn" onclick="switchTab('netbanking')">NetBanking</button>
+    </div>
+
+    <div class="body">
+        <div class="magic-hint">
+            <strong>Test Mode — Magic Amounts</strong>
+            <ul>
+                <li>Amount ending in <strong>.99</strong> → Payment fails</li>
+                <li>Amount ending in <strong>.88</strong> → Insufficient balance</li>
+                <li>Amount ending in <strong>.55</strong> → Authorization only</li>
+                <li>Any other → <strong>Success</strong></li>
+            </ul>
+        </div>
+
+        <!-- WALLET TAB -->
+        <form id="form-wallet" class="tab-content active" method="POST" action="/checkout/pay">
+            <input type="hidden" name="orderId" th:value="${orderId}">
+            <input type="hidden" name="callbackUrl" th:value="${callbackUrl}">
+            <input type="hidden" name="redirectUrl" th:value="${redirectUrl}">
+            <input type="hidden" name="method" value="wallet">
+
+            <div class="form-group">
+                <label>Wallet / Phone Number</label>
+                <input type="tel" name="walletId" th:value="${prefillContact}" placeholder="9876543210">
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" name="email" th:value="${prefillEmail}" placeholder="you@example.com">
+            </div>
+            <div class="form-group">
+                <label>Phone</label>
+                <input type="tel" name="contact" th:value="${prefillContact}" placeholder="9876543210">
+            </div>
+            <button type="submit" class="pay-btn">Pay ₹<span th:text="${amountInRupees}">0</span></button>
+        </form>
+
+        <!-- UPI TAB -->
+        <form id="form-upi" class="tab-content" method="POST" action="/checkout/pay">
+            <input type="hidden" name="orderId" th:value="${orderId}">
+            <input type="hidden" name="callbackUrl" th:value="${callbackUrl}">
+            <input type="hidden" name="redirectUrl" th:value="${redirectUrl}">
+            <input type="hidden" name="method" value="upi">
+
+            <div class="form-group">
+                <label>UPI ID (VPA)</label>
+                <input type="text" name="vpa" placeholder="yourname@upi">
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" name="email" th:value="${prefillEmail}" placeholder="you@example.com">
+            </div>
+            <div class="form-group">
+                <label>Phone</label>
+                <input type="tel" name="contact" th:value="${prefillContact}" placeholder="9876543210">
+            </div>
+            <button type="submit" class="pay-btn">Pay via UPI</button>
+        </form>
+
+        <!-- CARD TAB -->
+        <form id="form-card" class="tab-content" method="POST" action="/checkout/pay">
+            <input type="hidden" name="orderId" th:value="${orderId}">
+            <input type="hidden" name="callbackUrl" th:value="${callbackUrl}">
+            <input type="hidden" name="redirectUrl" th:value="${redirectUrl}">
+            <input type="hidden" name="method" value="card">
+
+            <div class="form-group">
+                <label>Card Number</label>
+                <input type="text" name="cardNumber" maxlength="19" placeholder="4111 1111 1111 1111"
+                       oninput="this.value=this.value.replace(/[^0-9]/g,'').replace(/(.{4})/g,'$1 ').trim()">
+            </div>
+            <div class="row">
+                <div class="form-group">
+                    <label>Expiry (MM/YY)</label>
+                    <input type="text" name="cardExpiry" maxlength="5" placeholder="12/27">
+                </div>
+                <div class="form-group">
+                    <label>CVV</label>
+                    <input type="text" name="cvv" maxlength="4" placeholder="123">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" name="email" th:value="${prefillEmail}" placeholder="you@example.com">
+            </div>
+            <div class="form-group">
+                <label>Phone</label>
+                <input type="tel" name="contact" th:value="${prefillContact}" placeholder="9876543210">
+            </div>
+            <button type="submit" class="pay-btn">Pay ₹<span th:text="${amountInRupees}">0</span></button>
+        </form>
+
+        <!-- NETBANKING TAB -->
+        <form id="form-netbanking" class="tab-content" method="POST" action="/checkout/pay">
+            <input type="hidden" name="orderId" th:value="${orderId}">
+            <input type="hidden" name="callbackUrl" th:value="${callbackUrl}">
+            <input type="hidden" name="redirectUrl" th:value="${redirectUrl}">
+            <input type="hidden" name="method" value="netbanking">
+
+            <div class="form-group">
+                <label>Select Bank</label>
+                <select name="bank">
+                    <option value="">-- Choose a bank --</option>
+                    <option value="HDFC">HDFC Bank</option>
+                    <option value="ICICI">ICICI Bank</option>
+                    <option value="SBI">State Bank of India</option>
+                    <option value="AXIS">Axis Bank</option>
+                    <option value="KOTAK">Kotak Mahindra Bank</option>
+                    <option value="YES">Yes Bank</option>
+                    <option value="PNB">Punjab National Bank</option>
+                    <option value="BOB">Bank of Baroda</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" name="email" th:value="${prefillEmail}" placeholder="you@example.com">
+            </div>
+            <div class="form-group">
+                <label>Phone</label>
+                <input type="tel" name="contact" th:value="${prefillContact}" placeholder="9876543210">
+            </div>
+            <button type="submit" class="pay-btn">Pay via NetBanking</button>
+        </form>
+
+        <p class="secure">🔒 Secured by Mock Payment Gateway (Dev Only)</p>
+    </div>
+</div>
+
+<script>
+    function switchTab(method) {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        event.target.classList.add('active');
+        document.getElementById('form-' + method).classList.add('active');
+    }
+
+    // Alert before redirecting back to FitPro after payment submission
+    document.querySelectorAll('form[action="/checkout/pay"]').forEach(function(form) {
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            var orderId = form.querySelector('input[name="orderId"]').value;
+            var redirectUrl = form.querySelector('input[name="redirectUrl"]').value;
+            var method = form.querySelector('input[name="method"]').value;
+            alert('[Payment Gateway → FitPro]\n\nOrder: ' + orderId +
+                  '\nMethod: ' + method +
+                  '\nRedirect URL: ' + redirectUrl +
+                  '\n\nPayment will be processed and you will be redirected back to FitPro.');
+            form.submit();
+        });
+    });
+</script>
+</body>
+</html>

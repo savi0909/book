@@ -1,5 +1,7 @@
 # Study ticket inventory and payment recovery in IntelliJ
 
+[Tutorial index and learning guide](TUTORIAL_INDEX.md) · One lesson at a time; runtime exercises require a selected hands-on session.
+
 Updated: 2026-10-03. This tutorial explains the code currently in this project.
 Runtime exercises below are instructions and predictions, not results from this
 documentation session. Existing execution evidence remains in the linked project
@@ -19,12 +21,12 @@ documents. Reading or passing a test does not establish learner mastery.
 
 ## 1. Prepare the study session
 
-Open `D:/java-projects/pom.xml` as a Maven project, use JDK 21 for both the project
-SDK and Maven runner, and reload Maven. The workspace aggregates independent
-projects; it does not supply their inherited dependency configuration. On a fresh
-clone, initialize the coordinator and monitor submodules before importing.
+Open `D:/sd-book-my-show/pom.xml` as a Maven project, use JDK 21 for both the project
+SDK and Maven runner, and reload Maven. This repository is standalone: the
+original workspace and its submodules are not prerequisites. Import the loader
+or copied gateway's separate POM only when studying that module.
 
-Focus on `ticket-booking-lab`. First read [System specification](SYSTEM_SPEC.md); [Run guide](USER_GUIDE.md); [API reference](API_REFERENCE.md); [Executed verification](VERIFICATION.md); [Source relationship](../PARITY.md); [Interview guide](INTERVIEW_GUIDE.md).
+Focus on `src/main/java/com/example/booking`. First read [System specification](SYSTEM_SPEC.md); [Run guide](USER_GUIDE.md); [API reference](API_REFERENCE.md); [Executed verification](VERIFICATION.md); [Source relationship](../PARITY.md); [Interview guide](INTERVIEW_GUIDE.md).
 Use the project's README for its exact infrastructure and startup commands.
 Start only the selected lab when attempting live exercises. Import its supplied
 Postman collection/environment where available; dependent requests need their

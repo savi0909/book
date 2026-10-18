@@ -1,5 +1,7 @@
 # Scenario 1: survive an API failure during checkout
 
+[Tutorial index and learning guide](TUTORIAL_INDEX.md) · One lesson at a time; runtime exercises require a selected hands-on session.
+
 Implemented and verified: 2026-10-04. Read this guide in two passes: first learn
 the five interview points, then trace the files and run the experiments. Scenario
 2 (provider isolation) and scenario 3 (poison-job handling) are queued separately.

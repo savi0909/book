@@ -1,5 +1,7 @@
 # API 2: list events
 
+[Tutorial index and learning guide](TUTORIAL_INDEX.md) · One lesson at a time; runtime exercises require a selected hands-on session.
+
 Today's API is **`GET /api/events`**. It reads existing events without creating a fixture. Your goal is to explain how URL parameters become a SQL query and then a JSON array.
 
 Read one step at a time in IntelliJ. Stop after step 3; the Postman practice is optional.
@@ -7,25 +9,53 @@ Read one step at a time in IntelliJ. Stop after step 3; the Postman practice is 
 ## 1. Understand the request
 
 ```http
-GET http://localhost:8105/api/events?limit=3&offset=0
+GET http://localhost:8132/api/events?limit=3&offset=0
 ```
 
-There is no JSON request body. `limit=3` asks for at most three events; `offset=0` skips none. The response is HTTP **200 OK** with an array:
+This is the deployed local HAProxy gateway; API A is also reachable on port 8130.
+There is no JSON request body and no authentication header is required.
+
+| Query parameter | This request | Default | Allowed values |
+| --- | --- | --- | --- |
+| `limit` | `3` | `50` | `1`–`100` |
+| `offset` | `0` | `0` | `0`–`10000` |
+
+`limit=3` asks for at most three events; `offset=0` skips none. Successful status:
+HTTP **200 OK**, with a JSON array. The 2026-10-18 study invocation returned three
+retained events; this excerpt shows only the first, omitting its `createdAt` field
+and the other two items:
 
 ```json
 [
   {
-    "id": "11111111-1111-4111-8111-111111111111",
-    "name": "My first concert",
-    "seatCount": 3,
+    "id": "8a1d9a2a-47b5-45cc-b7ae-042fe22b090d",
+    "name": "Java load 4280e600e6b44bc1",
+    "seatCount": 1,
     "priceMinor": 5000,
-    "currency": "INR",
-    "createdAt": "2026-10-05T10:00:00Z"
+    "currency": "INR"
   }
 ]
 ```
 
-This example is illustrative. Your retained database may contain many earlier fixtures, so the actual names and IDs will differ. An empty database returns `[]`, not a missing-event error. The response contains event metadata; it does not count currently available seats.
+This is an excerpt of the earlier study response, not a newly executed request
+or a permanent fixture guarantee. Future names and IDs can differ. An empty
+database returns `[]`, not a missing-event error. `priceMinor=5000` means ₹50.
+The response contains event metadata; it does not count currently available seats.
+
+Compact IDE flow (open each class and find the named method):
+
+```text
+BookingController.events(limit, offset)
+  -> BookingService.events(limit, offset)
+    -> BookingStore.jdbc() returns JdbcTemplate
+      -> JdbcTemplate.query(SQL, rowMapper, limit, offset)
+        -> PostgreSQL: events table
+```
+
+Source: [controller](../src/main/java/com/example/booking/BookingController.java),
+[service](../src/main/java/com/example/booking/BookingService.java),
+[store](../src/main/java/com/example/booking/BookingStore.java).
+There is no separate repository method on this path; the SQL lives in the service.
 
 ## 2. Find the controller method
 

@@ -1,5 +1,7 @@
 # Learn distributed systems through ticket booking
 
+[Tutorial index and learning guide](TUTORIAL_INDEX.md) · One lesson at a time; runtime exercises require a selected hands-on session.
+
 Requested and refined: 2026-10-03. Primary learning project: `ticket-booking-lab`.
 
 Implemented extension 2026-10-04: [scenario 1 API failover and graceful restart](API_FAILOVER_TUTORIAL.md).

@@ -4,6 +4,97 @@ Actual delivery record. Reconstructed sprint dates are described in
 [provenance](../TIMELINE_PROVENANCE.md), not treated as actual work dates here.
 Current resume entry: [project context](../PROJECT_CONTEXT.md).
 
+## 2026-10-18: incremental API learning notes
+
+Added a short learning resume section to the existing next-session handover:
+the learner has just started GET /api/events, the first endpoint tried in this
+session. Distinguished that from the original tutorial numbering and older API 3
+resume marker; synchronized the index and memory without claiming mastery.
+
+User wants existing guides updated as study progresses, preserving request,
+parameters and status code, with a small response excerpt and actual IDE method
+flow. Saved the preference in project memory/index and updated the existing
+[API 2 guide](API_02_LIST_EVENTS_WALKTHROUGH.md) with gateway port 8132, parameter
+bounds, success status, an excerpt of the earlier event-list response and the
+controller/service/store/JDBC chain. No API was invoked and no tests/load or
+service operations were run for this documentation update; no lesson advancement
+or learner mastery is claimed.
+
+## 2026-10-18: explicit sprint smoke selection and loader restriction
+
+User requires load tests only on explicit request and never at startup. Saved
+the rule in project instructions/context and separated idle-loader startup from
+normal application restart commands. On the subsequent stop request, stopped
+`sd-book-my-show-java-load-test-load-tester-1` and verified Exited (143); booking
+services remained running and containers/data were preserved.
+
+User then requested at most 10 smoke tests for explicit invocation after a
+development sprint. Source-reviewed and selected [10 existing JUnit methods](SPRINT_SMOKE_TESTS.md),
+with exact Maven method selectors, isolated PostgreSQL/Kafka/provider scope and
+reporting criteria. Updated AGENTS, CLAUDE working memory, project context/status.
+No tests, load, service operations or Maven clean were executed for this selection;
+it does not establish a passing smoke result or authorize automatic execution.
+
+## 2026-10-18: deploy local Docker components
+
+User explicitly requested all local Docker components. Reused the retained
+PostgreSQL container/booking-data volume and saved a 39,559,776-byte custom-format
+database backup before API startup/migrations. Repackaged the current booking jar
+without tests; built both API images, copied gateway and legacy provider. Removed
+the copied gateway Dockerfile's eager offline-dependency scan after it spent
+minutes resolving unrelated Maven plugin dependencies; package-time cache remains.
+Subsequent gateway packaging succeeded in about 20 seconds.
+
+Started base + failover + provider + saga overlays. Both APIs and dependencies
+became healthy; V8 and copied gateway V069 applied successfully. Four Kafka topics
+have three partitions/14-day retention, initializer exited 0 and two saga
+consumers formed a Stable group. Health/auth/routing reads passed, including
+both replicas through HAProxy. No order/provider operation was created.
+
+Java loader control service was recreated at committed 384 MiB/1 CPU and started
+idle with a deliberate observer STOP marker. Node workload and one-off containers
+remain stopped. No load, business-booking POST, Maven tests, file/data-volume
+deletion, clean/prune or unrelated stack operation. Normal movie rolling
+maintenance is enabled and may purge eligible past-day legacy rows under its
+existing policy; the pre-startup snapshot is retained. Private token env file,
+backup and logs are in ignored `target/local-docker/`.
+[Full deployment record](LOCAL_DOCKER_DEPLOYMENT_2026-10-18.md).
+
+Follow-up: added [local GET learning collection](../postman/local-get-learning.postman_collection.json)
+with seven read-only requests, gateway defaults and automatic ID handoff. Verified
+event/detail, movie slate, Mumbai cinemas, tomorrow's shows and a 400-seat map
+through the deployed gateway. No booking/payment requests or load run.
+
+## 2026-10-18: Kafka order saga, copied gateway and learning index
+
+User selected the order outbox/saga brief, required Kafka as the only messaging
+system, and requested a copy of `D:/customer-api/mock-payment-gateway` in this repo.
+Added default-off `/api/orders`, V8 durable saga/outbox/inbox/commands, cancellation
+tombstones, payment operations, compensation and audited recovery. The copied
+standalone gateway adds V069 immutable same-ID capture/refund lookup and normalized
+route authentication; original source remains untouched. Legacy movie checkout/
+cancel rejects saga-owned bookings under lock, and catalog purge preserves their
+reconciliation evidence. No existing migration was rewritten.
+
+Independent review findings were reproduced and fixed, including cross-replica
+request hash ordering, normalized-path token enforcement, durable manual-review
+stop intent, null Kafka quarantine and bounded customer-action recovery.
+Full root verification: **101 tests**, zero failures/errors/skips, Maven verify
+and packaging passed at 13:48:38 IST. Copied gateway: **21 tests**, zero failures/
+errors/skips, passed at 13:45:34 IST. Real Kafka plus a separate gateway process
+was exercised in isolated integration fixtures. Optional Compose configuration
+validated; retained stack not deployed. No sustained load, data reset, file
+deletion or Maven clean. See [verification](ORDER_SAGA_VERIFICATION.md).
+
+User additionally requested updated tutorial guides and a tutorial index for
+learning. Created [learning index](TUTORIAL_INDEX.md) with saved API 3 resume point,
+prerequisites, one-session checkpoints, source entry points, separate generic/
+movie/saga tracks and optional performance study. Refreshed 20 guide navigation
+entries, standalone IntelliJ setup, saga review lessons, movie retention scope
+and interview practice. Added [saga tutorial](ORDER_SAGA_TUTORIAL.md) and
+[recovery runbook](ORDER_SAGA_RUNBOOK.md). This records delivered explanations and
+executed verification, not learner mastery or permission for a new runtime session.
+
 ## 2026-10-05: independent repository and movie backend
 
 Created `D:/sd-book-my-show` with fresh Git init, as requested. Imported 14 actual

@@ -1,5 +1,7 @@
 # API 1: create a demo event
 
+[Tutorial index and learning guide](TUTORIAL_INDEX.md) · One lesson at a time; runtime exercises require a selected hands-on session.
+
 Today's API is **`POST /api/demo/events`**. It creates a concert/show and its numbered seats. Your goal is to explain how one JSON request becomes database rows and a response.
 
 Read one step, then pause in IntelliJ. You can stop after any step and resume at the next number. The core walkthrough ends at step 4; running or debugging is optional.
